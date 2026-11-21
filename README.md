@@ -1,6 +1,6 @@
-# Busola · Ritm
+# Atlas · Ritm
 
-Hackathon prototype: Ritm, an opt-in feature in Busola (a fictional Romanian bank) that protects a first salary from fast spending after payday.
+Hackathon prototype: Ritm, an opt-in feature in Atlas (a fictional Romanian bank) that protects a first salary from fast spending after payday.
 
 - Plan, roles and prompts: [docs/ROADMAP.md](docs/ROADMAP.md)
 - Rules for Claude Code: [CLAUDE.md](CLAUDE.md)
