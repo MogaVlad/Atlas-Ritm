@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Busola",
-  description: "Busola · Ritm — hackathon prototype (fictional bank)",
+  title: "Atlas",
+  description: "Atlas · Ritm — hackathon prototype (fictional bank)",
 };
 
 export const viewport: Viewport = {
