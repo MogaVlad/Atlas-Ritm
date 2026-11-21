@@ -98,7 +98,17 @@
       "tapHint": "{merchant}, {amount}",
       "simulatedNote": "Plățile în magazin nu pot fi puse pe pauză. Primești imediat o notificare cu ce ți-a rămas.",
       "tapToast": "Ai plătit {amount} la {merchant}. Azi mai poți cheltui liniștit {safe}.",
-      "tapToastNoRitm": "Ai plătit {amount} la {merchant}."
+      "tapToastNoRitm": "Ai plătit {amount} la {merchant}.",
+      "tapHintMany": "{count} plăți, între {min} și {max}",
+      "sheet": {
+        "title": "Alege o plată în magazin",
+        "close": "Închide",
+        "balance": "Sold curent:",
+        "paid": "Ai plătit {amount} la {merchant}.",
+        "balanceChange": "{before} → {after}",
+        "safe": "Azi mai poți cheltui liniștit {safe}.",
+        "hint": "Poți alege încă o plată sau închide fereastra."
+      }
     },
     "profile": {
       "title": "Profil",
