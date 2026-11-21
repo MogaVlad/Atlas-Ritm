@@ -1,35 +1,37 @@
 "use client";
 
+import { ChevronRight, PiggyBank } from "lucide-react";
 import Link from "next/link";
 import { BalancePanel } from "@/components/bank/BalancePanel";
-import { MOCK_ACCOUNTS, sortedTransactions } from "@/components/bank/mockData";
+import { CARD_LAST4, currentBalance, savingsBalance, visibleTransactions } from "@/components/bank/bankData";
 import { RitmSlot } from "@/components/bank/RitmSlot";
 import { TransactionRow } from "@/components/bank/TransactionRow";
+import { PERSONA } from "@/lib/data/persona";
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
 
 export default function HomePage() {
   const t = useT();
   const locale = useLocale((s) => s.locale);
-  const recent = sortedTransactions().slice(0, 5);
+  const recent = visibleTransactions().slice(0, 5);
 
   return (
     <div className="flex flex-col gap-5">
       <h1 className="font-display text-[1.7rem] leading-tight font-semibold tracking-[-0.02em]">
-        {t("bank.home.greeting", { name: "Andrei" })}
+        {t("bank.home.greeting", { name: PERSONA.name })}
       </h1>
 
-      <BalancePanel balance={MOCK_ACCOUNTS.currentBalance} cardLast4={MOCK_ACCOUNTS.cardLast4} />
+      <BalancePanel balance={currentBalance()} cardLast4={CARD_LAST4} href="/accounts/current" />
 
-      <section
-        aria-labelledby="savings-label"
-        className="-mt-1 flex items-center justify-between rounded-2xl border border-atlas-line bg-white px-5 py-4"
+      <Link
+        href="/accounts/savings"
+        className="-mt-1 flex min-h-16 items-center gap-3 rounded-2xl border border-atlas-line bg-white px-5 py-3 transition-colors hover:border-atlas-pine/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-atlas-pine"
       >
-        <p id="savings-label" className="text-sm text-atlas-muted">
-          {t("bank.home.savingsLabel")}
-        </p>
-        <p className="font-medium tabular-nums">{formatLei(MOCK_ACCOUNTS.savingsBalance, locale)}</p>
-      </section>
+        <PiggyBank className="size-5 text-atlas-pine" aria-hidden="true" />
+        <span className="flex-1 text-sm text-atlas-muted">{t("bank.home.savingsLabel")}</span>
+        <span className="font-medium tabular-nums">{formatLei(savingsBalance(), locale)}</span>
+        <ChevronRight className="size-4 text-atlas-muted" aria-hidden="true" />
+      </Link>
 
       <RitmSlot />
 
