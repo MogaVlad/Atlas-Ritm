@@ -90,10 +90,9 @@ export default function RitmOnboarding() {
 
   return (
     <>
-      <div className="px-5 pt-3">
+      <header className="flex flex-col px-5 pt-3">
         <RitmBack />
-      </div>
-      <header className="flex items-center justify-between gap-4 px-5 pt-2">
+        <div className="flex items-center justify-between gap-4 pt-2">
         <div className="flex flex-1 flex-col gap-2">
           <p className="text-sm text-atlas-muted">{t("ritm.onboarding.progress", { step, total: STEPS })}</p>
           <div aria-hidden className="flex gap-1.5">
@@ -102,7 +101,8 @@ export default function RitmOnboarding() {
             ))}
           </div>
         </div>
-        <LocaleToggle />
+          <LocaleToggle />
+        </div>
       </header>
 
       <main key={step} className="flex flex-1 flex-col gap-7 px-5 pt-8 pb-6 motion-safe:animate-in motion-safe:fade-in motion-safe:duration-300">

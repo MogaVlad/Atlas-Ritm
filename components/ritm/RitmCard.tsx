@@ -1,5 +1,7 @@
 "use client";
 
+import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 import { useLayoutEffect, useState } from "react";
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
@@ -38,10 +40,27 @@ export function RitmCard() {
         cycleLength={pace.cycleLength}
       />
 
-      {lock && lock.status !== "unlocked" && lock.amount > 0 && (
-        <p className="border-t border-atlas-line pt-4 text-sm">
-          {t("ritm.card.lock", { amount: formatLei(lock.amount, locale), day: lock.unlockDay })}
-        </p>
+      {lock && lock.amount > 0 && (
+        <Link
+          href={lock.status === "unlocked" ? "/ritm/unlock" : "/ritm/lock"}
+          className="-mx-2 flex min-h-11 items-center justify-between gap-2 rounded-lg border-t border-atlas-line px-2 pt-4 text-sm focus-visible:outline-2 focus-visible:outline-ritm"
+        >
+          <span>
+            {lock.status === "unlocked"
+              ? t("ritm.card.lockOpen", { amount: formatLei(lock.amount, locale) })
+              : t("ritm.card.lock", { amount: formatLei(lock.amount, locale), day: lock.unlockDay })}
+          </span>
+          <ChevronRight className="size-4 shrink-0 text-atlas-muted" aria-hidden="true" />
+        </Link>
+      )}
+
+      {pace.dayOfCycle === pace.cycleLength && (
+        <Link
+          href="/ritm/summary"
+          className="flex min-h-12 items-center justify-center rounded-full border border-atlas-line px-5 font-medium text-ritm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm"
+        >
+          {t("ritm.card.summaryCta")}
+        </Link>
       )}
 
       {latest && (
