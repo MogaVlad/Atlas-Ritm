@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useLayoutEffect, useState, type ReactNode } from "react";
 import { LocaleToggle } from "@/components/bank/LocaleToggle";
+import { PensionExplainer } from "@/components/ritm/PensionExplainer";
 import { RitmBack } from "@/components/ritm/RitmBack";
 import { useHydrated } from "@/components/ritm/useHydrated";
 import { SAVINGS_OPTIONS } from "@/lib/data/savingsOptions";
@@ -23,11 +24,15 @@ export default function UnlockScreen() {
   // null = the default, keep 100%.
   const [keep, setKeep] = useState<number | null>(null);
   const [done, setDone] = useState<{ keep: number; back: number } | null>(null);
+  const [pensionOpen, setPensionOpen] = useState(false);
+  const [pensioned, setPensioned] = useState<{ amount: number; taxSavedUpTo: number } | null>(null);
   // Next keeps this page alive while hidden: come back to the default.
   useLayoutEffect(
     () => () => {
       setKeep(null);
       setDone(null);
+      setPensionOpen(false);
+      setPensioned(null);
     },
     [],
   );
@@ -38,7 +43,13 @@ export default function UnlockScreen() {
   if (!lock || lock.amount <= 0) {
     return (
       <Screen>
-        <p className="text-atlas-muted">{t("ritm.unlock.empty")}</p>
+        {pensioned ? (
+          <p role="status" className="rounded-2xl bg-ritm-tint p-4">
+            {t("ritm.pension.done", { amount: lei(pensioned.amount), tax: lei(pensioned.taxSavedUpTo) })}
+          </p>
+        ) : (
+          <p className="text-atlas-muted">{t("ritm.unlock.empty")}</p>
+        )}
       </Screen>
     );
   }
@@ -119,10 +130,36 @@ export default function UnlockScreen() {
                 <Fact label={t("ritm.unlock.horizon")} value={t(`ritm.unlock.horizonValue.${o.horizon}`)} />
               </dl>
               <p className="text-xs text-atlas-muted">{t(`ritm.unlock.options.${o.id}.note`)}</p>
+              {o.needsExplainer &&
+                (pensioned ? (
+                  <p role="status" className="rounded-xl bg-ritm-tint p-3 text-sm">
+                    {t("ritm.pension.done", { amount: lei(pensioned.amount), tax: lei(pensioned.taxSavedUpTo) })}
+                  </p>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setPensionOpen(true)}
+                    className="min-h-11 self-start rounded-full border border-atlas-line px-4 text-sm font-medium text-ritm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm"
+                  >
+                    {t("ritm.unlock.pensionCta")}
+                  </button>
+                ))}
             </li>
           ))}
         </ul>
       </section>
+
+      {pensionOpen && (
+        <PensionExplainer
+          amount={total}
+          source="savings"
+          onClose={() => setPensionOpen(false)}
+          onDone={(result) => {
+            setPensionOpen(false);
+            setPensioned(result);
+          }}
+        />
+      )}
     </Screen>
   );
 }
