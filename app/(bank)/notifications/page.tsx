@@ -8,6 +8,7 @@ import { useDemoDay } from "@/components/bank/bankData";
 import { CategoryIcon } from "@/components/bank/categories";
 import { dayLabel } from "@/components/bank/dates";
 import { useActivity, type ActivityItem } from "@/components/bank/notifications";
+import { Toast } from "@/components/bank/Toast";
 import { HeadsUpSheet } from "@/components/ritm/HeadsUpSheet";
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
@@ -23,6 +24,8 @@ export default function NotificationsPage() {
   const headsUps = useBank((s) => s.notifications);
   const activity = useActivity();
   const [sheet, setSheet] = useState<HeadsUpNotification | null>(null);
+  const clearAll = useBank((s) => s.clearNotifications);
+  const [cleared, setCleared] = useState(false);
 
   const activityText = (item: ActivityItem) =>
     item.kind === "salary"
@@ -38,9 +41,23 @@ export default function NotificationsPage() {
   return (
     <div className="flex flex-col">
       <BackLink href="/" label={t("bank.nav.home")} />
-      <h1 className="mt-1 font-display text-[1.7rem] leading-tight font-semibold tracking-[-0.02em]">
-        {t("bank.notifications.title")}
-      </h1>
+      <div className="mt-1 flex items-center justify-between gap-3">
+        <h1 className="font-display text-[1.7rem] leading-tight font-semibold tracking-[-0.02em]">
+          {t("bank.notifications.title")}
+        </h1>
+        {(headsUps.length > 0 || activity.length > 0) && (
+          <button
+            type="button"
+            onClick={() => {
+              clearAll();
+              setCleared(true);
+            }}
+            className="-mr-2 flex min-h-11 items-center rounded-lg px-2 text-sm font-medium text-atlas-pine focus-visible:outline-2 focus-visible:outline-atlas-pine"
+          >
+            {t("bank.notifications.clearAll")}
+          </button>
+        )}
+      </div>
 
       {headsUps.length === 0 && activity.length === 0 && (
         <div className="mt-10 flex flex-col items-center text-center">
@@ -114,6 +131,10 @@ export default function NotificationsPage() {
       )}
 
       {sheet && <HeadsUpSheet notification={sheet} onClose={() => setSheet(null)} />}
+
+      <Toast open={cleared} onClose={() => setCleared(false)}>
+        {t("bank.notifications.cleared")}
+      </Toast>
     </div>
   );
 }

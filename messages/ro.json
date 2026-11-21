@@ -196,7 +196,9 @@
       "salaryTitle": "Salariu primit",
       "salaryBody": "{amount} de la {from}.",
       "paymentTitle": "Plată cu cardul",
-      "paymentBody": "Ai plătit {amount} la {merchant}."
+      "paymentBody": "Ai plătit {amount} la {merchant}.",
+      "clearAll": "Șterge tot",
+      "cleared": "Notificările au fost șterse."
     },
     "salary": {
       "title": "Salariul a intrat",

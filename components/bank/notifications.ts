@@ -34,18 +34,20 @@ export function useActivity(): ActivityItem[] {
   const transactions = useBank((s) => s.transactions);
   const added = useBank((s) => s.added);
   const day = useBank((s) => s.demoDay);
+  const cleared = useBank((s) => s.clearedActivityIds);
 
   return useMemo(() => {
+    const hidden = new Set(cleared); // removed with "Clear all"
     const salary: ActivityItem[] = transactions
-      .filter((t) => t.category === "salary" && t.day <= day)
+      .filter((t) => t.category === "salary" && t.day <= day && !hidden.has(t.id))
       .map((tx) => ({ kind: "salary", id: tx.id, day: tx.day, tx }));
     const payments: ActivityItem[] = added
-      .filter((t) => t.day <= day)
+      .filter((t) => t.day <= day && !hidden.has(t.id))
       .map((tx) => ({ kind: "payment", id: tx.id, day: tx.day, tx }));
     // Later entries first within a day: payments were made after the salary arrived.
     return [...salary, ...payments]
       .map((item, order) => ({ item, order }))
       .sort((a, b) => b.item.day - a.item.day || b.order - a.order)
       .map(({ item }) => item);
-  }, [transactions, added, day]);
+  }, [transactions, added, day, cleared]);
 }
