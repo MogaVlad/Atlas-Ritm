@@ -79,7 +79,8 @@
       "home": "Home",
       "payments": "Payments",
       "ritm": "Ritm",
-      "profile": "Profile"
+      "profile": "Profile",
+      "transfers": "Transfers"
     },
     "home": {
       "greeting": "Hi, {name}!",
@@ -279,6 +280,33 @@
       "disclaimer": "Ritm explains; it doesn’t decide for you.",
       "you": "You",
       "ritm": "Ritm"
+    },
+    "transfers": {
+      "title": "Transfers",
+      "intro": "Move money between your current account and savings.",
+      "direction": "From which account to which",
+      "from": "From",
+      "to": "To",
+      "swap": "Swap direction",
+      "account": {
+        "current": "Current account",
+        "savings": "Savings account"
+      },
+      "locked": "{amount} in the Lock",
+      "amount": "Amount",
+      "available": "You can move up to {amount}.",
+      "lockedNote": "Money in the Lock stays there until it unlocks.",
+      "toSavings": "Move to savings",
+      "toCurrent": "Move to current account",
+      "doneToSavings": "You moved {amount} to savings.",
+      "doneToCurrent": "You moved {amount} to your current account.",
+      "currentChange": "Current account: {before} → {after}",
+      "savingsChange": "Savings: {before} → {after}",
+      "notEnough": "You can move at most {amount}.",
+      "invalid": "Enter an amount above zero.",
+      "history": "Your transfers",
+      "rowToSavings": "To savings",
+      "rowToCurrent": "To current account"
     }
   },
   "ritm": {
@@ -406,20 +434,29 @@
       "actions": {
         "moveToLock": "Put {amount} aside until day {day}: enough for the last {days} days of the month",
         "enableSpeedBump": "Turn on Speed bump until payday",
-        "markPlanned": "{merchant}, {amount}, was planned"
+        "markPlanned": "Some payments were planned"
       },
       "hint": {
         "moveToLock": "The money stays aside and unlocks by itself on day {day}.",
         "enableSpeedBump": "Before big online payments we show you the numbers and you confirm after 5 seconds.",
-        "markPlanned": "It stops counting towards your pace."
+        "markPlanned": "You pick which. They stop counting towards your pace."
       },
       "done": {
         "moveToLock": "Done. {amount} moved to the Lock until day {day}.",
         "enableSpeedBump": "Done. Speed bump is on until payday.",
-        "markPlanned": "Done. {merchant} no longer counts towards your pace."
+        "markPlanned": "Done. {merchant} no longer counts towards your pace.",
+        "markPlannedMany": "Done. {count} payments ({amount}) no longer count towards your pace."
       },
       "later": "Not now",
-      "close": "Close"
+      "close": "Close",
+      "pick": {
+        "title": "Which payments were planned?",
+        "hint": "You can pick one or more.",
+        "day": "day {day}",
+        "none": "Pick at least one payment",
+        "confirm": "Mark as planned ({count})",
+        "back": "Back"
+      }
     },
     "speedBump": {
       "tag": "Speed bump · day {day}",

@@ -1,6 +1,6 @@
 "use client";
 
-import { X } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import { isCounted, RULES, type AlertAction } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
@@ -23,6 +23,9 @@ export function HeadsUpSheet({ notification, onClose }: Props) {
   const titleId = useId();
   const heading = useRef<HTMLHeadingElement>(null);
   const [done, setDone] = useState<string | null>(null);
+  /** "Some payments were planned": the list of this month's payments to pick from. */
+  const [picking, setPicking] = useState(false);
+  const [picked, setPicked] = useState<string[]>([]);
 
   const ritm = useBank((s) => s.ritm);
   const lock = useBank((s) => s.lock);
@@ -35,10 +38,12 @@ export function HeadsUpSheet({ notification, onClose }: Props) {
 
   useEffect(() => heading.current?.focus(), []);
 
-  // "Mark as planned" refers to the latest, biggest purchase that still counts.
-  const target = transactions
+  // "Mark as planned": the user picks one or more of this month's purchases that still count (biggest first).
+  const candidates = transactions
     .filter((tx) => tx.day <= demoDay && isCounted(tx, ritm))
-    .sort((a, b) => b.day - a.day || b.amount - a.amount)[0];
+    .sort((a, b) => b.amount - a.amount || b.day - a.day)
+    .slice(0, 8);
+  const target = candidates[0];
   const unlockDay = lock?.unlockDay ?? ritm.lock.unlockDay;
   const lockChosen = (lock !== null && lock.status !== "unlocked") || ritm.lock.amount > 0;
 
@@ -53,16 +58,29 @@ export function HeadsUpSheet({ notification, onClose }: Props) {
   const values = (a: AlertAction): Record<string, string | number> =>
     a.kind === "moveToLock"
       ? { amount: formatLei(a.amount ?? 0, locale), day: unlockDay, days: RULES.cycleLength - unlockDay + 1 }
-      : a.kind === "markPlanned" && target
-        ? { merchant: target.merchant, amount: formatLei(target.amount, locale) }
-        : {};
+      : {};
 
   const act = (a: AlertAction) => {
+    if (a.kind === "markPlanned") return setPicking(true);
     if (a.kind === "moveToLock") lockMoney(a.amount ?? 0);
     if (a.kind === "enableSpeedBump") setFeature("speedBump", true);
-    if (a.kind === "markPlanned" && target) markPlanned(target.id);
     dismiss(notification.id, true);
     setDone(t(`ritm.headsUp.done.${a.kind}`, values(a)));
+  };
+
+  const togglePick = (id: string) => setPicked((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
+
+  const confirmPlanned = () => {
+    const chosen = candidates.filter((tx) => picked.includes(tx.id));
+    chosen.forEach((tx) => markPlanned(tx.id));
+    dismiss(notification.id, true);
+    setPicking(false);
+    setDone(
+      t("ritm.headsUp.done.markPlannedMany", {
+        count: chosen.length,
+        amount: formatLei(chosen.reduce((sum, tx) => sum + tx.amount, 0), locale),
+      }),
+    );
   };
 
   const close = () => {
@@ -113,6 +131,56 @@ export function HeadsUpSheet({ notification, onClose }: Props) {
             </p>
             <button type="button" onClick={close} className={SECONDARY}>
               {t("ritm.headsUp.close")}
+            </button>
+          </div>
+        ) : picking ? (
+          <div className="mt-6 flex flex-col gap-3">
+            <p className="font-medium">{t("ritm.headsUp.pick.title")}</p>
+            <p className="-mt-2 text-sm text-atlas-muted">{t("ritm.headsUp.pick.hint")}</p>
+            <ul className="flex flex-col gap-2">
+              {candidates.map((tx) => {
+                const on = picked.includes(tx.id);
+                return (
+                  <li key={tx.id}>
+                    <button
+                      type="button"
+                      role="checkbox"
+                      aria-checked={on}
+                      onClick={() => togglePick(tx.id)}
+                      className={cn(
+                        "flex min-h-14 w-full items-center gap-3 rounded-2xl px-4 py-2 text-left ring-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm",
+                        on ? "bg-ritm-tint ring-ritm" : "ring-atlas-line",
+                      )}
+                    >
+                      <span
+                        aria-hidden
+                        className={cn(
+                          "flex size-6 shrink-0 items-center justify-center rounded-md border",
+                          on ? "border-ritm bg-ritm text-white" : "border-atlas-line bg-white",
+                        )}
+                      >
+                        {on && <Check className="size-4" />}
+                      </span>
+                      <span className="flex-1">
+                        <span className="block font-medium">{tx.merchant}</span>
+                        <span className="block text-sm text-atlas-muted">{t("ritm.headsUp.pick.day", { day: tx.day })}</span>
+                      </span>
+                      <span className="font-medium tabular-nums">{formatLei(tx.amount, locale)}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+            <button
+              type="button"
+              onClick={confirmPlanned}
+              disabled={picked.length === 0}
+              className="min-h-12 rounded-full bg-ritm px-5 font-medium text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm disabled:bg-ritm-track disabled:text-atlas-muted"
+            >
+              {picked.length === 0 ? t("ritm.headsUp.pick.none") : t("ritm.headsUp.pick.confirm", { count: picked.length })}
+            </button>
+            <button type="button" onClick={() => setPicking(false)} className={SECONDARY}>
+              {t("ritm.headsUp.pick.back")}
             </button>
           </div>
         ) : (

@@ -107,6 +107,8 @@ interface PersistedState {
   alertMemory: AlertMemory;
   /** Every early exit from the Lock this month, with its reason (shown back in the summary). */
   unlockReasons: UnlockRecord[];
+  /** Transfers between the user's own accounts (the Transfers tab), oldest first. */
+  transfers: AccountTransfer[];
   /** Scripted payments declined because the current account couldn't cover them (never below 0). */
   declinedIds: string[];
 }
@@ -159,6 +161,11 @@ interface Actions {
   /** At unlock: keep `amount` in savings, the rest goes back to the current account. */
   keepSaved: (amount: number) => void;
   /**
+   * Move money between the user's own accounts. Never more than the source holds: from savings,
+   * money still in the Lock can't be moved (the Lock has its own unlock rules).
+   */
+  transferBetweenAccounts: (input: { from: AccountId; amount: number }) => TransferResult;
+  /**
    * Pillar III contribution to Atlas Pensii. Never a default: `consent` must be true, which the
    * explainer sets only after its checkbox AND explicit button. "currentAccount" = the purchase
    * not made (Speed bump); "savings" = money kept at unlock (not money still in the Lock).
@@ -187,6 +194,20 @@ export interface InStoreResult {
   /** The current account couldn't cover it: nothing was charged (a card never goes below zero). */
   declined: boolean;
 }
+
+export type AccountId = "current" | "savings";
+
+export interface AccountTransfer {
+  id: string;
+  day: Day;
+  from: AccountId;
+  to: AccountId;
+  amount: number;
+}
+
+export type TransferResult =
+  | { ok: true; transfer: AccountTransfer; before: Balances; after: Balances }
+  | { ok: false; reason: "invalidAmount" | "notEnoughMoney"; available: number };
 
 export type BankState = PersistedState & DerivedState & Actions;
 
@@ -354,6 +375,7 @@ const INITIAL: PersistedState = {
   clearedActivityIds: [],
   alertMemory: INITIAL_ALERT_MEMORY,
   unlockReasons: [],
+  transfers: [],
   declinedIds: [],
 };
 
@@ -400,6 +422,7 @@ const pick = (s: BankState): PersistedState => ({
   clearedActivityIds: s.clearedActivityIds,
   alertMemory: s.alertMemory,
   unlockReasons: s.unlockReasons,
+  transfers: s.transfers,
   declinedIds: s.declinedIds,
 });
 
@@ -535,6 +558,30 @@ export const useBank = create<BankState>()(
             }));
           }
           return result;
+        },
+
+        transferBetweenAccounts: ({ from, amount: wanted }) => {
+          const s = get();
+          const amount = Math.round(wanted * 100) / 100;
+          const stillLocked = s.lock && s.lock.status !== "unlocked" ? s.lock.amount : 0;
+          const available = Math.max(0, from === "current" ? s.balances.current : s.savings - stillLocked);
+          if (!(amount > 0)) return { ok: false, reason: "invalidAmount", available };
+          if (amount > available) return { ok: false, reason: "notEnoughMoney", available };
+
+          const before = s.balances;
+          const transfer: AccountTransfer = {
+            id: `transfer-${s.transfers.length + 1}`,
+            day: s.demoDay,
+            from,
+            to: from === "current" ? "savings" : "current",
+            amount,
+          };
+          update((p) => ({
+            ...p,
+            savings: Math.round((p.savings + (from === "current" ? amount : -amount)) * 100) / 100,
+            transfers: [...p.transfers, transfer],
+          }));
+          return { ok: true, transfer, before, after: get().balances };
         },
 
         keepSaved: (amount) =>
