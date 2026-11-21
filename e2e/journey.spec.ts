@@ -58,12 +58,13 @@ test("payday → onboarding → day 6 Heads-up → Speed bump on the jacket", as
   // The ModaHub jacket (300 lei, online) now pauses on the Speed bump.
   await page.getByRole("link", { name: exact(ro.bank.nav.payments) }).click();
   await payForJacket(page);
-  await expect(page.getByText(ro.bank.speedBump.title)).toBeVisible();
+  const speedBump = page.getByRole("dialog", { name: ro.ritm.speedBump.title });
+  await expect(speedBump).toBeVisible();
 
   // Confirm stays inactive for 5 seconds, then the choice is the user's.
-  const countdown = page.getByRole("button", { name: /^Plătesc oricum \(\d s\)$/ });
+  const countdown = speedBump.getByRole("button", { name: /^Plătesc oricum · \d s$/ });
   await expect(countdown).toBeDisabled();
-  const payAnyway = page.getByRole("button", { name: exact(ro.bank.speedBump.confirm) });
+  const payAnyway = speedBump.getByRole("button", { name: exact(ro.ritm.speedBump.confirm) });
   await expect(payAnyway).toBeEnabled({ timeout: 8_000 });
   await payAnyway.click();
   await expect(page.getByText(ro.bank.confirm.paidTitle)).toBeVisible();
@@ -79,5 +80,5 @@ test("with Ritm off, the jacket is paid with no pause", async ({ page }) => {
   await page.getByRole("link", { name: exact(ro.bank.nav.payments) }).click();
   await payForJacket(page);
   await expect(page.getByText(ro.bank.confirm.paidTitle)).toBeVisible();
-  await expect(page.getByText(ro.bank.speedBump.title)).toHaveCount(0);
+  await expect(page.getByRole("dialog", { name: ro.ritm.speedBump.title })).toHaveCount(0);
 });
