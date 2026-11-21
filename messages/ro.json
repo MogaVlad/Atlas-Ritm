@@ -35,10 +35,6 @@
       "recentTitle": "Ultimele tranzacții",
       "seeAll": "Vezi toate"
     },
-    "ritmSlot": {
-      "title": "Ritm",
-      "body": "Vezi cât de repede se duce salariul și cât poți cheltui liniștit azi. Apare aici în curând."
-    },
     "transactions": {
       "title": "Tranzacții",
       "today": "Azi",
@@ -93,7 +89,7 @@
       "copied": "Copiat",
       "history": "Istoric",
       "savingsBalance": "Sold",
-      "savingsEmpty": "Contul de economii e gol deocamdată. Dacă pornești Lock din Ritm, banii puși deoparte ajung aici."
+      "savingsEmpty": "Contul de economii e gol deocamdată. Dacă pornești Lacătul din Ritm, banii puși deoparte ajung aici."
     },
     "detail": {
       "category": "Categorie",
@@ -142,6 +138,34 @@
       "notNow": "Nu acum",
       "confirm": "Plătesc oricum",
       "confirmIn": "Plătesc oricum ({seconds} s)"
+    },
+    "notifications": {
+      "title": "Notificări",
+      "bellOne": "Notificări, una nouă",
+      "bellMany": "Notificări, {count} noi",
+      "app": "Atlas",
+      "ritm": "Ritm",
+      "now": "acum",
+      "hide": "Ascunde notificarea",
+      "new": "Noi",
+      "earlier": "Mai devreme",
+      "unread": "Necitită",
+      "empty": "Nu ai notificări. Când intră salariul sau Ritm are ceva să-ți spună, apar aici.",
+      "salaryTitle": "Salariu primit",
+      "salaryBody": "{amount} de la {from}.",
+      "paymentTitle": "Plată cu cardul",
+      "paymentBody": "Ai plătit {amount} la {merchant}."
+    },
+    "salary": {
+      "title": "Salariul a intrat",
+      "from": "de la {from}"
+    },
+    "ritmInvite": {
+      "title": "Vrei ca salariul să țină până la următorul?",
+      "bodyPayday": "Salariul tocmai a intrat. Ritm urmărește cât de repede cheltui de azi încolo și te anunță din timp, nu după ce banii s-au dus. Tu alegi cât de strict să fie.",
+      "body": "Ritm urmărește cât de repede cheltui din salariu și te anunță din timp, nu după ce banii s-au dus. Tu alegi cât de strict să fie.",
+      "cta": "Pornește Ritm",
+      "note": "3 pași. Niciun ban nu se mută fără acordul tău."
     }
   },
   "ritm": {
