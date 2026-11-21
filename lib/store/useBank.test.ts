@@ -32,6 +32,13 @@ describe("useBank", () => {
     expect(store().pace.pool).toBe(2120);
   });
 
+  it("enableRitm keeps the planned purchases from onboarding; Reset clears them", () => {
+    store().enableRitm(DEFAULT_RITM_SETTINGS, [{ name: "Pantofi", amount: 280 }]);
+    expect(store().plannedPurchases).toEqual([{ name: "Pantofi", amount: 280 }]);
+    store().resetDemo();
+    expect(store().plannedPurchases).toEqual([]);
+  });
+
   it("jumping to day 6 queues a spike Heads-up", () => {
     store().enableRitm(DEFAULT_RITM_SETTINGS);
     store().setDemoDay(6);
