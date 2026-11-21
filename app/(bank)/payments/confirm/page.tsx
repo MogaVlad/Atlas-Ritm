@@ -57,8 +57,10 @@ export default function ConfirmPaymentPage() {
   const candidate: Transaction = { id: "pending", day, ...purchase };
   const needsSpeedBump = shouldShowSpeedBump(candidate, ritm, pace);
   const affordable = purchase.amount <= balance;
-  // The jacket came from the ModaHub shop; a purchase from the demo tools goes back to Payments.
-  const backHref = purchase === MODAHUB_JACKET ? "/payments/checkout" : "/payments";
+  // The jacket came from the ModaHub shop, so it goes back there. A purchase from the demo tools has no
+  // shop to go back to: it goes Home, never to Payments (that screen is only part of the demo now).
+  const fromShop = purchase === MODAHUB_JACKET;
+  const backHref = fromShop ? "/payments/checkout" : "/";
 
   function pay() {
     if (!affordable) return;
@@ -161,6 +163,7 @@ export default function ConfirmPaymentPage() {
           pace={pace}
           onConfirm={payAfterSpeedBump}
           onNotNow={() => router.replace(backHref)}
+          fromShop={fromShop}
           onBackToAtlas={() => router.replace("/")}
           onAskRitm={() => setAskOpen(true)}
         />
