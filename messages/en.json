@@ -325,7 +325,8 @@
     "card": {
       "title": "Ritm",
       "lock": "{amount} put aside, unlocks on day {day}.",
-      "headsUpCta": "See why Ritm gave you a heads-up"
+      "headsUpCta": "See why Ritm gave you a heads-up",
+      "lockOpen": "The Lock is open: {amount} is free."
     },
     "reason": {
       "pctSpent": "Day {day}: you've already used {pct}% of your spending money.",
@@ -384,7 +385,89 @@
       "lockValue": "{amount}, until day {day}",
       "lockNone": "Nothing put aside",
       "essentials": "Fixed payments per month",
-      "settingsLink": "More Ritm settings in Profile"
+      "settingsLink": "More Ritm settings in Profile",
+      "lockOpen": "Open: {amount} free"
+    },
+    "lock": {
+      "title": "Your Lock",
+      "amountLabel": "Put aside",
+      "unlockOn": "Opens by itself on day {day}. {days} days to go.",
+      "unlockTomorrow": "Opens by itself tomorrow, on day {day}.",
+      "interest": "Until then, interest adds about {amount}.",
+      "interestNote": "Estimate: {rate}% a year on savings, after 10% tax. In the demo, interest is simulated.",
+      "waysOut": "If you need the money sooner",
+      "earlyTitle": "Unlock early",
+      "earlyHint": "You get all the money after 24 hours.",
+      "earlyExplain": "You ask now, and {amount} leaves the Lock tomorrow, on day {day}. That money stops being set aside for {goal}.",
+      "earlyConfirm": "Request unlock",
+      "requested": "Unlock requested. {amount} leaves the Lock tomorrow, on day {day}.",
+      "emergencyTitle": "Emergency: up to {max} now",
+      "emergencyHint": "The money arrives right away. Once a month.",
+      "emergencyExplain": "The money goes straight to your current account and the rest stays in the Lock. You can do this once a month.",
+      "emergencyAmount": "How much you need (lei)",
+      "emergencyReason": "What for? One word is enough.",
+      "emergencyConfirm": "Take out {amount} now",
+      "emergencyDone": "Done. {amount} is in your current account.",
+      "emergencyUsed": "You've already used the emergency release this month. Unlocking with the 24-hour wait is still there.",
+      "cancel": "Never mind",
+      "error": {
+        "overLimit": "You can take out up to {max}.",
+        "reason": "Write briefly what you need the money for.",
+        "alreadyUsed": "You've already used the emergency release this month.",
+        "notLocked": "There's nothing left in the Lock."
+      },
+      "unlocked": "The Lock is open. {amount} is free.",
+      "chooseCta": "Choose what to do with it",
+      "empty": "Nothing in the Lock right now."
+    },
+    "unlock": {
+      "title": "You made it to day {day} without it.",
+      "intro": "{amount} is free. You choose how much stays aside.",
+      "keepLabel": "How much you keep in savings",
+      "keepValue": "You keep {keep}, and {back} goes to your current account.",
+      "confirmKeep": "Keep {amount}",
+      "confirmNone": "Move it all to my current account",
+      "done": "Done. {keep} stays in savings, {back} is in your current account.",
+      "notYet": "The Lock opens on day {day}. Until then, the money stays aside.",
+      "notYetCta": "See the Lock",
+      "empty": "Nothing to unlock.",
+      "compareTitle": "Where kept money can go",
+      "compareIntro": "Compared by how soon you can reach the money, risk and how long it stays. No promised returns.",
+      "access": "Access",
+      "risk": "Risk",
+      "horizon": "Length",
+      "accessValue": {
+        "anytime": "Anytime",
+        "atMaturity": "At maturity",
+        "atRetirement": "At retirement"
+      },
+      "riskValue": {
+        "veryLow": "Very low",
+        "low": "Low",
+        "medium": "Medium"
+      },
+      "horizonValue": {
+        "short": "Months",
+        "medium": "1–5 years",
+        "long": "Until retirement"
+      },
+      "options": {
+        "flexibleSavings": {
+          "name": "Atlas flexible savings",
+          "tradeoff": "Take the money out anytime, but the interest is low.",
+          "note": "An Atlas product. This is where the money is now."
+        },
+        "governmentBonds": {
+          "name": "Government bonds (Tezaur, Fidelis)",
+          "tradeoff": "The interest is fixed, but you get the money back only at maturity, after 1–5 years.",
+          "note": "Issued by the Romanian state, not Atlas."
+        },
+        "pillar3": {
+          "name": "Pillar III (Atlas Pensii)",
+          "tradeoff": "You pay less tax now, but the money stays locked until retirement.",
+          "note": "Atlas Pensii is Atlas's own fund. You can compare funds on the ASF website."
+        }
+      }
     }
   }
 }
