@@ -18,7 +18,7 @@ export function AtlasWordmark({ className }: { className?: string }) {
   return (
     <span className={`inline-flex items-center gap-2 text-atlas-ink ${className ?? ""}`}>
       <AtlasGlobe className="size-7" />
-      <span className="font-display text-[1.6rem] leading-none font-semibold tracking-[-0.04em]">atlas</span>
+      <span translate="no" className="font-display text-[1.6rem] leading-none font-semibold tracking-[-0.04em]">atlas</span>
     </span>
   );
 }
