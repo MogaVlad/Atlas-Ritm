@@ -66,6 +66,7 @@
       "later": "Mai târziu"
     },
     "flash": {
+      "paid": "Plătit: {amount} la {merchant}.",
       "saved": "Gata! {amount} au fost adăugați în contul de economii.",
       "backToCurrent": "Gata! {amount} s-au întors în contul curent."
     },
@@ -501,13 +502,15 @@
       }
     },
     "speedBump": {
-      "tag": "Pauză · ziua {day}",
+      "tag": "Pauză",
       "title": "Stai o clipă înainte să plătești",
       "progress": "Ziua {day} din {total}: ai folosit {pct}% din banii de cheltuit.",
       "goal": "Suma asta înseamnă {days} zile de economisit pentru {goal}.",
       "safe": "Azi mai poți cheltui liniștit {amount}.",
       "choice": "Alegerea e a ta. Poți plăti oricum.",
       "notNow": "Nu acum",
+      "keptTitle": "Ai păstrat {amount}. Ce faci cu ei?",
+      "leaveIt": "Lasă-i în cont",
       "moveToLock": "Pune {amount} în Lacăt",
       "moveToLockHint": "În loc să-i cheltui acum, stau deoparte până în ziua {day}.",
       "pension": "Pune-i la pensie",

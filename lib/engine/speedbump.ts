@@ -22,3 +22,13 @@ export function shouldShowSpeedBump(tx: Transaction, settings: RitmSettings, sta
     !settings.essentialCategories.includes(tx.category)
   );
 }
+
+/**
+ * Days of saving for the main goal that a payment equals (the Speed bump's "why not now").
+ * `monthlySaving` = what goes aside a month for it: the Lock amount, or what the goal needs a month.
+ * Null when nothing goes aside.
+ */
+export function goalImpactDays(amount: number, monthlySaving: number, cycleLength: number): number | null {
+  const perDay = monthlySaving / cycleLength;
+  return perDay > 0 ? Math.ceil(amount / perDay) : null;
+}
