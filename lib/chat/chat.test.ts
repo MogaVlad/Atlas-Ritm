@@ -87,7 +87,7 @@ describe("askRitm", () => {
   it("works with no API key: answers from the fallbacks", async () => {
     const result = await askRitm(ask("Why the pause?"), { apiKey: undefined });
     expect(result.source).toBe("fallback");
-    expect(result.reply).toMatch(/3 seconds/);
+    expect(result.reply).toMatch(/2 seconds/);
   });
 
   it("falls back when the API call fails", async () => {

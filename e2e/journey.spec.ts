@@ -70,7 +70,7 @@ test("payday → onboarding → day 6 Heads-up → Speed bump on the jacket", as
   const speedBump = page.getByRole("dialog", { name: m.ritm.speedBump.title });
   await expect(speedBump).toBeVisible();
 
-  // Pay anyway needs a 3-second hold: a short press does nothing, then the choice is the user's.
+  // Pay anyway needs a 2-second hold: a short press does nothing, then the choice is the user's.
   const payAnyway = speedBump.getByRole("button", { name: exact(m.ritm.speedBump.confirm) });
   await payAnyway.click();
   await expect(speedBump).toBeVisible();
@@ -78,10 +78,8 @@ test("payday → onboarding → day 6 Heads-up → Speed bump on the jacket", as
   await page.mouse.down();
   await page.waitForTimeout(3_500);
   await page.mouse.up();
-  await expect(page.getByText(m.bank.confirm.paidTitle)).toBeVisible();
-
-  // Back home: the balance dropped by 300 lei.
-  await page.getByRole("link", { name: m.bank.confirm.backHome }).click();
+  // Paid straight away: back home with a short toast, and the balance dropped by 300 lei.
+  await expect(page.getByText(fill(m.common.flash.paid, { amount: "300,00 RON", merchant: "ModaHub" }))).toBeVisible();
   await expect(page.getByText("804,00 RON")).toBeVisible();
 });
 
@@ -167,11 +165,22 @@ test("after the money goes to Pillar III, Back to Atlas leads home and back does
   await page.goto("/payments"); // Payments left the bottom bar (simulated from the demo panel)
   await payForJacket(page);
   const speedBump = page.getByRole("dialog", { name: m.ritm.speedBump.title });
+  // The options come after "Not now", in the same sheet.
+  await speedBump.getByRole("button", { name: m.ritm.speedBump.notNow }).click();
+  await expect(speedBump.getByText(fill(m.ritm.speedBump.keptTitle, { amount: "300,00 RON" }))).toBeVisible();
   await speedBump.getByRole("button", { name: starts(m.ritm.speedBump.pension) }).click();
-  // The explainer is 3 short steps: what it is → what you get → the catch (with the checkbox).
+  // The explainer: what it is → what you get → what to know (fees) → join (first time) → the payment.
   await page.getByRole("button", { name: m.ritm.pension.next, exact: true }).click();
   await expect(page.getByText(fill(m.ritm.pension.getBig, { tax: "30,00 RON" }), { exact: true })).toBeVisible();
   await page.getByRole("button", { name: m.ritm.pension.next, exact: true }).click();
+  await expect(page.getByText(m.ritm.pension.fees)).toBeVisible();
+  await page.getByRole("button", { name: m.ritm.pension.next, exact: true }).click();
+  // Not a member yet: the adhesion act is signed only after ticking that the summary was read.
+  const sign = page.getByRole("button", { name: m.ritm.pension.join.sign });
+  await expect(sign).toBeDisabled();
+  await page.getByRole("checkbox", { name: m.ritm.pension.join.read }).check();
+  await sign.click();
+  await expect(page.getByText(m.ritm.pension.join.signed)).toBeVisible();
   await page.getByRole("checkbox", { name: m.ritm.pension.consent }).check();
   await page.getByRole("button", { name: starts(fill(m.ritm.pension.contribute, { amount: "" })) }).click();
 
@@ -305,10 +314,9 @@ test("the Speed bump shows one number per choice; lowering the Lock asks why", a
   await page.goto("/payments");
   await payForJacket(page);
   const speedBump = page.getByRole("dialog", { name: m.ritm.speedBump.title });
-  // Day 1: today's share is already used, so "Not now" says it keeps the month on track.
-  await expect(speedBump.getByText(m.ritm.speedBump.notNowHintUsed)).toBeVisible();
-  await expect(speedBump.getByText(starts(m.ritm.speedBump.pensionNumber.split("{")[0]))).toBeVisible();
   await speedBump.getByRole("button", { name: m.ritm.speedBump.notNow }).click();
+  await expect(speedBump.getByText(starts(m.ritm.speedBump.pensionNumber.split("{")[0]))).toBeVisible();
+  await speedBump.getByRole("button", { name: m.ritm.speedBump.leaveIt }).click();
 
   // Lock screen: a lower Lock goes through the reason buttons.
   await page.goto("/ritm/lock?demo=1");
