@@ -229,6 +229,9 @@
     }
   },
   "ritm": {
+    "common": {
+      "back": "Înapoi la Atlas"
+    },
     "pace": {
       "aria": "Ai folosit {spent}% din banii de cheltuit, iar luna a trecut {month}%. {status}",
       "spent": "folosit",
