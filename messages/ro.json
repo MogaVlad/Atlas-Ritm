@@ -2,7 +2,19 @@
   "common": {
     "appName": "Atlas",
     "language": "Limba",
-    "switchTo": "Schimbă limba în engleză"
+    "switchTo": "Schimbă limba în engleză",
+    "demo": {
+      "title": "Demo",
+      "button": "Demo · ziua {day}",
+      "day": "Ziua {day}",
+      "slider": "Ziua din lună",
+      "reset": "Resetează demo-ul",
+      "severity": {
+        "ok": "ok",
+        "watch": "atenție",
+        "spike": "prea repede"
+      }
+    }
   },
   "bank": {
     "brand": {

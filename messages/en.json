@@ -2,7 +2,19 @@
   "common": {
     "appName": "Atlas",
     "language": "Language",
-    "switchTo": "Switch language to Romanian"
+    "switchTo": "Switch language to Romanian",
+    "demo": {
+      "title": "Demo",
+      "button": "Demo · day {day}",
+      "day": "Day {day}",
+      "slider": "Day of the month",
+      "reset": "Reset demo",
+      "severity": {
+        "ok": "ok",
+        "watch": "watch",
+        "spike": "too fast"
+      }
+    }
   },
   "bank": {
     "brand": {
