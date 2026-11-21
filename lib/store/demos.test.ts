@@ -44,8 +44,8 @@ describe("demo list", () => {
   it("payday: day 30, 500 lei kept saved", () => {
     startDemo("payday", store);
     expect(store().demoDay).toBe(30);
-    expect(store().lock?.status).toBe("unlocked");
-    expect(store().balances.savings).toBe(500);
+    expect(store().summary.reachedPayday).toBe(true);
+    expect(store().summary.keptSaved).toBe(500);
   });
 
   it("keeps the language the pitch runs in", () => {
