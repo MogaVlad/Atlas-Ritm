@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useLayoutEffect, useState, type ReactNode } from "react";
-import { LocaleToggle } from "@/components/bank/LocaleToggle";
 import { PensionExplainer } from "@/components/ritm/PensionExplainer";
 import { RitmBack } from "@/components/ritm/RitmBack";
 import { useHydrated } from "@/components/ritm/useHydrated";
@@ -178,7 +177,6 @@ function Screen({ children }: { children: ReactNode }) {
     <>
       <header className="flex items-center justify-between gap-4 px-5 pt-3">
         <RitmBack />
-        <LocaleToggle />
       </header>
       <main className="flex flex-1 flex-col gap-6 px-5 pt-4 pb-8">{children}</main>
     </>
