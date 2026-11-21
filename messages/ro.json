@@ -94,7 +94,27 @@
     },
     "profile": {
       "title": "Profil",
-      "comingSoon": "Aici vei găsi setările tale, inclusiv Ritm. Vine în curând."
+      "you": "Datele tale",
+      "ritmTitle": "Setări Ritm",
+      "offTitle": "Ritm e oprit",
+      "offBody": "Când îl pornești, urmărește cât de repede se duce salariul și te anunță din timp. Tu alegi cât de strict să fie.",
+      "statusTitle": "Ritm pornit",
+      "statusHint": "Urmărește ritmul cheltuielilor de la salariu încoace.",
+      "offPending": "Ritm se oprește în ziua {day}. Până atunci rămâne pornit.",
+      "keepOn": "Păstrează Ritm pornit",
+      "offConfirmTitle": "Oprești Ritm?",
+      "offConfirmBody": "Se oprește peste 24 de ore, în ziua {day}. Până atunci totul rămâne ca acum.",
+      "offConfirmLock": "Banii din Lacăt ({amount}) rămân acolo până în ziua {day}.",
+      "offConfirmYes": "Oprește Ritm",
+      "offConfirmCancel": "Anulează",
+      "levelTitle": "Cât de strict",
+      "thresholdTitle": "Pauza pornește de la",
+      "thresholdHint": "La nivelurile Pauză și Lacăt, plățile online de la {amount} în sus primesc o pauză scurtă. Plățile în magazin nu sunt oprite niciodată.",
+      "essentialsTitle": "Cheltuieli esențiale",
+      "essentialsHint": "Ce e pornit aici nu intră în ritm: e scos dinainte din banii de cheltuit.",
+      "perMonth": "{amount} pe lună",
+      "essentialsTotal": "Esențiale pe lună",
+      "spendingMoney": "Bani de cheltuit luna asta"
     },
     "channels": {
       "card_in_store": "Card, în magazin",
@@ -348,6 +368,16 @@
       "askRitm": "Întreabă Ritm",
       "lockedDone": "Gata. {amount} stau în Lacăt până în ziua {day}.",
       "backToShop": "Înapoi la magazin"
+    },
+    "tab": {
+      "title": "Ritm",
+      "setupTitle": "Ce ai setat",
+      "goal": "Scop",
+      "lock": "Lacăt",
+      "lockValue": "{amount}, până în ziua {day}",
+      "lockNone": "Nimic pus deoparte",
+      "essentials": "Plăți fixe pe lună",
+      "settingsLink": "Alte setări Ritm, în Profil"
     }
   }
 }
