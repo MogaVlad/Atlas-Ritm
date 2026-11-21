@@ -12,6 +12,7 @@ import { MODAHUB_JACKET, usePendingPurchase } from "@/components/bank/purchases"
 import { SpeedBumpSlot } from "@/components/bank/SpeedBumpSlot";
 import { shouldShowSpeedBump, type Transaction } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
+import { useFlash } from "@/lib/store/flash";
 import { useLocale, useT } from "@/lib/i18n";
 import { useBank } from "@/lib/store/useBank";
 
@@ -38,6 +39,7 @@ export default function ConfirmPaymentPage() {
   const pace = useBank((s) => s.pace);
   const balance = useBank((s) => s.balances.current);
   const addTransaction = useBank((s) => s.addTransaction);
+  const showFlash = useFlash((s) => s.show);
   const purchase = usePendingPurchase((s) => s.purchase);
   const [status, setStatus] = useState<"review" | "paused" | "paid">("review");
   const [askOpen, setAskOpen] = useState(false);
@@ -62,6 +64,15 @@ export default function ConfirmPaymentPage() {
     if (!affordable) return;
     addTransaction(purchase);
     setStatus("paid");
+  }
+
+  // Pay anyway on the Speed bump: the 3 s hold was the decision, so it pays at once and says so
+  // with a short message on Home (no second confirmation). replace: Back can't reopen the payment.
+  function payAfterSpeedBump() {
+    if (!affordable) return;
+    addTransaction(purchase);
+    showFlash({ key: "common.flash.paid", values: { amount: formatLei(purchase.amount, locale), merchant: purchase.merchant } });
+    router.replace("/");
   }
 
   function onConfirm() {
@@ -148,7 +159,7 @@ export default function ConfirmPaymentPage() {
         <SpeedBumpSlot
           purchase={purchase}
           pace={pace}
-          onConfirm={pay}
+          onConfirm={payAfterSpeedBump}
           onNotNow={() => router.replace(backHref)}
           onBackToAtlas={() => router.replace("/")}
           onAskRitm={() => setAskOpen(true)}
