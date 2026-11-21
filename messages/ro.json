@@ -9,6 +9,7 @@
       "day": "Ziua {day}",
       "prevDay": "Ziua anterioară",
       "nextDay": "Ziua următoare",
+      "nextMonth": "Ziua următoare: începe luna 2",
       "slider": "Ziua din lună",
       "reset": "Resetează demo-ul",
       "severity": {
