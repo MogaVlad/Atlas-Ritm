@@ -328,6 +328,16 @@
       "askRitm": "Întreabă Ritm",
       "lockedDone": "Gata. {amount} stau în Lacăt până în ziua {day}.",
       "backToShop": "Înapoi la magazin"
+    },
+    "tab": {
+      "title": "Ritm",
+      "setupTitle": "Ce ai setat",
+      "goal": "Scop",
+      "lock": "Lacăt",
+      "lockValue": "{amount}, până în ziua {day}",
+      "lockNone": "Nimic pus deoparte",
+      "essentials": "Plăți fixe pe lună",
+      "settingsLink": "Alte setări Ritm, în Profil"
     }
   }
 }
