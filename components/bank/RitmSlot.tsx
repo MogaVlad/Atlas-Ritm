@@ -19,7 +19,7 @@ function RitmInvite() {
   const payday = useSalaryToday() !== undefined;
 
   return (
-    <section aria-labelledby="ritm-invite-title" className="rounded-3xl bg-white p-5 ring-1 ring-atlas-line">
+    <section aria-labelledby="ritm-invite-title" className="rounded-[28px] bg-white p-5 ring-1 ring-atlas-line">
       <div className="flex items-center gap-3">
         <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-ritm-tint text-ritm" aria-hidden="true">
           <Activity className="size-5" />

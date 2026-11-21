@@ -504,7 +504,10 @@
       "headsUpCta": "See why Ritm gave you a heads-up",
       "lockOpen": "The Lock is open: {amount} is free.",
       "summaryCta": "See how your month went",
-      "askCta": "Ask Ritm"
+      "askCta": "Ask Ritm",
+      "sentence": "You've used {spent}% of your spending money, and {month}% of the month has passed.",
+      "openCta": "Open Ritm",
+      "activeLine": "On: {list}"
     },
     "reason": {
       "pctSpent": "Day {day}: you've already used {pct}% of your spending money.",
@@ -590,7 +593,9 @@
       "essentials": "Fixed payments per month",
       "settingsLink": "More Ritm settings in Profile",
       "lockOpen": "Open: {amount} free",
-      "summaryLink": "Month summary"
+      "summaryLink": "Month summary",
+      "dayPill": "Day {day} of {total}",
+      "paceTitle": "Your pace"
     },
     "pension": {
       "title": "How Pillar III works",

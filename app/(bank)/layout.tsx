@@ -1,6 +1,6 @@
 import type { Viewport } from "next";
 import type { ReactNode } from "react";
-import { Bricolage_Grotesque } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
 import { BottomNav } from "@/components/bank/BottomNav";
 import { NotificationBanner } from "@/components/bank/NotificationBanner";
 import { PhoneFrame } from "@/components/bank/PhoneFrame";
@@ -8,10 +8,10 @@ import { TopBar } from "@/components/bank/TopBar";
 import { Welcome } from "@/components/bank/Welcome";
 import { FlashToast } from "@/lib/store/FlashToast";
 
-const display = Bricolage_Grotesque({
+const display = Space_Grotesk({
   variable: "--font-atlas-display",
   subsets: ["latin", "latin-ext"],
-  weight: ["500", "600"],
+  weight: ["500", "600", "700"],
 });
 
 /**
@@ -23,7 +23,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   interactiveWidget: "resizes-content",
   // The phone browser bar takes the app's paper colour instead of a white strip.
-  themeColor: "#f6f7f4",
+  themeColor: "#f5f3ee",
 };
 
 export default function BankLayout({ children }: { children: ReactNode }) {
