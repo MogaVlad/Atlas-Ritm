@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect } from "react";
-import { create } from "zustand";
+import { useBank } from "@/lib/store/useBank";
 import en from "@/messages/en.json";
 import ro from "@/messages/ro.json";
 
@@ -10,11 +10,8 @@ export type Locale = "ro" | "en";
 type Messages = { [key: string]: string | Messages };
 const MESSAGES: Record<Locale, Messages> = { ro, en };
 
-/** Locale store. Will be folded into useBank (C5); keep the same names. */
-export const useLocale = create<{ locale: Locale; setLocale: (l: Locale) => void }>((set) => ({
-  locale: "ro",
-  setLocale: (locale) => set({ locale }),
-}));
+/** The locale lives in useBank (saved with the demo). useLocale((s) => s.locale) / s.setLocale still work. */
+export const useLocale = useBank;
 
 /** Looks up "namespace.key" and fills {placeholders}. Missing keys return the key itself. */
 export function translate(locale: Locale, key: string, values?: Record<string, string | number>): string {
