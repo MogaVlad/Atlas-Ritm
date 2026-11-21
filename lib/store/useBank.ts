@@ -92,6 +92,8 @@ interface PersistedState {
   /** Commitment card on day 30: "Next raise: save half of it automatically?" Off until the user turns it on. */
   raiseCommitment: boolean;
   notifications: HeadsUpNotification[];
+  /** Activity entries (salary, live payments) the user cleared from the notification centre. */
+  clearedActivityIds: string[];
   alertMemory: AlertMemory;
 }
 
@@ -138,6 +140,11 @@ interface Actions {
   setRaiseCommitment: (on: boolean) => void;
   /** Close a notification. `acted: false` counts it as ignored. */
   dismissNotification: (id: string, acted?: boolean) => void;
+  /**
+   * "Clear all" in the notification centre: closes every Heads-up (each counts as ignored, like
+   * closing it by hand) and hides the activity shown so far. Later activity still appears.
+   */
+  clearNotifications: () => void;
   resetDemo: () => void;
 }
 
@@ -227,6 +234,7 @@ const INITIAL: PersistedState = {
   pensionContributions: [],
   raiseCommitment: false,
   notifications: [],
+  clearedActivityIds: [],
   alertMemory: INITIAL_ALERT_MEMORY,
 };
 
@@ -268,6 +276,7 @@ const pick = (s: BankState): PersistedState => ({
   pensionContributions: s.pensionContributions,
   raiseCommitment: s.raiseCommitment,
   notifications: s.notifications,
+  clearedActivityIds: s.clearedActivityIds,
   alertMemory: s.alertMemory,
 });
 
@@ -427,6 +436,20 @@ export const useBank = create<BankState>()(
             notifications: s.notifications.filter((n) => n.id !== id),
             alertMemory: acted ? s.alertMemory : { ...s.alertMemory, ignoredCount: s.alertMemory.ignoredCount + 1 },
           })),
+
+        clearNotifications: () =>
+          update((s) => {
+            const shown = [
+              ...allTransactions(s).filter((t) => t.category === "salary" && t.day <= s.demoDay),
+              ...s.added.filter((t) => t.day <= s.demoDay),
+            ].map((t) => t.id);
+            return {
+              ...s,
+              notifications: [],
+              clearedActivityIds: [...new Set([...s.clearedActivityIds, ...shown])],
+              alertMemory: { ...s.alertMemory, ignoredCount: s.alertMemory.ignoredCount + s.notifications.length },
+            };
+          }),
 
         resetDemo: () => update(() => ({ ...INITIAL })),
       };
