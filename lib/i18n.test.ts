@@ -31,8 +31,8 @@ describe("translate", () => {
 
 describe("formatLei", () => {
   it("uses the same format in RO and EN", () => {
-    expect(formatLei(1234.56, "ro")).toBe("1.234,56 lei");
-    expect(formatLei(1234.56, "en")).toBe("1.234,56 lei");
-    expect(formatLei(4800, "ro")).toBe("4.800,00 lei");
+    expect(formatLei(1234.56, "ro")).toBe("1.234,56 RON");
+    expect(formatLei(1234.56, "en")).toBe("1.234,56 RON");
+    expect(formatLei(4800, "ro")).toBe("4.800,00 RON");
   });
 });
