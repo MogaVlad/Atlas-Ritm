@@ -230,6 +230,42 @@
         "pool": "Spending money this month",
         "poolHint": "Your salary, minus fixed payments and the amount put aside."
       }
+    },
+    "card": {
+      "title": "Ritm",
+      "lock": "{amount} put aside, unlocks on day {day}.",
+      "headsUpCta": "See why Ritm gave you a heads-up"
+    },
+    "reason": {
+      "pctSpent": "Day {day}: you've already used {pct}% of your spending money.",
+      "runOut": "At this pace, the money runs out on day {day}, {daysBefore} days before payday.",
+      "burst": "{pct}% of your spending money went in the last 2 days."
+    },
+    "headsUp": {
+      "tag": "Heads-up · day {day}",
+      "title": {
+        "ok": "You're on pace",
+        "watch": "You're spending a little faster than the month is passing",
+        "spike": "Money is going faster than the days"
+      },
+      "intro": "You can do something now, with one tap. Or nothing, it's your call.",
+      "actions": {
+        "moveToLock": "Move {amount} to the Lock",
+        "enableSpeedBump": "Turn on Speed bump until payday",
+        "markPlanned": "{merchant}, {amount}, was planned"
+      },
+      "hint": {
+        "moveToLock": "The money stays aside and unlocks by itself on day {day}.",
+        "enableSpeedBump": "Before big online payments we show you the numbers and you confirm after 5 seconds.",
+        "markPlanned": "It stops counting towards your pace."
+      },
+      "done": {
+        "moveToLock": "Done. {amount} moved to the Lock until day {day}.",
+        "enableSpeedBump": "Done. Speed bump is on until payday.",
+        "markPlanned": "Done. {merchant} no longer counts towards your pace."
+      },
+      "later": "Not now",
+      "close": "Close"
     }
   }
 }

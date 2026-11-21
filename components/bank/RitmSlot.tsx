@@ -1,7 +1,9 @@
 "use client";
 
 import { Activity } from "lucide-react";
+import { RitmCard } from "@/components/ritm/RitmCard";
 import { useT } from "@/lib/i18n";
+import { useBank } from "@/lib/store/useBank";
 
 /**
  * Slot for Horia's <RitmCard/> (H3). Until it lands, shows a quiet placeholder.
@@ -9,6 +11,8 @@ import { useT } from "@/lib/i18n";
  */
 export function RitmSlot() {
   const t = useT();
+  const enabled = useBank((s) => s.ritm.enabled);
+  if (enabled) return <RitmCard />;
 
   return (
     <section

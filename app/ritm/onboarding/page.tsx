@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { LocaleToggle } from "@/components/bank/LocaleToggle";
 import { LevelChips } from "@/components/ritm/LevelChips";
-import { useBank, type PlannedPurchase } from "@/components/ritm/mockBank";
+import { useBank } from "@/lib/store/useBank";
 import { ESSENTIAL_CATEGORIES, NET_SALARY } from "@/lib/data/persona";
 import { SCENARIO, transactionsUntil } from "@/lib/data/scenario";
 import { computePace, RULES, type Category, type RitmLevel, type RitmSettings } from "@/lib/engine";
@@ -19,6 +19,9 @@ const DETECTED = SCENARIO.filter((t) => ESSENTIAL_CATEGORIES.includes(t.category
 /** Lock slider: 0–30% of salary, in steps of 50 lei. */
 const LOCK_MAX = Math.floor((NET_SALARY * 0.3) / 50) * 50;
 
+// shortcut: the store has no place for future planned purchases yet; they show here but aren't saved. Ask Cosma for addPlannedPurchase.
+type PlannedPurchase = { name: string; amount: number };
+
 const INPUT =
   "min-h-11 w-full rounded-xl border border-atlas-line bg-white px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ritm";
 
@@ -27,7 +30,8 @@ export default function RitmOnboarding() {
   const t = useT();
   const locale = useLocale((s) => s.locale);
   const router = useRouter();
-  const { ritm: defaults, enableRitm } = useBank();
+  const defaults = useBank((s) => s.ritm);
+  const enableRitm = useBank((s) => s.enableRitm);
 
   const [step, setStep] = useState(1);
   const [essentialOn, setEssentialOn] = useState<Partial<Record<Category, boolean>>>(() =>
@@ -76,7 +80,7 @@ export default function RitmOnboarding() {
 
   const finish = () => {
     if (!settings.goal.name || !(settings.goal.amount > 0)) return setGoalError(true);
-    enableRitm(settings, planned);
+    enableRitm(settings);
     router.push("/");
   };
 
