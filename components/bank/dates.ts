@@ -8,6 +8,16 @@ const LONG: Record<Locale, Intl.DateTimeFormat> = {
   en: new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long" }),
 };
 
+const SHORT: Record<Locale, Intl.DateTimeFormat> = {
+  ro: new Intl.DateTimeFormat("ro-RO", { day: "numeric", month: "short" }),
+  en: new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short" }),
+};
+
+/** Day of the cycle → "1 nov." / "1 Nov". */
+export function formatDayShort(day: Day, locale: Locale): string {
+  return SHORT[locale].format(dayToDate(day, DEMO_MONTH));
+}
+
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 /** Day of the cycle → "Joi, 5 noiembrie" / "Thursday 5 November". */

@@ -14,11 +14,12 @@ export function AtlasGlobe({ className }: { className?: string }) {
   );
 }
 
-export function AtlasWordmark({ className }: { className?: string }) {
+/** `light` is for the ink header on Home. */
+export function AtlasWordmark({ className, tone = "ink" }: { className?: string; tone?: "ink" | "light" }) {
   return (
-    <span className={`inline-flex items-center gap-2 text-atlas-ink ${className ?? ""}`}>
+    <span className={`inline-flex items-center gap-2 ${tone === "light" ? "text-white" : "text-atlas-ink"} ${className ?? ""}`}>
       <AtlasGlobe className="size-7" />
-      <span className="font-display text-[1.6rem] leading-none font-semibold tracking-[-0.04em]">atlas</span>
+      <span translate="no" className="font-display text-[1.6rem] leading-none font-semibold tracking-[-0.04em]">atlas</span>
     </span>
   );
 }

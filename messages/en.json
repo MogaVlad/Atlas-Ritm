@@ -111,7 +111,9 @@
       "card": "Card ••• {last4}",
       "savingsLabel": "Savings account",
       "recentTitle": "Recent transactions",
-      "seeAll": "See all"
+      "seeAll": "See all",
+      "emptyRecent": "No transactions this month yet. The story starts on day 1, when the salary arrives.",
+      "emptyRecentCta": "See how it works"
     },
     "transactions": {
       "title": "Transactions",
@@ -333,6 +335,54 @@
       "history": "Your transfers",
       "rowToSavings": "To savings",
       "rowToCurrent": "To current account"
+    },
+    "welcome": {
+      "title": "Welcome to Atlas",
+      "lead": "Atlas is a made-up bank. Ritm is the idea we are showing: it helps your salary last until the next one, without blocking anything.",
+      "mapTitle": "The month at a glance",
+      "dayShort": "day",
+      "day": "Day {day}",
+      "stops": {
+        "d1": {
+          "title": "Payday",
+          "body": "Turn on Ritm in 3 steps and choose how strict it is."
+        },
+        "d6": {
+          "title": "Money goes too fast",
+          "body": "Ritm tells you early, and a big online payment can get a short pause."
+        },
+        "d20": {
+          "title": "The Lock opens",
+          "body": "If you put money aside, it is yours again. You choose where it stays."
+        },
+        "d30": {
+          "title": "Payday again",
+          "body": "See how the month went."
+        }
+      },
+      "simulated": "Everything is simulated: the money, the payments, the salary. Tap anything, and move from day to day with the clock at the top.",
+      "start": "Start on payday",
+      "later": "I will look around",
+      "reopen": "You can open this guide any time from Home or Profile.",
+      "guide": "Guide"
+    },
+    "hero": {
+      "balanceLabel": "In your current account",
+      "savings": "In savings: {amount}",
+      "salaryIn": "{amount} arrived today from {from}.",
+      "dayOf": "day {day} of {total}",
+      "paydayTomorrow": "Payday is tomorrow",
+      "paydayToday": "Payday is today",
+      "daysFew": "{n} days to payday",
+      "daysMany": "{n} days to payday",
+      "beforePayday": "before payday"
+    },
+    "actions": {
+      "label": "What you can do",
+      "transfer": "Transfer",
+      "pay": "Pay",
+      "history": "History",
+      "guide": "Guide"
     }
   },
   "ritm": {
