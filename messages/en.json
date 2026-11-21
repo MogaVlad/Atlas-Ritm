@@ -1,0 +1,15 @@
+{
+  "common": {
+    "appName": "Busola",
+    "language": "Language",
+    "switchTo": "Switch language to Romanian"
+  },
+  "bank": {
+    "home": {
+      "greeting": "Hi, {name}!",
+      "balanceLabel": "Current account",
+      "comingSoon": "The app is under construction."
+    }
+  },
+  "ritm": {}
+}
