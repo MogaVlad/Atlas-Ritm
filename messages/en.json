@@ -319,7 +319,15 @@
         "goalAmount": "Amount you need (lei)",
         "goalInvalid": "Write a name and an amount for your goal.",
         "pool": "Spending money this month",
-        "poolHint": "Your salary, minus fixed payments and the amount put aside."
+        "quick": "Quick amounts",
+        "preview": "That leaves about {perDay} a day. On day {day} you get back {back}, with the estimated interest. That's {pct}% of {goal}.",
+        "previewNone": "That leaves about {perDay} a day.",
+        "tight": "This leaves under {min} a day. That's tight.",
+        "planTitle": "Your plan for this month",
+        "planSalary": "Salary",
+        "planBills": "Fixed bills",
+        "planLock": "Put aside",
+        "planPerDay": "That's about {amount} a day."
       }
     },
     "card": {
@@ -419,29 +427,35 @@
       "interest": "Until then, interest adds about {amount}.",
       "interestNote": "Estimate: {rate}% a year on savings, after 10% tax. In the demo, interest is simulated.",
       "waysOut": "If you need the money sooner",
-      "earlyTitle": "Unlock early",
-      "earlyHint": "You get all the money after 24 hours.",
-      "earlyExplain": "You ask now, and {amount} leaves the Lock tomorrow, on day {day}. That money stops being set aside for {goal}.",
       "earlyConfirm": "Request unlock",
       "requested": "Unlock requested. {amount} leaves the Lock tomorrow, on day {day}.",
-      "emergencyTitle": "Emergency: up to {max} now",
-      "emergencyHint": "The money arrives right away. Once a month.",
-      "emergencyExplain": "The money goes straight to your current account and the rest stays in the Lock. You can do this once a month.",
       "emergencyAmount": "How much you need (lei)",
-      "emergencyReason": "What for? One word is enough.",
       "emergencyConfirm": "Take out {amount} now",
       "emergencyDone": "Done. {amount} is in your current account.",
-      "emergencyUsed": "You've already used the emergency release this month. Unlocking with the 24-hour wait is still there.",
       "cancel": "Never mind",
       "error": {
-        "overLimit": "You can take out up to {max}.",
-        "reason": "Write briefly what you need the money for.",
         "alreadyUsed": "You've already used the emergency release this month.",
         "notLocked": "There's nothing left in the Lock."
       },
       "unlocked": "The Lock is open. {amount} is free.",
       "chooseCta": "Choose what to do with it",
-      "empty": "Nothing in the Lock right now."
+      "empty": "Nothing in the Lock right now.",
+      "mirrorIntro": "The money isn't blocked. We just show what changes, before you decide.",
+      "reasonLabel": "What do you need it for?",
+      "reason": {
+        "health": "Health",
+        "bill": "Bill or repair",
+        "unexpected": "Unexpected cost",
+        "want": "Something I want"
+      },
+      "mirror": "Unlocking {amount}: {goal} goes from {before}% to {after}%.",
+      "firstUnlock": "This is your first unlock this month.",
+      "nthUnlock": "This is unlock number {n} this month.",
+      "routeNow": "The money goes straight to your current account. The rest stays in the Lock.",
+      "routeWait": "Over {max}, all the money leaves after 24 hours, on day {day}.",
+      "routeWant": "All the money leaves after 24 hours, on day {day}.",
+      "note": "A short note, if you like",
+      "routeUsed": "The emergency release is used this month, so all the money leaves after 24 hours, on day {day}."
     },
     "unlock": {
       "title": "You made it to day {day} without it.",
