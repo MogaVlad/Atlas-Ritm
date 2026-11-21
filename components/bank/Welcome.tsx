@@ -5,7 +5,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import { useT } from "@/lib/i18n";
-import { AtlasGlobe } from "./AtlasMark";
+import { AtlasPeak, AtlasTile } from "./AtlasMark";
 import { useFocusTrap } from "./useFocusTrap";
 import { isFirstVisit, markWelcomeSeen, startOnPayday, useWelcome } from "./welcomeGuide";
 
@@ -65,7 +65,7 @@ function WelcomeSheet({ onClose }: { onClose: () => void }) {
       className="absolute inset-0 z-[65] flex flex-col overflow-y-auto overscroll-y-contain bg-atlas-paper text-atlas-ink [scrollbar-width:none]"
     >
       <div className="flex flex-col px-6 pt-9 pb-5">
-        <AtlasGlobe className="size-12 text-atlas-pine" />
+        <AtlasTile className="size-14" />
         <h2 id={titleId} ref={heading} tabIndex={-1} className="mt-5 font-display text-[2rem] leading-[1.1] font-semibold tracking-[-0.02em] text-balance outline-none">
           {t("bank.welcome.title")}
         </h2>
@@ -144,7 +144,7 @@ export function GuideButton({ className = "" }: { className?: string }) {
       onClick={() => useWelcome.getState().show()}
       className={`flex min-h-11 items-center gap-1.5 rounded-full border border-atlas-line bg-white px-3.5 text-sm font-medium text-atlas-pine transition-colors hover:border-atlas-pine/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-atlas-pine ${className}`}
     >
-      <AtlasGlobe className="size-4" />
+      <AtlasPeak className="size-4" />
       {t("bank.welcome.guide")}
     </button>
   );
