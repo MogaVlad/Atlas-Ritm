@@ -9,7 +9,6 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { LocaleToggle } from "@/components/bank/LocaleToggle";
 import { fromDraft, GoalsEditor, toDraft, type GoalDraft } from "@/components/ritm/GoalsEditor";
 import { FeatureSwitches } from "@/components/ritm/FeatureSwitches";
 import { leaveRitm, RitmBack } from "@/components/ritm/RitmBack";
@@ -143,7 +142,6 @@ export default function RitmOnboarding() {
               ))}
             </div>
           </div>
-          <LocaleToggle />
         </div>
       </header>
 

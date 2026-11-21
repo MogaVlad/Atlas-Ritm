@@ -1,6 +1,5 @@
 "use client";
 
-import { LocaleToggle } from "@/components/bank/LocaleToggle";
 import { RitmBack } from "@/components/ritm/RitmBack";
 import { useHydrated } from "@/components/ritm/useHydrated";
 import { raiseSavingPlan, type PacePoint } from "@/lib/engine";
@@ -29,7 +28,6 @@ export default function SummaryScreen() {
     <>
       <header className="flex items-center justify-between gap-4 px-5 pt-3">
         <RitmBack />
-        <LocaleToggle />
       </header>
       <main className="flex flex-1 flex-col gap-6 px-5 pt-4 pb-8">
         <h1 className="font-display text-[1.7rem] leading-tight font-semibold tracking-[-0.02em]">
