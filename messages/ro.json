@@ -434,11 +434,11 @@
       "pension": "Pune-i la pensie",
       "pensionHint": "Îți explicăm întâi cum funcționează, apoi decizi.",
       "confirm": "Plătesc oricum",
-      "confirmIn": "Plătesc oricum · {seconds} s",
       "askRitm": "Întreabă Ritm",
       "lockedDone": "Gata. {amount} stau în Lacăt până în ziua {day}.",
       "backToShop": "Înapoi la magazin",
-      "backToAtlas": "Înapoi la Atlas"
+      "backToAtlas": "Înapoi la Atlas",
+      "holdHint": "Ține apăsat {seconds} secunde ca să plătești."
     },
     "tab": {
       "title": "Ritm",
