@@ -1,6 +1,6 @@
 import { IN_STORE_PAYMENTS } from "@/lib/data/inStorePayments";
 import { beforeEach, describe, expect, it } from "vitest";
-import { DEFAULT_RITM_SETTINGS } from "@/lib/data/persona";
+import { DEFAULT_RITM_SETTINGS, NET_SALARY } from "@/lib/data/persona";
 import { shouldShowSpeedBump } from "@/lib/engine";
 import { migrateSaved, OPENING_CURRENT, useBank } from "./useBank";
 
@@ -86,22 +86,44 @@ describe("useBank", () => {
     expect(move?.amount).toBe(410);
   });
 
-  it("month 2: day 0 again, settings kept, last month's Lock exits remembered", () => {
+  it("month 2: starts on payday, Ritm asks again, last month's Lock exits remembered", () => {
     store().enableRitm(DEFAULT_RITM_SETTINGS);
     store().setDemoDay(5);
     store().requestUnlock("want");
     store().setMonth(2);
     expect(store().month).toBe(2);
-    expect(store().demoDay).toBe(0);
-    expect(store().ritm.enabled).toBe(true);
+    expect(store().demoDay).toBe(1);
+    expect(store().ritm.enabled).toBe(false);
+    expect(store().ritm.lock).toEqual(DEFAULT_RITM_SETTINGS.lock);
     expect(store().unlockReasons).toEqual([]);
     expect(store().lastMonthUnlocks.map((r) => r.reason)).toEqual(["want"]);
     expect(store().lastMonth?.suggestedLock).toBe(600);
   });
 
-  it("month 2 day 6: the soft habit note instead of a Heads-up, asking for nothing", () => {
-    store().enableRitm(DEFAULT_RITM_SETTINGS);
+  it("month 2 has no day 0", () => {
     store().setMonth(2);
+    store().setDemoDay(0);
+    expect(store().demoDay).toBe(1);
+  });
+
+  it("month 2 carries month 1's balances; a new Lock adds to the savings", () => {
+    store().enableRitm(DEFAULT_RITM_SETTINGS);
+    store().setDemoDay(30);
+    const end = store().balances;
+    expect(end.savings).toBe(DEFAULT_RITM_SETTINGS.lock.amount);
+    store().setMonth(2);
+    expect(store().balances.savings).toBe(end.savings);
+    expect(store().opening).toEqual(end);
+    // Payday is in: the salary on top of what month 1 left (minus day 1's own payments).
+    expect(store().balances.current).toBeGreaterThan(end.current + NET_SALARY - 200);
+    store().enableRitm(DEFAULT_RITM_SETTINGS);
+    expect(store().lock?.amount).toBe(DEFAULT_RITM_SETTINGS.lock.amount);
+    expect(store().balances.savings).toBe(end.savings + DEFAULT_RITM_SETTINGS.lock.amount);
+  });
+
+  it("month 2 day 6: the soft habit note instead of a Heads-up, asking for nothing", () => {
+    store().setMonth(2);
+    store().enableRitm(DEFAULT_RITM_SETTINGS);
     store().setDemoDay(6);
     const note = store().notifications.at(-1);
     expect(note?.variant).toBe("habit");
