@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { DEFAULT_RITM_SETTINGS } from "@/lib/data/persona";
+import { shouldShowSpeedBump } from "@/lib/engine";
 import { OPENING_CURRENT, useBank } from "./useBank";
 
 const store = () => useBank.getState();
@@ -108,6 +109,47 @@ describe("useBank", () => {
     store().enableRitm({ ...DEFAULT_RITM_SETTINGS, level: "speedbump" });
     store().setDemoDay(30);
     expect(store().ritm.level).toBe("headsup");
+  });
+
+  it("turning Ritm off takes effect a day later; its Heads-ups go, the Lock stays", () => {
+    store().enableRitm(DEFAULT_RITM_SETTINGS);
+    store().setDemoDay(6);
+    expect(store().notifications).toHaveLength(1);
+    store().requestRitmOff();
+    expect(store().ritm.enabled).toBe(true);
+    expect(store().ritmOffDay).toBe(7);
+    store().setDemoDay(7);
+    expect(store().ritm.enabled).toBe(false);
+    expect(store().ritmOffDay).toBeNull();
+    expect(store().notifications).toEqual([]);
+    expect(store().lock?.amount).toBe(500);
+  });
+
+  it("cancelling the turn-off keeps Ritm on", () => {
+    store().enableRitm(DEFAULT_RITM_SETTINGS);
+    store().requestRitmOff();
+    store().cancelRitmOff();
+    store().setDemoDay(5);
+    expect(store().ritm.enabled).toBe(true);
+    expect(store().ritmOffDay).toBeNull();
+  });
+
+  it("a higher Speed bump threshold lets the 300-lei jacket through", () => {
+    store().enableRitm({ ...DEFAULT_RITM_SETTINGS, level: "speedbump" });
+    store().setDemoDay(6);
+    const pending = { id: "pending", day: 6, ...jacket };
+    expect(shouldShowSpeedBump(pending, store().ritm, store().pace)).toBe(true);
+    store().setSpeedBumpThreshold(400);
+    expect(store().ritm.speedBumpThreshold).toBe(400);
+    expect(shouldShowSpeedBump(pending, store().ritm, store().pace)).toBe(false);
+  });
+
+  it("changing the essentials changes the spending money", () => {
+    store().enableRitm(DEFAULT_RITM_SETTINGS);
+    store().setEssentials(["rent", "utilities", "transport"]);
+    expect(store().ritm.essentialsTotal).toBe(2130);
+    // 4800 salary − 2130 essentials − 500 Lock; the phone bill now counts as spending.
+    expect(store().pace.pool).toBe(2170);
   });
 
   it("day stays within 1–30", () => {
