@@ -37,6 +37,8 @@ export const RULES = {
     /** Early unlock is released this many days after the request (24h). */
     earlyUnlockDelayDays: 1,
     emergencyMaxLei: 300,
+    /** Quick buttons next to the Lock slider (section 11 B). */
+    quickAmounts: [300, 500, 800],
     /** Lock preview: under this many lei a day of spending money, show the gentle "that's tight" note. */
     tightPerDayLei: 30,
   },

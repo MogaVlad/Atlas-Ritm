@@ -1,6 +1,6 @@
 import { RULES } from "./config";
 import { interestEstimate } from "./lock";
-import type { Day, LockState } from "./types";
+import type { Day, GoalPlan, GoalPlanInput, LockState, PlanEditResult, RitmSettings, UnlockReason } from "./types";
 
 /** Section 11 B: what a Lock amount means for the month, shown live while the user picks it. */
 export interface LockPreview {
@@ -15,6 +15,7 @@ export interface LockPreview {
 }
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
+const clampDay = (day: Day) => Math.min(RULES.cycleLength, Math.max(1, Math.round(day)));
 
 /** `spendingMoney` already has the Lock taken out (computePace(...).pool with this Lock). */
 export function lockPreview(input: {
@@ -44,7 +45,6 @@ export function lockPreview(input: {
 }
 
 /** Section 11 C: the reasons a user can give for taking money out of the Lock. */
-export type UnlockReason = "health" | "bill" | "unexpected" | "want";
 export const UNLOCK_REASONS: readonly UnlockReason[] = [
   "health",
   "bill",
@@ -94,5 +94,45 @@ export function unlockMirror(input: {
       (lock.emergencyUsed ? 1 : 0) +
       (lock.status === "unlockRequested" ? 1 : 0) +
       1,
+  };
+}
+
+/** 0–1 share of the goal reached with `saved` lei. */
+export function goalProgress(saved: number, goalAmount: number): number {
+  if (goalAmount <= 0) return 0;
+  return Math.min(1, Math.max(0, saved / goalAmount));
+}
+
+/**
+ * Goal with an amount and a date (section 11 A): lei a month needed by the date, whether the
+ * chosen monthly Lock covers it, and how many months the chosen Lock takes instead.
+ */
+export function goalPlan(goal: GoalPlanInput, monthlyLock: number): GoalPlan {
+  const left = Math.max(0, goal.amount - goal.saved);
+  const months = Math.max(1, Math.ceil(goal.monthsLeft));
+  const neededPerMonth = Math.ceil(left / months);
+  return {
+    neededPerMonth,
+    fitsLock: monthlyLock >= neededPerMonth,
+    monthsWithLock: left === 0 ? 0 : monthlyLock > 0 ? Math.ceil(left / monthlyLock) : null,
+  };
+}
+
+/**
+ * Editing the plan (section 11 A, edit rule). Anything safer (a bigger Lock, a later unlock day,
+ * a new goal, other settings) applies now. A smaller Lock or an earlier unlock day goes through
+ * the reason screen + 24h (requestUnlockWithReason): there is no back door around the Lock.
+ */
+export function planEdit(old: RitmSettings, next: RitmSettings, day: Day): PlanEditResult {
+  const lockDecrease = round2(Math.max(0, old.lock.amount - next.lock.amount));
+  const earlierDay = next.lock.unlockDay < old.lock.unlockDay;
+  if (lockDecrease === 0 && !earlierDay) return { kind: "applied", settings: next };
+
+  return {
+    kind: "needsUnlock",
+    // Keep the old Lock (amount and day) until the unlock goes through; everything else applies.
+    settings: { ...next, lock: { amount: Math.max(old.lock.amount, next.lock.amount), unlockDay: Math.max(old.lock.unlockDay, next.lock.unlockDay) } },
+    lockDecrease,
+    requestedUnlockDay: earlierDay ? Math.max(clampDay(day), next.lock.unlockDay) : old.lock.unlockDay,
   };
 }
