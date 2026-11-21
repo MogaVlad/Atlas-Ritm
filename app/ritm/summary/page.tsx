@@ -1,6 +1,7 @@
 "use client";
 
-import { RitmBack } from "@/components/ritm/RitmBack";
+import { useRouter } from "next/navigation";
+import { leaveRitm, RitmBack } from "@/components/ritm/RitmBack";
 import { useHydrated } from "@/components/ritm/useHydrated";
 import { raiseSavingPlan, type PacePoint } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
@@ -16,6 +17,7 @@ export default function SummaryScreen() {
   const t = useT();
   const locale = useLocale((s) => s.locale);
   const hydrated = useHydrated();
+  const router = useRouter();
   const summary = useBank((s) => s.summary);
   const commitment = useBank((s) => s.raiseCommitment);
   const setCommitment = useBank((s) => s.setRaiseCommitment);
@@ -127,6 +129,14 @@ export default function SummaryScreen() {
             {commitment ? t("ritm.summary.raiseOn") : t("ritm.summary.raiseOff")}
           </p>
         </section>
+
+        <button
+          type="button"
+          onClick={() => leaveRitm(router)}
+          className="mt-2 min-h-12 rounded-full border border-atlas-line bg-white px-5 font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm"
+        >
+          {t("ritm.summary.close")}
+        </button>
       </main>
     </>
   );
