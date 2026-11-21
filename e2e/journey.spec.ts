@@ -220,6 +220,14 @@ test("Lock: shown as on, and taking money out asks why with buttons (Health = no
   // The mirror: pick a reason from the buttons, see the facts, then decide.
   await page.getByRole("radio", { name: lock.reason.health }).click();
   await expect(page.getByText(lock.firstUnlock, { exact: false })).toBeVisible();
+  // 0 is a mistake, not "the whole Lock"; a comma works as the decimal separator.
+  const howMuch = page.getByRole("textbox", { name: lock.emergencyAmount });
+  await howMuch.fill("0");
+  await expect(page.getByText(lock.error.noAmount)).toBeVisible();
+  await expect(page.getByRole("button", { name: lock.earlyConfirm })).toBeDisabled();
+  await howMuch.fill("150,5");
+  await expect(page.getByRole("button", { name: fill(lock.emergencyConfirm, { amount: "150,50 RON" }) })).toBeVisible();
+  await howMuch.fill("300");
   await page.getByRole("button", { name: starts(lock.emergencyConfirm.split("{")[0]) }).click();
   await expect(page.getByText(fill(lock.emergencyDone, { amount: "300,00 RON" }))).toBeVisible();
 

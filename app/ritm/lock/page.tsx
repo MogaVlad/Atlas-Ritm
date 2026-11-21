@@ -13,7 +13,7 @@ import {
   type LockState,
   type UnlockReason,
 } from "@/lib/engine";
-import { formatLei } from "@/lib/format";
+import { cleanAmountInput, formatLei, parseAmount } from "@/lib/format";
 import { useHtmlLang, useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { useBank } from "@/lib/store/useBank";
@@ -143,11 +143,13 @@ export default function LockScreen() {
   );
   const emergencyMax = Math.min(RULES.lock.emergencyMaxLei, lock.amount);
   const askAmount = reason !== null && reason !== "want" && !lock.emergencyUsed;
+  // An empty or 0 amount is a mistake, not "the whole Lock": ask for a real amount first.
+  const noAmount = askAmount && !(parseAmount(amount) > 0);
   const mirror = reason
     ? unlockMirror({
         lock,
         reason,
-        amount: Number(amount) || 0,
+        amount: parseAmount(amount),
         saved,
         goalAmount: goal?.amount ?? 0,
       })
@@ -161,7 +163,7 @@ export default function LockScreen() {
   };
 
   const confirm = () => {
-    if (!mirror || !reason) return;
+    if (!mirror || !reason || noAmount) return;
     const why = note.trim() || undefined;
     if (mirror.route === "wait") return requestUnlock(reason, why);
     const result = emergencyRelease(mirror.released, reason, why);
@@ -264,43 +266,49 @@ export default function LockScreen() {
                 <label className="flex flex-col gap-1.5 text-sm font-medium">
                   {t("ritm.lock.emergencyAmount")}
                   <input
-                    type="number"
-                    inputMode="numeric"
-                    min={1}
-                    max={lock.amount}
+                    type="text"
+                    inputMode="decimal"
+                    autoComplete="off"
                     value={amount}
                     // No minus sign: a negative amount would put money in, not take it out.
-                    onChange={(e) => setAmount(e.target.value.replace(/-/g, ""))}
-                    onKeyDown={(e) => ["-", "+", "e", "E"].includes(e.key) && e.preventDefault()}
+                    onChange={(e) => setAmount(cleanAmountInput(e.target.value))}
                     className={INPUT}
                   />
                 </label>
               )}
 
-              <p className="rounded-xl bg-ritm-tint p-3" aria-live="polite">
-                {t("ritm.lock.mirror", {
-                  amount: lei(mirror.released),
-                  goal: goal?.name ?? "",
-                  before: pct(mirror.goalBefore),
-                  after: pct(mirror.goalAfter),
-                })}{" "}
-                {mirror.unlockNumber === 1
-                  ? t("ritm.lock.firstUnlock")
-                  : t("ritm.lock.nthUnlock", { n: mirror.unlockNumber })}
-              </p>
+              {noAmount ? (
+                <p role="alert" className="text-sm text-ritm-spike">
+                  {t("ritm.lock.error.noAmount")}
+                </p>
+              ) : (
+                <>
+                  <p className="rounded-xl bg-ritm-tint p-3" aria-live="polite">
+                    {t("ritm.lock.mirror", {
+                      amount: lei(mirror.released),
+                      goal: goal?.name ?? "",
+                      before: pct(mirror.goalBefore),
+                      after: pct(mirror.goalAfter),
+                    })}{" "}
+                    {mirror.unlockNumber === 1
+                      ? t("ritm.lock.firstUnlock")
+                      : t("ritm.lock.nthUnlock", { n: mirror.unlockNumber })}
+                  </p>
 
-              <p className="text-sm">
-                {mirror.route === "emergency"
-                  ? t("ritm.lock.routeNow")
-                  : t(
-                      reason === "want"
-                        ? "ritm.lock.routeWant"
-                        : lock.emergencyUsed
-                          ? "ritm.lock.routeUsed"
-                          : "ritm.lock.routeWait",
-                      { day: releaseDay, max: lei(emergencyMax) },
-                    )}
-              </p>
+                  <p className="text-sm">
+                    {mirror.route === "emergency"
+                      ? t("ritm.lock.routeNow")
+                      : t(
+                          reason === "want"
+                            ? "ritm.lock.routeWant"
+                            : lock.emergencyUsed
+                              ? "ritm.lock.routeUsed"
+                              : "ritm.lock.routeWait",
+                          { day: releaseDay, max: lei(emergencyMax) },
+                        )}
+                  </p>
+                </>
+              )}
 
               <label className="flex flex-col gap-1.5 text-sm font-medium">
                 {t("ritm.lock.note")}
@@ -330,7 +338,8 @@ export default function LockScreen() {
                 <button
                   type="button"
                   onClick={confirm}
-                  className={`${PRIMARY} flex-1`}
+                  disabled={noAmount}
+                  className={`${PRIMARY} flex-1 disabled:bg-ritm-track disabled:text-atlas-muted`}
                 >
                   {mirror.route === "emergency"
                     ? t("ritm.lock.emergencyConfirm", {

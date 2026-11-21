@@ -61,7 +61,9 @@ export function HeadsUpSheet({ notification, onClose }: Props) {
   const values = (a: AlertAction): Record<string, string | number> =>
     a.kind === "moveToLock"
       ? { amount: formatLei(a.amount ?? 0, locale), day: unlockDay, days: RULES.cycleLength - unlockDay + 1 }
-      : {};
+      : a.kind === "enableSpeedBump"
+        ? { seconds: RULES.speedBump.holdSeconds }
+        : {};
 
   const act = (a: AlertAction) => {
     if (a.kind === "markPlanned") return setPicking(true);
