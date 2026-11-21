@@ -538,6 +538,12 @@
       "consent": "I understand this money is for retirement and I can't use it before then.",
       "contribute": "Contribute {amount}",
       "notNow": "Not now",
+      "donePopup": {
+        "title": "Done! {amount} went to Atlas Pensii",
+        "tax": "Your tax goes down by up to {tax}",
+        "note": "The money stays invested for retirement. Atlas Pensii is Atlas's own fund; you can compare every fund on the ASF website.",
+        "ok": "Got it"
+      },
       "done": "Done. {amount} went to Atlas Pensii. Your tax goes down by up to {tax}.",
       "error": {
         "noConsent": "First tick that you understand.",
