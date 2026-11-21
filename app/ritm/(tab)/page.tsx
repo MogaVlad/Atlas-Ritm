@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { FeatureSwitches, useLockLink } from "@/components/ritm/FeatureSwitches";
 import { PaceBar } from "@/components/ritm/PaceBar";
-import { SafeToSpend } from "@/components/ritm/SafeToSpend";
+import { SafeToSpend, safeLineKey } from "@/components/ritm/SafeToSpend";
 import { useHydrated } from "@/components/ritm/useHydrated";
 import { NET_SALARY } from "@/lib/data/persona";
 import { goalMonthly, goalsPlan } from "@/lib/engine";
@@ -40,7 +40,7 @@ export default function RitmTab() {
 
       {/* Not <RitmCard/>: Next keeps this page alive while hidden, and Home already has the card. */}
       <section className="flex flex-col gap-5 rounded-3xl bg-white p-5 ring-1 ring-atlas-line">
-        <SafeToSpend amount={pace.safeToSpendToday} line={t(`ritm.safe.line.${pace.severity}`)} />
+        <SafeToSpend amount={pace.safeToSpendToday} line={t(safeLineKey(pace))} />
         <PaceBar
           pctSpent={pace.pctSpent}
           pctMonthPassed={pace.pctMonthPassed}

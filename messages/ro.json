@@ -61,6 +61,13 @@
       "body": "Ai fost în ritm {days} din {total} de zile. Vezi pe scurt cum a mers luna.",
       "open": "Vezi rezumatul",
       "later": "Mai târziu"
+    },
+    "lockPrompt": {
+      "title": "Lacătul tău s-a deschis",
+      "body": "Ai ajuns până în ziua {day} fără ei. Acum {amount} sunt liberi.",
+      "bodyEarly": "Banii ceruți au ieșit din Lacăt: {amount} sunt liberi acum.",
+      "open": "Alege ce faci cu ei",
+      "later": "Mai târziu"
     }
   },
   "bank": {
@@ -292,7 +299,8 @@
         "ok": "Așa ajungi liniștit până la salariu.",
         "watch": "Cheltui puțin mai repede decât trece luna.",
         "spike": "Banii se duc mai repede decât zilele. Azi, mai cu grijă."
-      }
+      },
+      "usedToday": "Ai folosit partea de azi. Mâine ai una nouă, iar luna e în continuare pe drumul bun."
     },
     "levels": {
       "label": "Ce face Ritm pentru tine",
@@ -393,7 +401,7 @@
       },
       "intro": "Poți face ceva acum, dintr-o atingere. Sau nimic, tu decizi.",
       "actions": {
-        "moveToLock": "Pune {amount} deoparte până în ziua {day}, ca să ai și la final de lună",
+        "moveToLock": "Pune {amount} deoparte până în ziua {day}: ajung pentru ultimele {days} zile din lună",
         "enableSpeedBump": "Pornește Pauza până la salariu",
         "markPlanned": "{merchant}, {amount}, era planificată"
       },

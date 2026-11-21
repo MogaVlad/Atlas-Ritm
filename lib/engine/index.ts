@@ -2,7 +2,7 @@
 export * from "./types";
 export { RULES } from "./config";
 export { computePace, isCounted } from "./pace";
-export { shouldNotify, alertActions, INITIAL_ALERT_MEMORY } from "./alerts";
+export { shouldNotify, alertActions, moveToLockAmount, INITIAL_ALERT_MEMORY } from "./alerts";
 export { shouldShowSpeedBump } from "./speedbump";
 export { createLock, requestUnlock, requestUnlockWithReason, resolveLock, emergencyRelease, interestEstimate } from "./lock";
 export { monthSummary, raiseSavingPlan } from "./summary";

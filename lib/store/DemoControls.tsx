@@ -46,6 +46,13 @@ export function DemoControls() {
   const demoDay = useBank((s) => s.demoDay);
   const setDemoDay = useBank((s) => s.setDemoDay);
   const resetDemo = useBank((s) => s.resetDemo);
+  const router = useRouter();
+  // A fresh demo starts on Home, whatever screen it was reset from.
+  const reset = () => {
+    resetDemo();
+    setPanelOpen(false);
+    router.push("/");
+  };
 
   // Browser-only value, read once after mount (keeps the page prerenderable).
   useEffect(() => {
@@ -111,7 +118,7 @@ export function DemoControls() {
         {/* Laptop only: on a phone these live in the panel. */}
         <div className="hidden grid-cols-4 gap-1 min-[500px]:grid">{jumpButtons(cn(DOCK_BUTTON, "justify-center px-0 tabular-nums"))}</div>
         <div className="hidden flex-col gap-1 border-t border-background/20 pt-2 min-[500px]:flex">
-          <button type="button" onClick={resetDemo} className={DOCK_BUTTON}>
+          <button type="button" onClick={reset} className={DOCK_BUTTON}>
             <RotateCcw className="size-4" aria-hidden="true" />
             {t("common.demo.reset")}
           </button>
@@ -149,7 +156,7 @@ export function DemoControls() {
             </div>
             <button
               type="button"
-              onClick={resetDemo}
+              onClick={reset}
               className="flex min-h-11 items-center justify-center gap-2 rounded-lg border font-medium focus-visible:outline-2 focus-visible:outline-ring"
             >
               <RotateCcw className="size-4" aria-hidden="true" />
