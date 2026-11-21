@@ -65,6 +65,21 @@
       "open": "Vezi rezumatul",
       "later": "Mai târziu"
     },
+    "monthPrompt": {
+      "title": "Luna 2 începe azi",
+      "body": "Ritm pornește din nou în fiecare lună, ca să alegi tu cum lucrează. Luna trecută ai avut:",
+      "levels": "Niveluri",
+      "none": "Niciunul",
+      "lockValue": "{amount} până în ziua {day}",
+      "threshold": "Pauză de la",
+      "goal": "Obiectiv principal",
+      "goalValue": "{name}, {amount}",
+      "essentials": "Cheltuieli esențiale",
+      "perMonth": "{amount} pe lună",
+      "lockNote": "Dacă le păstrezi, {amount} merg azi în economii și se deblochează în ziua {day}.",
+      "keep": "Păstrez setările de luna trecută",
+      "change": "Modific setările"
+    },
     "lockPrompt": {
       "title": "Lacătul tău s-a deschis",
       "body": "Ai ajuns până în ziua {day} fără ei. Acum {amount} sunt liberi.",
@@ -644,6 +659,7 @@
       }
     },
     "summary": {
+      "close": "Închide",
       "titlePayday": "Ai ajuns la salariu.",
       "titleSoFar": "Luna ta, până în ziua {day}",
       "leftLabel": "Ți-au rămas din banii de cheltuit",

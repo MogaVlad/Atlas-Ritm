@@ -100,6 +100,18 @@ describe("useBank", () => {
     expect(store().lastMonth?.suggestedLock).toBe(600);
   });
 
+  it("month 2: keeping last month's settings turns Ritm on again, Speed bump included", () => {
+    store().enableRitm({ ...DEFAULT_RITM_SETTINGS, speedBump: true });
+    store().setDemoDay(30); // payday switches the Speed bump off for the day
+    expect(store().ritm.speedBump).toBe(false);
+    store().setMonth(2);
+    expect(store().monthPromptSeen).toBe(false);
+    store().keepLastMonthSettings();
+    expect(store().monthPromptSeen).toBe(true);
+    expect(store().ritm).toMatchObject({ enabled: true, headsUp: true, speedBump: true });
+    expect(store().lock?.amount).toBe(DEFAULT_RITM_SETTINGS.lock.amount);
+  });
+
   it("month 2 has no day 0", () => {
     store().setMonth(2);
     store().setDemoDay(0);

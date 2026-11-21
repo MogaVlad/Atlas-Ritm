@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { BankHydrator } from "@/lib/store/BankHydrator";
 import { DemoControls } from "@/lib/store/DemoControls";
 import { LockOpenPrompt } from "@/lib/store/LockOpenPrompt";
+import { MonthStartPrompt } from "@/lib/store/MonthStartPrompt";
 import { SummaryPrompt } from "@/lib/store/SummaryPrompt";
 import "./globals.css";
 
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <BankHydrator />
         <DemoControls />
         <SummaryPrompt />
+        <MonthStartPrompt />
         <LockOpenPrompt />
       </body>
     </html>
