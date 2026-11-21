@@ -24,6 +24,14 @@ export const GOAL = { name: "Islanda 2027", amount: 9000 }; // illustrative, rep
 
 export const ESSENTIAL_CATEGORIES: Category[] = ["rent", "utilities", "phone", "transport"];
 
+/** Monthly amount of each detected essential: Settings lists them and totals the ones kept as essential. */
+export const ESSENTIAL_AMOUNTS: Partial<Record<Category, number>> = {
+  rent: RENT,
+  utilities: UTILITIES,
+  phone: PHONE,
+  transport: TRANSPORT_PASS,
+};
+
 export const PERSONA = {
   name: "Andrei",
   age: 23,
