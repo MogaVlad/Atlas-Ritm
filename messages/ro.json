@@ -166,6 +166,26 @@
       "body": "Ritm urmărește cât de repede cheltui din salariu și te anunță din timp, nu după ce banii s-au dus. Tu alegi cât de strict să fie.",
       "cta": "Pornește Ritm",
       "note": "3 pași. Niciun ban nu se mută fără acordul tău."
+    },
+    "askRitm": {
+      "title": "Întreabă Ritm",
+      "close": "Închide",
+      "intro": "Îți explic pauza, cifrele de pe ecran și opțiunile tale. Nu-ți spun ce să cumperi: alegerea rămâne a ta.",
+      "suggestions": {
+        "pillar": "Ce este Pilonul III?",
+        "pause": "De ce a apărut pauza?"
+      },
+      "inputLabel": "Întrebarea ta",
+      "placeholder": "Scrie o întrebare…",
+      "send": "Trimite",
+      "counter": "{count}/{max}",
+      "typing": "Ritm scrie…",
+      "error": "Nu am putut răspunde acum. Verifică internetul și încearcă din nou.",
+      "retry": "Încearcă din nou",
+      "fallback": "Răspuns pregătit dinainte",
+      "disclaimer": "Ritm explică; nu decide în locul tău.",
+      "you": "Tu",
+      "ritm": "Ritm"
     }
   },
   "ritm": {
@@ -290,6 +310,24 @@
       },
       "later": "Nu acum",
       "close": "Închide"
+    },
+    "speedBump": {
+      "tag": "Pauză · ziua {day}",
+      "title": "Stai o clipă înainte să plătești",
+      "progress": "Ziua {day} din {total}: ai folosit {pct}% din banii de cheltuit.",
+      "goal": "Suma asta înseamnă {days} zile de economisit pentru {goal}.",
+      "safe": "Azi mai poți cheltui liniștit {amount}.",
+      "choice": "Alegerea e a ta. Poți plăti oricum.",
+      "notNow": "Nu acum",
+      "moveToLock": "Pune {amount} în Lacăt",
+      "moveToLockHint": "În loc să-i cheltui acum, stau deoparte până în ziua {day}.",
+      "pension": "Pune-i la pensie",
+      "pensionHint": "Îți explicăm întâi cum funcționează, apoi decizi.",
+      "confirm": "Plătesc oricum",
+      "confirmIn": "Plătesc oricum · {seconds} s",
+      "askRitm": "Întreabă Ritm",
+      "lockedDone": "Gata. {amount} stau în Lacăt până în ziua {day}.",
+      "backToShop": "Înapoi la magazin"
     }
   }
 }

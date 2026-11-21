@@ -3,7 +3,8 @@
 import { CircleCheck, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
+import { AskRitmSheet } from "@/components/bank/AskRitmSheet";
 import { AtlasWordmark } from "@/components/bank/AtlasMark";
 import { CARD_LAST4 } from "@/components/bank/bankData";
 import { FullScreen } from "@/components/bank/FullScreen";
@@ -36,6 +37,17 @@ export default function ConfirmPaymentPage() {
   const pace = useBank((s) => s.pace);
   const addTransaction = useBank((s) => s.addTransaction);
   const [status, setStatus] = useState<"review" | "paused" | "paid">("review");
+  const [askOpen, setAskOpen] = useState(false);
+
+  // Next keeps routes you left alive (<Activity>) with their state: start fresh each time the
+  // page is shown again, or a second purchase would open on "Payment approved".
+  useLayoutEffect(
+    () => () => {
+      setStatus("review");
+      setAskOpen(false);
+    },
+    [],
+  );
 
   const candidate: Transaction = { id: "pending", day, ...MODAHUB_JACKET };
   const needsSpeedBump = shouldShowSpeedBump(candidate, ritm, pace);
@@ -118,8 +130,10 @@ export default function ConfirmPaymentPage() {
           pace={pace}
           onConfirm={pay}
           onNotNow={() => router.push("/payments/checkout")}
+          onAskRitm={() => setAskOpen(true)}
         />
       )}
+      {status === "paused" && askOpen && <AskRitmSheet purchase={MODAHUB_JACKET} onClose={() => setAskOpen(false)} />}
     </FullScreen>
   );
 }

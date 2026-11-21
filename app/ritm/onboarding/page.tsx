@@ -81,6 +81,7 @@ export default function RitmOnboarding() {
   const finish = () => {
     if (!settings.goal.name || !(settings.goal.amount > 0)) return setGoalError(true);
     enableRitm(settings);
+    setStep(1); // Next keeps this page alive after we leave; next visit starts at step 1
     router.push("/");
   };
 
