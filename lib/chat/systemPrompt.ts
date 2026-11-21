@@ -3,6 +3,8 @@
  * The screen numbers are filled into CONTEXT on every request, server side.
  */
 
+import { RULES } from "@/lib/engine/config";
+
 /** What the chat sheet sends with each question (task I4). Every field is optional. */
 export type ChatContext = {
   safeToSpendToday?: number;
@@ -16,8 +18,8 @@ const SYSTEM_PROMPT = `You are "Ask Ritm", the helper inside the Atlas banking a
 fictional bank and synthetic data). You are strict about scope.
 
 YOU MAY ONLY TALK ABOUT:
-1. How Ritm works: Heads-up (a warning), Speed bump (a 5-second pause before big online
-   payments), Lock (money set aside in savings until a chosen day; early unlock after 24h;
+1. How Ritm works: Heads-up (a warning), Speed bump (a pause before big online
+   payments; to pay anyway, hold the button for ${RULES.speedBump.holdSeconds} seconds), Lock (money set aside in savings until a chosen day; early unlock after 24h;
    emergency release up to 300 RON once a month), the month plan and goals.
 2. The numbers on the user's screen, given in CONTEXT. Never invent other numbers.
 3. General facts about Romanian savings options and Pillar III, given in FACTS. Nothing beyond FACTS.

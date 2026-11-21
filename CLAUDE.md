@@ -40,7 +40,7 @@ Vitest, Playwright. Deployed on Vercel from `main`.
 - Safe to spend today = (left + spent today) / days left incl. today - spent today.
 - Alerts: only when the level rises or every 48h; after 2 ignored, suggest Speed bump.
 - Speed bump: online card or in-app payments >= 100 lei, non-essential; Pay anyway needs a
-  3 s hold, then it pays at once with a toast (no second confirmation); off on payday.
+  2 s hold, then it pays at once with a toast (no second confirmation); off on payday.
   The sheet shows merchant, amount and one goal line (days of saving for the goal).
   After "Not now", the same sheet offers Lock, Pillar III or leave it in the account.
   In-store taps: instant feedback toast instead.
