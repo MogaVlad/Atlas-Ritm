@@ -2,9 +2,10 @@
 
 import { Plus, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { LocaleToggle } from "@/components/bank/LocaleToggle";
 import { LevelChips } from "@/components/ritm/LevelChips";
+import { RitmBack } from "@/components/ritm/RitmBack";
 import { useBank } from "@/lib/store/useBank";
 import { ESSENTIAL_CATEGORIES, NET_SALARY } from "@/lib/data/persona";
 import { SCENARIO, transactionsUntil } from "@/lib/data/scenario";
@@ -53,6 +54,8 @@ export default function RitmOnboarding() {
   useEffect(() => {
     if (moved.current) heading.current?.focus();
   }, [step]);
+  // Next keeps this page alive after we leave (finish, back, browser back): the next visit starts at step 1.
+  useLayoutEffect(() => () => setStep(1), []);
   const go = (to: number) => {
     moved.current = true;
     setStep(to);
@@ -81,13 +84,15 @@ export default function RitmOnboarding() {
   const finish = () => {
     if (!settings.goal.name || !(settings.goal.amount > 0)) return setGoalError(true);
     enableRitm(settings);
-    setStep(1); // Next keeps this page alive after we leave; next visit starts at step 1
     router.push("/");
   };
 
   return (
     <>
-      <header className="flex items-center justify-between gap-4 px-5 pt-5">
+      <div className="px-5 pt-3">
+        <RitmBack />
+      </div>
+      <header className="flex items-center justify-between gap-4 px-5 pt-2">
         <div className="flex flex-1 flex-col gap-2">
           <p className="text-sm text-atlas-muted">{t("ritm.onboarding.progress", { step, total: STEPS })}</p>
           <div aria-hidden className="flex gap-1.5">
