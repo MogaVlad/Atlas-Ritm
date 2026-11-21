@@ -13,6 +13,26 @@
         "ok": "ok",
         "watch": "watch",
         "spike": "too fast"
+      },
+      "menu": "Demos",
+      "exit": "Hide the demo tools",
+      "list": {
+        "journey": {
+          "title": "The full journey",
+          "body": "Payday, Ritm off. You do the onboarding live."
+        },
+        "spike": {
+          "title": "Too fast",
+          "body": "Ritm on with the Speed bump. The Heads-up is waiting; the jacket pauses at checkout."
+        },
+        "unlock": {
+          "title": "The Lock opens",
+          "body": "Ritm on; the 500 lei unlock by themselves."
+        },
+        "payday": {
+          "title": "Payday again",
+          "body": "Day 30, the 500 lei kept saved. Ready for the summary."
+        }
       }
     }
   },
