@@ -12,6 +12,7 @@ import { SAVINGS_OPTIONS, type SavingsOption } from "@/lib/data/savingsOptions";
 import { pensionDeductibleLimit, pensionTaxBenefit } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
 import { useHtmlLang, useLocale, useT } from "@/lib/i18n";
+import { useFlash } from "@/lib/store/flash";
 import { useBank } from "@/lib/store/useBank";
 
 /** Unlock day: choose how much stays saved (default all of it), and see where kept money can go. */
@@ -24,6 +25,7 @@ export default function UnlockScreen() {
   const day = useBank((s) => s.demoDay);
   const keepSaved = useBank((s) => s.keepSaved);
   const router = useRouter();
+  const showFlash = useFlash((s) => s.show);
 
   // null = the default, keep 100%.
   const [keep, setKeep] = useState<number | null>(null);
@@ -45,7 +47,17 @@ export default function UnlockScreen() {
   if (!hydrated) return null;
   const lei = (n: number) => formatLei(n, locale);
   // All of the Lock may have gone to the pension, so every branch below shows the popup.
-  const donePopup = doneOpen && pensioned && <PensionDoneDialog result={pensioned} onClose={() => setDoneOpen(false)} />;
+  const goHome = () => {
+    const demo = new URLSearchParams(window.location.search).has("demo");
+    router.replace(demo ? "/?demo=1" : "/");
+  };
+  // After the popup: if all of the Lock went to the pension there's nothing left to choose, so the screen closes.
+  const closeDone = () => {
+    setDoneOpen(false);
+    const left = useBank.getState().lock;
+    if (!left || left.amount <= 0) goHome();
+  };
+  const donePopup = doneOpen && pensioned && <PensionDoneDialog result={pensioned} onClose={closeDone} />;
 
   if (!lock || lock.amount <= 0) {
     return (
@@ -80,8 +92,8 @@ export default function UnlockScreen() {
   // Back doesn't reopen the choice.
   const confirm = () => {
     keepSaved(kept);
-    const demo = new URLSearchParams(window.location.search).has("demo");
-    router.replace(demo ? "/?demo=1" : "/");
+    showFlash(kept > 0 ? { key: "common.flash.saved", values: { amount: lei(kept) } } : { key: "common.flash.backToCurrent", values: { amount: lei(back) } });
+    goHome();
   };
 
   return (
