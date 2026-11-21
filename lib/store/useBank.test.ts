@@ -315,7 +315,7 @@ describe("useBank", () => {
     expect(store().pace.spent).toBe(spent);
   });
 
-  it("Lock: emergency release once, early unlock the next day, keep saved at unlock", () => {
+  it("Lock: emergency release once; money asked for early lands in the current account the next day", () => {
     store().enableRitm(DEFAULT_RITM_SETTINGS);
     expect(store().emergencyRelease(300).ok).toBe(true);
     expect(store().balances.savings).toBe(200);
@@ -325,10 +325,19 @@ describe("useBank", () => {
     store().requestUnlock();
     expect(store().lock?.status).toBe("unlockRequested");
     store().nextDay();
-    expect(store().lock?.status).toBe("unlocked");
+    // Asked for, so no second choice: straight to the current account, no "Your Lock is open".
+    expect(store().lock).toMatchObject({ status: "unlocked", amount: 0 });
+    expect(store().balances.savings).toBe(0);
+    expect(store().lockPromptSeen).toBe(true);
+  });
 
-    store().keepSaved(150);
-    expect(store().balances.savings).toBe(150);
+  it("Lock: after an early unlock, putting money aside again locks it until the same day", () => {
+    store().enableRitm(DEFAULT_RITM_SETTINGS);
+    store().setDemoDay(6);
+    store().requestUnlock("want");
+    store().nextDay();
+    store().lockMoney(100);
+    expect(store().lock).toMatchObject({ status: "locked", amount: 100, unlockDay: DEFAULT_RITM_SETTINGS.lock.unlockDay });
   });
 
   it("pension from the Speed bump: needs consent, then 300 lei leave the current account", () => {

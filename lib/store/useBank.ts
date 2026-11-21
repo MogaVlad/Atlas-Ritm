@@ -4,6 +4,8 @@ import { create } from "zustand";
 import { createJSONStorage, persist, type StateStorage } from "zustand/middleware";
 import { DEFAULT_RITM_SETTINGS, ESSENTIAL_AMOUNTS, GOAL, NET_SALARY } from "@/lib/data/persona";
 import { historyFor, scenarioFor } from "@/lib/data/scenario";
+import { formatLei } from "@/lib/format";
+import { useFlash } from "./flash";
 import {
   alertActions,
   habitNote,
@@ -380,6 +382,16 @@ function evaluateDay(s: PersistedState): PersistedState {
     if (before.status === "unlockRequested" && next.lock.status === "locked" && next.lock.amount < before.amount) {
       next.savings = next.savings - (before.amount - next.lock.amount);
     }
+    // The user asked for the money ("Something I want", or more than the emergency release): it
+    // goes straight to the current account, with no second choice. Only money they didn't ask
+    // for (the rest, if the unlock day came at the same time) gets the usual "Your Lock is open".
+    if (before.status === "unlockRequested" && next.lock.status === "unlocked") {
+      const asked = Math.min(before.requestedAmount ?? before.amount, before.amount);
+      const rest = before.amount - asked;
+      next.savings = next.savings - asked;
+      next.lock = { ...next.lock, amount: rest };
+      if (rest <= 0) next.lockPromptSeen = true;
+    }
   }
 
   // Payday again: the Speed bump switches off.
@@ -513,8 +525,14 @@ export const useBank = create<BankState>()(
     (set, get) => {
       /** Apply a change to the persisted part, then recompute everything derived. */
       const update = (change: (s: PersistedState) => PersistedState) => {
+        const before = get().lock;
         const next = change(pick(get()));
         set({ ...next, ...derive(next) });
+        // Money the user asked for came out of the Lock: say so on the next screen.
+        const arrived = before?.status === "unlockRequested" && next.lock ? before.amount - next.lock.amount : 0;
+        if (arrived > 0 && next.lock?.status !== "unlockRequested") {
+          useFlash.getState().show({ key: "ritm.lock.arrived", values: { amount: formatLei(arrived, next.locale) } });
+        }
       };
 
       return {
@@ -614,9 +632,12 @@ export const useBank = create<BankState>()(
             // Never more than the current account holds.
             const amount = Math.min(wanted, Math.max(0, currentBalance(s, s.demoDay)));
             if (amount <= 0) return s;
-            const lock = s.lock
-              ? { ...s.lock, amount: s.lock.amount + amount }
-              : createLock(amount, unlockDay ?? s.ritm.lock.unlockDay);
+            // An empty Lock that was taken out early locks again until the same day.
+            const reopen = s.lock !== null && s.lock.status === "unlocked" && s.lock.amount <= 0 && s.demoDay < s.lock.unlockDay;
+            const lock =
+              s.lock && !reopen
+                ? { ...s.lock, amount: s.lock.amount + amount }
+                : { ...createLock(amount, s.lock?.unlockDay ?? unlockDay ?? s.ritm.lock.unlockDay), emergencyUsed: s.lock?.emergencyUsed ?? false };
             return { ...s, lock, savings: s.savings + amount, lockPromptSeen: s.lock ? s.lockPromptSeen : false };
           }),
 

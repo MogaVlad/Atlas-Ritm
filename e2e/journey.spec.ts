@@ -235,6 +235,12 @@ test("Lock: shown as on, and taking money out asks why with buttons (Health = no
   await page.getByRole("radio", { name: lock.reason.want }).click();
   await page.getByRole("button", { name: lock.earlyConfirm }).click();
   await expect(page.getByText(fill(lock.requested, { amount: "200,00 RON", day: 2 }))).toBeVisible();
+
+  // The next day the money is in the current account: no "Your Lock is open", no second choice.
+  await page.goto("/?demo=1");
+  await jumpToDay(page, 2, 1);
+  await expect(page.getByText(fill(lock.arrived, { amount: "200,00 RON" }))).toBeVisible();
+  await expect(page.getByText(m.common.lockPrompt.title)).toHaveCount(0);
 });
 
 test("the Lock opening pops up once and leads to the choice; Reset demo goes back Home", async ({ page }) => {
