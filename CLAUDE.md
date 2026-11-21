@@ -39,8 +39,8 @@ Vitest, Playwright. Deployed on Vercel from `main`.
 - Run-out forecast: warn if money runs out >= 3 days before payday.
 - Safe to spend today = (left + spent today) / days left incl. today - spent today.
 - Alerts: only when the level rises or every 48h; after 2 ignored, suggest Speed bump.
-- Speed bump: online card or in-app payments >= 100 lei, non-essential; Confirm active after
-  5 s; off on payday. In-store taps: instant feedback toast instead.
+- Speed bump: online card or in-app payments >= 100 lei, non-essential; Pay anyway needs a
+  3 s hold; off on payday. In-store taps: instant feedback toast instead.
 - Lock: auto-unlock on chosen day; early unlock after 24h; emergency 300 lei once a month;
   turning Ritm off takes 24h. At unlock the slider defaults to keep 100% saved.
 
