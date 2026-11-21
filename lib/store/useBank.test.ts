@@ -63,6 +63,22 @@ describe("useBank", () => {
     expect(store().alertMemory.ignoredCount).toBe(1);
   });
 
+  it("clear all closes the Heads-ups and hides the activity shown so far", () => {
+    store().enableRitm(DEFAULT_RITM_SETTINGS);
+    store().setDemoDay(6);
+    const paid = store().addTransaction(jacket);
+    store().clearNotifications();
+    expect(store().notifications).toEqual([]);
+    expect(store().alertMemory.ignoredCount).toBe(1);
+    expect(store().clearedActivityIds).toContain(paid.id);
+    expect(store().clearedActivityIds.some((id) => store().transactions.find((t) => t.id === id)?.category === "salary")).toBe(true);
+
+    // Later activity still shows: a payment made after clearing is not in the list.
+    store().setDemoDay(7);
+    const later = store().addTransaction(jacket);
+    expect(store().clearedActivityIds).not.toContain(later.id);
+  });
+
   it("adding the jacket lowers safe to spend", () => {
     store().enableRitm(DEFAULT_RITM_SETTINGS);
     store().setDemoDay(7);
