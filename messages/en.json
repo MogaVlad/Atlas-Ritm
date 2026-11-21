@@ -338,7 +338,7 @@
         "goalTitle": "What you're saving for",
         "goalName": "Goal name",
         "goalAmount": "Amount you need (lei)",
-        "goalInvalid": "Write a name and an amount for your goal.",
+        "goalInvalid": "Every goal needs a name, an amount above 0 and a time.",
         "pool": "Spending money this month",
         "poolHint": "Your salary, minus fixed payments and the amount put aside."
       }
@@ -533,6 +533,24 @@
       "raiseExample": "For example, with a {raise} raise: {saved} goes to savings and {kept} stays with you.",
       "raiseOn": "On. You can turn it off anytime.",
       "raiseOff": "Off. Nothing moves without your OK."
+    },
+    "goals": {
+      "label": "Goal {n}",
+      "remove": "Remove {name}",
+      "reachIn": "Reach it in",
+      "months": "{months} months",
+      "monthsOne": "1 month",
+      "monthly": "That's about {amount} a month.",
+      "add": "Add another goal",
+      "total": "All your goals: {amount} a month, {pct}% of your salary",
+      "over": "That's more than 20% of your salary ({guideline}). Saving guides suggest about 20%: above that, there's little left to live on and the plan gets hard to keep up. Give a goal more time, or lower an amount.",
+      "within": "Within the 20% of your salary that saving guides suggest. A plan you can keep up.",
+      "plan": "in {months} · {amount} a month",
+      "totalLabel": "All goals",
+      "totalValue": "{amount} a month · {pct}% of salary",
+      "editLink": "Edit your goals",
+      "editTitle": "Your goals",
+      "save": "Save goals"
     }
   }
 }

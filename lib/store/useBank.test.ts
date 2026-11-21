@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { DEFAULT_RITM_SETTINGS } from "@/lib/data/persona";
 import { shouldShowSpeedBump } from "@/lib/engine";
-import { OPENING_CURRENT, useBank } from "./useBank";
+import { migrateSaved, OPENING_CURRENT, useBank } from "./useBank";
 
 const store = () => useBank.getState();
 const jacket = { amount: 300, merchant: "ModaHub", category: "shopping" as const, channel: "card_online" as const };
@@ -249,5 +249,24 @@ describe("useBank", () => {
     expect(store().notifications).toEqual([]);
     expect(store().lock).toBeNull();
     expect(store().pensionContributions).toEqual([]);
+  });
+
+  it("goals can be replaced with several, never with an invalid one", () => {
+    const laptop = { name: "Laptop", amount: 4000, months: 8 };
+    expect(store().setGoals([...DEFAULT_RITM_SETTINGS.goals, laptop])).toBe(true);
+    expect(store().ritm.goals).toHaveLength(2);
+    expect(store().setGoals([{ ...laptop, amount: -1 }])).toBe(false);
+    expect(store().setGoals([])).toBe(false);
+    expect(store().ritm.goals).toHaveLength(2);
+  });
+
+  it("a demo saved with one goal (version 1) comes back as a list of goals", () => {
+    const { goals, ...ritm } = DEFAULT_RITM_SETTINGS;
+    void goals;
+    const saved = { demoDay: 6, ritm: { ...ritm, goal: { name: "Laptop", amount: 4000 } } };
+    const migrated = migrateSaved(saved, 1) as { demoDay: number; ritm: Record<string, unknown> };
+    expect(migrated.demoDay).toBe(6);
+    expect(migrated.ritm.goals).toEqual([{ name: "Laptop", amount: 4000, months: 18 }]);
+    expect(migrated.ritm).not.toHaveProperty("goal");
   });
 });

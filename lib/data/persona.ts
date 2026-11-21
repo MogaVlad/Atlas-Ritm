@@ -1,5 +1,5 @@
 import { RULES } from "@/lib/engine/config";
-import type { Category, RitmSettings } from "@/lib/engine/types";
+import type { Category, Goal, RitmSettings } from "@/lib/engine/types";
 
 /**
  * Andrei, the demo persona. Every amount is in lei.
@@ -20,7 +20,8 @@ export const LOCK_UNLOCK_DAY = RULES.lock.defaultUnlockDay; // 20
 /** Money Andrei can spend this month: salary − essentials − Lock = 2120 lei. */
 export const SPENDING_POOL = NET_SALARY - ESSENTIALS_TOTAL - LOCK_AMOUNT;
 
-export const GOAL = { name: "Islanda 2027", amount: 9000 }; // illustrative, replace with sourced figure
+/** 9000 lei in 18 months = 500 lei a month, about 10% of the salary. */
+export const GOAL: Goal = { name: "Islanda 2027", amount: 9000, months: 18 }; // illustrative, replace with sourced figure
 
 export const ESSENTIAL_CATEGORIES: Category[] = ["rent", "utilities", "phone", "transport"];
 
@@ -48,7 +49,7 @@ export const DEFAULT_RITM_SETTINGS: RitmSettings = {
   level: "headsup",
   essentialCategories: ESSENTIAL_CATEGORIES,
   essentialsTotal: ESSENTIALS_TOTAL,
-  goal: GOAL,
+  goals: [GOAL],
   speedBumpThreshold: RULES.speedBump.thresholdLei,
   lock: { amount: LOCK_AMOUNT, unlockDay: LOCK_UNLOCK_DAY },
 };

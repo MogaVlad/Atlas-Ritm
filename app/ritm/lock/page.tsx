@@ -20,7 +20,7 @@ export default function LockScreen() {
   const hydrated = useHydrated();
   const lock = useBank((s) => s.lock);
   const day = useBank((s) => s.demoDay);
-  const goal = useBank((s) => s.ritm.goal.name);
+  const goal = useBank((s) => s.ritm.goals[0]?.name ?? "");
   const requestUnlock = useBank((s) => s.requestUnlock);
   const emergencyRelease = useBank((s) => s.emergencyRelease);
 

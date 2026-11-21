@@ -338,7 +338,7 @@
         "goalTitle": "Pentru ce strângi",
         "goalName": "Numele scopului",
         "goalAmount": "Suma de care ai nevoie (lei)",
-        "goalInvalid": "Scrie un nume și o sumă pentru scop.",
+        "goalInvalid": "Fiecare scop are nevoie de un nume, o sumă mai mare de 0 și un termen.",
         "pool": "Bani de cheltuit luna asta",
         "poolHint": "Salariul, minus plățile fixe și suma pusă deoparte."
       }
@@ -533,6 +533,24 @@
       "raiseExample": "De exemplu, la o mărire de {raise}: {saved} merg în economii, iar {kept} rămân la tine.",
       "raiseOn": "Pornit. Îl poți opri oricând.",
       "raiseOff": "Oprit. Nimic nu se mută fără acordul tău."
+    },
+    "goals": {
+      "label": "Scopul {n}",
+      "remove": "Șterge {name}",
+      "reachIn": "Vreau să-l am în",
+      "months": "{months} luni",
+      "monthsOne": "1 lună",
+      "monthly": "Asta înseamnă cam {amount} pe lună.",
+      "add": "Adaugă încă un scop",
+      "total": "Toate scopurile: {amount} pe lună, {pct}% din salariu",
+      "over": "E mai mult de 20% din salariu ({guideline}). Ghidurile de economisire recomandă cam 20%: peste atât îți rămân prea puțini bani de trai și e greu să ții planul. Dă-i unui scop mai mult timp sau scade o sumă.",
+      "within": "Ești în cei 20% din salariu pe care îi recomandă ghidurile de economisire. Un plan pe care îl poți ține.",
+      "plan": "în {months} · {amount} pe lună",
+      "totalLabel": "Toate scopurile",
+      "totalValue": "{amount} pe lună · {pct}% din salariu",
+      "editLink": "Schimbă-ți scopurile",
+      "editTitle": "Scopurile tale",
+      "save": "Salvează scopurile"
     }
   }
 }

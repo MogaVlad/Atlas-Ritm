@@ -41,6 +41,15 @@ export interface Transaction {
 
 export type RitmLevel = "headsup" | "speedbump" | "lock";
 
+/** Something the user saves for, and the time they give themselves to reach it. */
+export interface Goal {
+  name: string;
+  /** Lei. */
+  amount: number;
+  /** Months until the user wants to have it. */
+  months: number;
+}
+
 export interface RitmSettings {
   enabled: boolean;
   level: RitmLevel;
@@ -48,7 +57,8 @@ export interface RitmSettings {
   essentialCategories: Category[];
   /** Lei per month, taken out of the spending money. */
   essentialsTotal: number;
-  goal: { name: string; amount: number };
+  /** At least one. The first is the main goal: the Speed bump and the Lock talk about it. */
+  goals: Goal[];
   /** Lei. Online payments at or above this can trigger the Speed bump. */
   speedBumpThreshold: number;
   lock: { amount: number; unlockDay: Day };

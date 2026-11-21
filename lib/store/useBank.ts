@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { createJSONStorage, persist, type StateStorage } from "zustand/middleware";
-import { DEFAULT_RITM_SETTINGS, ESSENTIAL_AMOUNTS } from "@/lib/data/persona";
+import { DEFAULT_RITM_SETTINGS, ESSENTIAL_AMOUNTS, GOAL } from "@/lib/data/persona";
 import { SCENARIO } from "@/lib/data/scenario";
 import {
   alertActions,
@@ -12,6 +12,7 @@ import {
   emergencyRelease as releaseFromLock,
   essentialsTotal,
   INITIAL_ALERT_MEMORY,
+  isValidGoal,
   monthSummary,
   pensionSummary,
   isRitmOffDue,
@@ -25,6 +26,7 @@ import {
   type Category,
   type Day,
   type EmergencyResult,
+  type Goal,
   type LockState,
   type MonthSummary,
   type PaceState,
@@ -117,6 +119,8 @@ interface Actions {
   markPlanned: (txId: string) => void;
   enableRitm: (settings: RitmSettings, planned?: PlannedPurchase[]) => void;
   setLevel: (level: RitmLevel) => void;
+  /** Replace the savings goals (at least one, each valid). Returns false and changes nothing otherwise. */
+  setGoals: (goals: Goal[]) => boolean;
   /** Turn Ritm off: it stays on until the next demo day (24 h rule). The Lock is not touched. */
   requestRitmOff: () => void;
   /** Keep Ritm on after all (cancels a pending turn-off). */
@@ -153,6 +157,18 @@ export type BankState = PersistedState & DerivedState & Actions;
 /* ─── helpers ─────────────────────────────────────────────────────────────── */
 
 const clampDay = (day: number) => Math.min(RULES.cycleLength, Math.max(1, Math.round(day)));
+
+/**
+ * Saved demos from version 1 had one `goal` with no time: it becomes the first of `goals`,
+ * with the default time, so a browser that already ran the demo doesn't break.
+ */
+export function migrateSaved(persisted: unknown, version: number): unknown {
+  if (version >= 2 || !persisted || typeof persisted !== "object") return persisted;
+  const saved = persisted as { ritm?: Omit<RitmSettings, "goals"> & { goal?: { name: string; amount: number }; goals?: unknown } };
+  if (!saved.ritm?.goal || saved.ritm.goals) return persisted;
+  const { goal, ...ritm } = saved.ritm;
+  return { ...saved, ritm: { ...ritm, goals: [{ ...goal, months: GOAL.months }] } };
+}
 
 function allTransactions(s: Pick<PersistedState, "added" | "plannedIds">): Transaction[] {
   const planned = new Set(s.plannedIds);
@@ -331,6 +347,12 @@ export const useBank = create<BankState>()(
 
         setLevel: (level) => update((s) => evaluateDay({ ...s, ritm: { ...s.ritm, level } })),
 
+        setGoals: (goals) => {
+          if (goals.length === 0 || goals.length > RULES.goals.maxGoals || !goals.every(isValidGoal)) return false;
+          update((s) => ({ ...s, ritm: { ...s.ritm, goals } }));
+          return true;
+        },
+
         requestRitmOff: () =>
           update((s) => {
             if (!s.ritm.enabled || s.ritmOffDay !== null) return s;
@@ -455,10 +477,11 @@ export const useBank = create<BankState>()(
     },
     {
       name: "atlas-ritm-demo",
-      version: 1,
+      version: 2,
       storage: createJSONStorage(() => safeStorage),
       partialize: pick,
-      // Rehydrated on the client by <BankHydrator/>, so the server HTML (day 1, RO) always matches.
+      migrate: migrateSaved,
+      // Rehydrated on the client by <BankHydrator/>, so the server HTML (day 1, EN) always matches.
       skipHydration: true,
       merge: (persisted, current) => {
         const next = { ...pick(current), ...(persisted as Partial<PersistedState>) };
