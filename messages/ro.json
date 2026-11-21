@@ -66,6 +66,7 @@
       "later": "Mai târziu"
     },
     "flash": {
+      "paid": "Plătit: {amount} la {merchant}.",
       "saved": "Gata! {amount} au fost adăugați în contul de economii.",
       "backToCurrent": "Gata! {amount} s-au întors în contul curent."
     },
@@ -490,13 +491,15 @@
       }
     },
     "speedBump": {
-      "tag": "Pauză · ziua {day}",
+      "tag": "Pauză",
       "title": "Stai o clipă înainte să plătești",
       "progress": "Ziua {day} din {total}: ai folosit {pct}% din banii de cheltuit.",
       "goal": "Suma asta înseamnă {days} zile de economisit pentru {goal}.",
       "safe": "Azi mai poți cheltui liniștit {amount}.",
       "choice": "Alegerea e a ta. Poți plăti oricum.",
       "notNow": "Nu acum",
+      "keptTitle": "Ai păstrat {amount}. Ce faci cu ei?",
+      "leaveIt": "Lasă-i în cont",
       "moveToLock": "Pune {amount} în Lacăt",
       "moveToLockHint": "În loc să-i cheltui acum, stau deoparte până în ziua {day}.",
       "pension": "Pune-i la pensie",
@@ -509,7 +512,7 @@
       "holdHint": "Ține apăsat {seconds} secunde ca să plătești.",
       "notNowHint": "Azi poți cheltui în continuare {safe}.",
       "moveToLockNumber": "+~{interest} dobândă până în ziua {day}, apoi îi ai înapoi.",
-      "pensionNumber": "Până la {tax} impozit în minus. Blocați până la pensie.",
+      "pensionNumber": "Până la {tax} impozit în minus. Disponibili de la 60 de ani.",
       "detailsTitle": "De unde vin cifrele",
       "detailsSafe": "Cât poți cheltui azi: ce ți-a rămas, împărțit pe zilele până la salariu, minus ce ai cheltuit azi.",
       "detailsLock": "Dobânda: o estimare cu {rate}% pe an la economii, după impozitul de 10%, până în ziua {day}.",

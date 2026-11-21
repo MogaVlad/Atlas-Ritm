@@ -66,6 +66,7 @@
       "later": "Later"
     },
     "flash": {
+      "paid": "Paid: {amount} to {merchant}.",
       "saved": "Done! {amount} was added to your savings account.",
       "backToCurrent": "Done! {amount} went back to your current account."
     },
@@ -490,13 +491,15 @@
       }
     },
     "speedBump": {
-      "tag": "Speed bump · day {day}",
+      "tag": "Speed bump",
       "title": "Quick check before you buy",
       "progress": "Day {day} of {total}: you've used {pct}% of your spending money.",
       "goal": "This amount is {days} days of saving for {goal}.",
       "safe": "Safe to spend today: {amount}.",
       "choice": "It's your choice. You can still pay.",
       "notNow": "Not now",
+      "keptTitle": "You kept {amount}. What do you want to do with it?",
+      "leaveIt": "Leave it in my account",
       "moveToLock": "Put {amount} in the Lock",
       "moveToLockHint": "Instead of spending it now, it stays aside until day {day}.",
       "pension": "Put it toward my pension",
@@ -509,7 +512,7 @@
       "holdHint": "Hold for {seconds} seconds to pay.",
       "notNowHint": "Your safe-to-spend stays at {safe} today.",
       "moveToLockNumber": "+~{interest} interest by day {day}, then it's yours again.",
-      "pensionNumber": "Up to {tax} less tax. Locked until retirement.",
+      "pensionNumber": "Up to {tax} less tax. Available from age 60.",
       "detailsTitle": "How we got these numbers",
       "detailsSafe": "Safe to spend today: what's left, split over the days to payday, minus what you spent today.",
       "detailsLock": "Interest: an estimate at {rate}% a year on savings, after 10% tax, until day {day}.",
