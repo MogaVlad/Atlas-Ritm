@@ -83,6 +83,14 @@ describe("useBank", () => {
     expect(store().notifications).toHaveLength(1);
   });
 
+  it("the day-30 popup closes once and comes back after Reset demo", () => {
+    expect(store().summaryPromptSeen).toBe(false);
+    store().dismissSummaryPrompt();
+    expect(store().summaryPromptSeen).toBe(true);
+    store().resetDemo();
+    expect(store().summaryPromptSeen).toBe(false);
+  });
+
   it("adding the jacket lowers safe to spend", () => {
     store().enableRitm(DEFAULT_RITM_SETTINGS);
     store().setDemoDay(7);
