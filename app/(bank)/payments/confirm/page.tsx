@@ -83,47 +83,51 @@ export default function ConfirmPaymentPage() {
   }
 
   return (
-    <FullScreen className="bg-atlas-paper text-atlas-ink">
-      <header className="flex items-center justify-between border-b border-atlas-line px-5 pt-4 pb-3">
-        <AtlasWordmark />
-        <span className="flex items-center gap-1.5 text-sm text-atlas-muted">
-          <ShieldCheck className="size-4 text-atlas-pine" aria-hidden="true" />
-          {t("bank.confirm.secure")}
-        </span>
-      </header>
+    <>
+      <FullScreen className="bg-atlas-paper text-atlas-ink">
+        <header className="flex items-center justify-between border-b border-atlas-line px-5 pt-4 pb-3">
+          <AtlasWordmark />
+          <span className="flex items-center gap-1.5 text-sm text-atlas-muted">
+            <ShieldCheck className="size-4 text-atlas-pine" aria-hidden="true" />
+            {t("bank.confirm.secure")}
+          </span>
+        </header>
+  
+        <main className="flex flex-1 flex-col px-5 pt-6 pb-8">
+          <h1 className="font-display text-[1.7rem] leading-tight font-semibold tracking-[-0.02em]">{t("bank.confirm.title")}</h1>
+          <p className="mt-1 text-atlas-muted">{t("bank.confirm.intro")}</p>
+  
+          <p className="mt-6 font-display text-[2.6rem] leading-none font-semibold tracking-[-0.03em] tabular-nums">
+            {formatLei(MODAHUB_JACKET.amount, locale)}
+          </p>
+  
+          <dl className="mt-6 divide-y divide-atlas-line rounded-3xl border border-atlas-line bg-white px-5">
+            <Row label={t("bank.confirm.merchant")} value={MODAHUB_JACKET.merchant} />
+            <Row label={t("bank.detail.card")} value={`••• ${CARD_LAST4}`} />
+            <Row label={t("bank.detail.account")} value={t("bank.home.balanceLabel")} />
+          </dl>
+  
+          <div className="mt-auto flex flex-col gap-3 pt-8">
+            <button
+              type="button"
+              onClick={onConfirm}
+              className="min-h-12 rounded-full bg-atlas-pine font-medium text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-atlas-pine"
+            >
+              {t("bank.confirm.confirm")}
+            </button>
+            <button
+              type="button"
+              onClick={() => router.push("/payments/checkout")}
+              className="min-h-12 rounded-full border border-atlas-line font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-atlas-pine"
+            >
+              {t("bank.confirm.cancel")}
+            </button>
+          </div>
+        </main>
+      </FullScreen>
 
-      <main className="flex flex-1 flex-col px-5 pt-6 pb-8">
-        <h1 className="font-display text-[1.7rem] leading-tight font-semibold tracking-[-0.02em]">{t("bank.confirm.title")}</h1>
-        <p className="mt-1 text-atlas-muted">{t("bank.confirm.intro")}</p>
-
-        <p className="mt-6 font-display text-[2.6rem] leading-none font-semibold tracking-[-0.03em] tabular-nums">
-          {formatLei(MODAHUB_JACKET.amount, locale)}
-        </p>
-
-        <dl className="mt-6 divide-y divide-atlas-line rounded-3xl border border-atlas-line bg-white px-5">
-          <Row label={t("bank.confirm.merchant")} value={MODAHUB_JACKET.merchant} />
-          <Row label={t("bank.detail.card")} value={`••• ${CARD_LAST4}`} />
-          <Row label={t("bank.detail.account")} value={t("bank.home.balanceLabel")} />
-        </dl>
-
-        <div className="mt-auto flex flex-col gap-3 pt-8">
-          <button
-            type="button"
-            onClick={onConfirm}
-            className="min-h-12 rounded-full bg-atlas-pine font-medium text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-atlas-pine"
-          >
-            {t("bank.confirm.confirm")}
-          </button>
-          <button
-            type="button"
-            onClick={() => router.push("/payments/checkout")}
-            className="min-h-12 rounded-full border border-atlas-line font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-atlas-pine"
-          >
-            {t("bank.confirm.cancel")}
-          </button>
-        </div>
-      </main>
-
+      {/* Outside the scrolling FullScreen: on short phones the page scrolls to reach Confirm, and a
+          sheet inside it would scroll up with the content, leaving its bottom buttons off screen. */}
       {status === "paused" && (
         <SpeedBumpSlot
           purchase={MODAHUB_JACKET}
@@ -134,6 +138,6 @@ export default function ConfirmPaymentPage() {
         />
       )}
       {status === "paused" && askOpen && <AskRitmSheet purchase={MODAHUB_JACKET} onClose={() => setAskOpen(false)} />}
-    </FullScreen>
+    </>
   );
 }

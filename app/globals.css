@@ -164,3 +164,14 @@
   --color-atlas-muted: var(--atlas-muted);
   --font-display: var(--font-atlas-display), var(--font-sans);
 }
+
+/* Atlas on real phones (Iustin): no grey tap rectangle on iOS/Android; a soft press instead.
+   :where() keeps specificity at 0, so any component style still wins. */
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  :where(button:not(:disabled), a[href], [role="switch"], [role="radio"]):active {
+    opacity: 0.82;
+  }
+}

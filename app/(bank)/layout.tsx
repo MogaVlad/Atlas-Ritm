@@ -1,3 +1,4 @@
+import type { Viewport } from "next";
 import type { ReactNode } from "react";
 import { Bricolage_Grotesque } from "next/font/google";
 import { BottomNav } from "@/components/bank/BottomNav";
@@ -10,6 +11,16 @@ const display = Bricolage_Grotesque({
   subsets: ["latin", "latin-ext"],
   weight: ["500", "600"],
 });
+
+/**
+ * Android Chrome: the on-screen keyboard shrinks the page (dvh) instead of covering it, so the
+ * "Ask Ritm" input stays above the keyboard. iOS Safari ignores this and pans to the input itself.
+ */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  interactiveWidget: "resizes-content",
+};
 
 export default function BankLayout({ children }: { children: ReactNode }) {
   return (
