@@ -9,3 +9,4 @@ export { monthSummary, raiseSavingPlan } from "./summary";
 export { lockPreview, unlockMirror, UNLOCK_REASONS, goalPlan, goalProgress, planEdit, type LockPreview, type UnlockMirror } from "./plan";
 export { pensionDeductibleLimit, pensionTaxBenefit, checkPensionContribution, pensionSummary } from "./pension";
 export { ritmOffDay, isRitmOffDue, essentialsTotal } from "./settings";
+export { goalMonthly, goalsPlan, isValidGoal, type GoalsPlan } from "./goals";

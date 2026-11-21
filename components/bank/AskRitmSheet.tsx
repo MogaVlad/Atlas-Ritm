@@ -52,7 +52,8 @@ export function AskRitmSheet({
   const inFlight = useRef<AbortController | null>(null);
 
   const pace = useBank((s) => s.pace);
-  const goal = useBank((s) => s.ritm.goal.name);
+  // Every goal's name, so Ask Ritm can talk about any of them.
+  const goal = useBank((s) => s.ritm.goals.map((g) => g.name).join(", "));
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");

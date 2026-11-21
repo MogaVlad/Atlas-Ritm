@@ -33,7 +33,7 @@ export const DEMOS: readonly DemoScenario[] = [
     day: 6,
     path: "/",
     setup: (bank) => {
-      bank.enableRitm({ ...DEFAULT_RITM_SETTINGS, level: "speedbump" });
+      bank.enableRitm({ ...DEFAULT_RITM_SETTINGS, speedBump: true });
       bank.setDemoDay(6);
     },
   },

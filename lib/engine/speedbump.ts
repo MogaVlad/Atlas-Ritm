@@ -5,15 +5,15 @@ const NEVER_PAUSED: ReadonlySet<Category> = new Set(["salary", "own_transfer", "
 /**
  * Should this payment pause on the Speed bump before Confirm?
  * Only for online card or in-app payments (transfer), non-essential, not planned,
- * amount ≥ threshold, with Ritm on at level speedbump or lock.
+ * amount ≥ threshold, with Ritm on and its Speed bump switched on.
  * In-store taps never pause (they get the feedback toast instead).
- * Switching the level off on payday is the store's job.
+ * Switching the Speed bump off on payday is the store's job.
  */
 export function shouldShowSpeedBump(tx: Transaction, settings: RitmSettings, state: PaceState): boolean {
   void state; // reserved: the pace could tune the trigger later (pilot)
   return (
     settings.enabled &&
-    (settings.level === "speedbump" || settings.level === "lock") &&
+    settings.speedBump &&
     (tx.channel === "card_online" || tx.channel === "transfer") &&
     !tx.planned &&
     tx.amount >= settings.speedBumpThreshold &&

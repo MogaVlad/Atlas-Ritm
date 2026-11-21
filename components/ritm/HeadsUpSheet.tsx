@@ -29,7 +29,7 @@ export function HeadsUpSheet({ notification, onClose }: Props) {
   const demoDay = useBank((s) => s.demoDay);
   const transactions = useBank((s) => s.transactions);
   const lockMoney = useBank((s) => s.lockMoney);
-  const setLevel = useBank((s) => s.setLevel);
+  const setFeature = useBank((s) => s.setFeature);
   const markPlanned = useBank((s) => s.markPlanned);
   const dismiss = useBank((s) => s.dismissNotification);
 
@@ -40,9 +40,14 @@ export function HeadsUpSheet({ notification, onClose }: Props) {
     .filter((tx) => tx.day <= demoDay && isCounted(tx, ritm))
     .sort((a, b) => b.day - a.day || b.amount - a.amount)[0];
   const unlockDay = lock?.unlockDay ?? ritm.lock.unlockDay;
+  const lockChosen = (lock !== null && lock.status !== "unlocked") || ritm.lock.amount > 0;
 
   const actions = notification.actions.filter(
-    (a) => (a.kind !== "markPlanned" || target) && (a.kind !== "enableSpeedBump" || ritm.level === "headsup"),
+    (a) =>
+      (a.kind !== "markPlanned" || target) &&
+      (a.kind !== "enableSpeedBump" || !ritm.speedBump) &&
+      // Only for someone who chose the Lock: otherwise it would push a feature they said no to.
+      (a.kind !== "moveToLock" || lockChosen),
   );
 
   const values = (a: AlertAction): Record<string, string | number> =>
@@ -54,7 +59,7 @@ export function HeadsUpSheet({ notification, onClose }: Props) {
 
   const act = (a: AlertAction) => {
     if (a.kind === "moveToLock") lockMoney(a.amount ?? 0);
-    if (a.kind === "enableSpeedBump") setLevel("speedbump");
+    if (a.kind === "enableSpeedBump") setFeature("speedBump", true);
     if (a.kind === "markPlanned" && target) markPlanned(target.id);
     dismiss(notification.id, true);
     setDone(t(`ritm.headsUp.done.${a.kind}`, values(a)));

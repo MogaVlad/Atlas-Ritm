@@ -35,6 +35,25 @@
           "title": "Payday again",
           "body": "Day 30, the 500 lei kept saved. Ready for the summary."
         }
+      },
+      "jumpTo": "Go to day {day}",
+      "buy": {
+        "button": "Simulate a purchase",
+        "title": "Simulate a purchase",
+        "close": "Close the demo tools",
+        "shop": "Shop",
+        "amount": "Amount (lei)",
+        "channel": "How it's paid",
+        "online": "Online",
+        "inStore": "In store",
+        "pay": "Pay {amount}",
+        "invalid": "Enter an amount above 0.",
+        "inStoreNote": "In-store payments never pause. Ritm shows what's left right after.",
+        "ritmOff": "Ritm is off, so this payment goes straight through.",
+        "enableSpeedBump": "Turn on the Speed bump",
+        "underThreshold": "Under {threshold}, so no Speed bump.",
+        "willPause": "The Speed bump will pause this payment before you confirm.",
+        "speedBumpOff": "The Speed bump is off, so Ritm won't pause this payment. Turn it on to pause big online payments."
       }
     },
     "summaryPrompt": {
@@ -69,7 +88,9 @@
       "yesterday": "Yesterday",
       "essential": "Essential",
       "empty": "No transactions this month yet.",
-      "planned": "Planned"
+      "planned": "Planned",
+      "declined": "Declined · not enough money",
+      "refund": "Refund"
     },
     "categories": {
       "salary": "Salary",
@@ -99,6 +120,7 @@
       "simulatedNote": "In-store payments can’t be paused. You get a message right away with what you have left.",
       "tapToast": "You just spent {amount} at {merchant}. Safe to spend today: {safe}.",
       "tapToastNoRitm": "You just spent {amount} at {merchant}.",
+      "insufficient": "Not enough money for {amount} at {merchant}. Your current account has {balance}.",
       "tapHintMany": "{count} payments, from {min} to {max}",
       "sheet": {
         "title": "Pick an in-store payment",
@@ -125,7 +147,7 @@
       "offConfirmLock": "The money in the Lock ({amount}) stays there until day {day}.",
       "offConfirmYes": "Turn Ritm off",
       "offConfirmCancel": "Cancel",
-      "levelTitle": "How strict",
+      "levelTitle": "What Ritm does",
       "thresholdTitle": "The pause starts at",
       "thresholdHint": "At the Speed bump and Lock levels, online payments of {amount} or more get a short pause. In-store payments are never stopped.",
       "essentialsTitle": "Essential costs",
@@ -191,7 +213,8 @@
       "cancel": "Cancel",
       "paidTitle": "Payment approved",
       "paidBody": "You paid {amount} to {merchant}.",
-      "backHome": "Back to Atlas"
+      "backHome": "Back to Atlas",
+      "insufficient": "Not enough money in your current account. You have {balance}."
     },
     "speedBump": {
       "title": "A short pause",
@@ -263,7 +286,8 @@
         "ok": "You're on pace",
         "watch": "A little ahead of pace",
         "spike": "Well ahead of pace"
-      }
+      },
+      "aheadLegend": "Hatched: {pct}% of your spending money used ahead of the calendar."
     },
     "safe": {
       "label": "Safe to spend today",
@@ -274,7 +298,7 @@
       }
     },
     "levels": {
-      "label": "How strict Ritm should be",
+      "label": "What Ritm does for you",
       "headsup": {
         "name": "Heads-up",
         "description": "Tells you when you spend faster than the month passes. Nothing is blocked."
@@ -336,7 +360,7 @@
         "goalTitle": "What you're saving for",
         "goalName": "Goal name",
         "goalAmount": "Amount you need (lei)",
-        "goalInvalid": "Write a name and an amount for your goal.",
+        "goalInvalid": "Every goal needs a name, an amount above 0 and a time.",
         "pool": "Spending money this month",
         "quick": "Quick amounts",
         "preview": "That leaves about {perDay} a day. On day {day} you get back {back}, with the estimated interest. That's {pct}% of {goal}.",
@@ -372,7 +396,7 @@
       },
       "intro": "You can do something now, with one tap. Or nothing, it's your call.",
       "actions": {
-        "moveToLock": "Move {amount} to the Lock",
+        "moveToLock": "Put {amount} aside until day {day}, so the end of the month is covered",
         "enableSpeedBump": "Turn on Speed bump until payday",
         "markPlanned": "{merchant}, {amount}, was planned"
       },
@@ -405,7 +429,8 @@
       "confirmIn": "Pay anyway · {seconds} s",
       "askRitm": "Ask Ritm",
       "lockedDone": "Done. {amount} stays in the Lock until day {day}.",
-      "backToShop": "Back to the shop"
+      "backToShop": "Back to the shop",
+      "backToAtlas": "Back to Atlas"
     },
     "tab": {
       "title": "Ritm",
@@ -455,12 +480,18 @@
       "emergencyDone": "Done. {amount} is in your current account.",
       "cancel": "Never mind",
       "error": {
+        "overLimit": "You can take out up to {max}.",
+        "reason": "Pick a reason first.",
         "alreadyUsed": "You've already used the emergency release this month.",
         "notLocked": "There's nothing left in the Lock."
       },
       "unlocked": "The Lock is open. {amount} is free.",
       "chooseCta": "Choose what to do with it",
       "empty": "Nothing in the Lock right now.",
+      "pending": "{amount} goes into the Lock on payday, when your salary arrives. It unlocks by itself on day {day}.",
+      "setupTitle": "Put money aside",
+      "setupCta": "Put {amount} aside until day {day}",
+      "setupNoMoney": "There isn't enough in your current account to put money aside right now.",
       "mirrorIntro": "The money isn't blocked. We just show what changes, before you decide.",
       "reasonLabel": "What do you need it for?",
       "reason": {
@@ -547,6 +578,30 @@
       "raiseExample": "For example, with a {raise} raise: {saved} goes to savings and {kept} stays with you.",
       "raiseOn": "On. You can turn it off anytime.",
       "raiseOff": "Off. Nothing moves without your OK."
+    },
+    "goals": {
+      "label": "Goal {n}",
+      "remove": "Remove {name}",
+      "reachIn": "Reach it in",
+      "months": "{months} months",
+      "monthsOne": "1 month",
+      "monthly": "That's about {amount} a month.",
+      "add": "Add another goal",
+      "total": "All your goals: {amount} a month, {pct}% of your salary",
+      "over": "That's more than 20% of your salary ({guideline}). Saving guides suggest about 20%: above that, there's little left to live on and the plan gets hard to keep up. Give a goal more time, or lower an amount.",
+      "within": "Within the 20% of your salary that saving guides suggest. A plan you can keep up.",
+      "plan": "in {months} · {amount} a month",
+      "totalLabel": "All goals",
+      "totalValue": "{amount} a month · {pct}% of salary",
+      "editLink": "Edit your goals",
+      "editTitle": "Your goals",
+      "save": "Save goals"
+    },
+    "features": {
+      "on": "On",
+      "off": "Off",
+      "lockPending": "{amount} goes in on payday.",
+      "lockOff": "Nothing put aside. Tap to set it up."
     }
   }
 }

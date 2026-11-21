@@ -83,9 +83,17 @@ describe("alerts", () => {
   it("notifies when the level rises, not again the next day, again after 48h", () => {
     const day6 = pace(6);
     expect(shouldNotify(day6, INITIAL_ALERT_MEMORY, 6)).toBe(true);
-    const memory = { lastNotifiedDay: 6, lastSeverity: "spike" as const, ignoredCount: 0 };
+    const memory = { lastNotifiedDay: 6, lastSeverity: "spike" as const, ignoredCount: 0, lastPctSpent: day6.pctSpent };
     expect(shouldNotify(pace(7), memory, 7)).toBe(false);
     expect(shouldNotify(pace(8), memory, 8)).toBe(true);
+  });
+
+  it("notifies again the next day when spending jumped since the last Heads-up (day 5 → the day-6 spike)", () => {
+    const day5 = pace(5);
+    expect(day5.severity).toBe("watch");
+    const memory = { lastNotifiedDay: 5, lastSeverity: "spike" as const, ignoredCount: 0, lastPctSpent: day5.pctSpent };
+    // Same level as the last Heads-up, only one day later, but 26% → 55% used: worth saying.
+    expect(shouldNotify(pace(6), memory, 6)).toBe(true);
   });
 
   it("suggests the Speed bump first after 2 ignored alerts", () => {
@@ -100,14 +108,14 @@ describe("alerts", () => {
 });
 
 describe("shouldShowSpeedBump", () => {
-  const sb: RitmSettings = { ...settings, level: "speedbump" };
+  const sb: RitmSettings = { ...settings, speedBump: true };
   const state = pace(6);
 
-  it("pauses the 300-lei online jacket at level speedbump", () => {
+  it("pauses the 300-lei online jacket with the Speed bump on", () => {
     expect(shouldShowSpeedBump(jacket, sb, state)).toBe(true);
   });
 
-  it("does not pause at level headsup or with Ritm off", () => {
+  it("does not pause with the Speed bump off or Ritm off", () => {
     expect(shouldShowSpeedBump(jacket, settings, state)).toBe(false);
     expect(shouldShowSpeedBump(jacket, { ...sb, enabled: false }, state)).toBe(false);
   });

@@ -2,21 +2,82 @@ import { IN_STORE_PAYMENTS } from "@/lib/data/inStorePayments";
 import { beforeEach, describe, expect, it } from "vitest";
 import { DEFAULT_RITM_SETTINGS } from "@/lib/data/persona";
 import { shouldShowSpeedBump } from "@/lib/engine";
-import { OPENING_CURRENT, useBank } from "./useBank";
+import { migrateSaved, OPENING_CURRENT, useBank } from "./useBank";
 
 const store = () => useBank.getState();
 const jacket = { amount: 300, merchant: "ModaHub", category: "shopping" as const, channel: "card_online" as const };
 
+// Most tests start on payday (day 1); the demo itself starts the day before (day 0).
 beforeEach(() => {
   store().resetDemo();
+  store().setDemoDay(1);
 });
 
 describe("useBank", () => {
-  it("starts on day 1, Romanian, Ritm off, no notifications", () => {
-    expect(store().demoDay).toBe(1);
-    expect(store().locale).toBe("ro");
+  it("starts on day 0, before payday: English, Ritm off, no salary yet", () => {
+    store().resetDemo();
+    expect(store().demoDay).toBe(0);
+    expect(store().locale).toBe("en");
     expect(store().ritm.enabled).toBe(false);
     expect(store().notifications).toEqual([]);
+    expect(store().balances.current).toBe(OPENING_CURRENT);
+  });
+
+  it("Ritm started on day 0 takes the Lock on payday, never before the salary", () => {
+    store().resetDemo();
+    store().enableRitm(DEFAULT_RITM_SETTINGS);
+    expect(store().lock).toBeNull();
+    expect(store().balances.current).toBe(OPENING_CURRENT);
+    store().setDemoDay(1);
+    expect(store().lock?.amount).toBe(500);
+    expect(store().balances.current).toBe(OPENING_CURRENT + 4800 - 260 - 500);
+  });
+
+  it("scripted payments the account can't cover are declined: the balance never goes below zero", () => {
+    store().lockMoney(4000, 20); // leaves 690 lei on day 1
+    for (let day = 2; day <= 30; day++) {
+      store().nextDay();
+      expect(store().balances.current, `day ${day}`).toBeGreaterThanOrEqual(0);
+    }
+    const rent = store().declined.find((t) => t.category === "rent");
+    expect(rent?.day).toBe(2);
+    expect(store().transactions.some((t) => t.id === rent?.id)).toBe(false);
+  });
+
+  it("a jump over many days settles them one by one, and going back then forward settles again", () => {
+    store().lockMoney(4000, 20);
+    store().setDemoDay(30);
+    expect(store().balances.current).toBeGreaterThanOrEqual(0);
+    const declinedOnce = store().declinedIds.length;
+    store().setDemoDay(1);
+    store().setDemoDay(30);
+    expect(store().declinedIds).toHaveLength(declinedOnce);
+  });
+
+  it("the Lock never takes more than the current account holds", () => {
+    store().resetDemo(); // day 0: 150 lei
+    store().lockMoney(500, 20);
+    expect(store().lock?.amount).toBe(OPENING_CURRENT);
+    expect(store().balances.current).toBe(0);
+  });
+
+  it("money taken out of the Lock early keeps its reason", () => {
+    store().enableRitm(DEFAULT_RITM_SETTINGS);
+    store().setDemoDay(5);
+    expect(store().emergencyRelease(200, "health").ok).toBe(true);
+    store().requestUnlock("want", "concert");
+    expect(store().unlockReasons).toEqual([
+      { day: 5, reason: "health", amount: 200, note: undefined, path: "emergency" },
+      { day: 5, reason: "want", amount: 300, note: "concert", path: "wait" },
+    ]);
+  });
+
+  it("with Heads-up switched off, Ritm sends no notifications", () => {
+    store().enableRitm({ ...DEFAULT_RITM_SETTINGS, headsUp: false });
+    store().setDemoDay(6);
+    expect(store().notifications).toEqual([]);
+    store().setFeature("headsUp", true);
+    expect(store().notifications).toHaveLength(1);
   });
 
   it("salary arrives on day 1", () => {
@@ -204,10 +265,11 @@ describe("useBank", () => {
     expect(store().lock?.status).toBe("unlocked");
   });
 
-  it("the Speed bump level switches off on payday (day 30)", () => {
-    store().enableRitm({ ...DEFAULT_RITM_SETTINGS, level: "speedbump" });
+  it("the Speed bump switches off on payday (day 30)", () => {
+    store().enableRitm({ ...DEFAULT_RITM_SETTINGS, speedBump: true });
     store().setDemoDay(30);
-    expect(store().ritm.level).toBe("headsup");
+    expect(store().ritm.speedBump).toBe(false);
+    expect(store().ritm.headsUp).toBe(true);
   });
 
   it("turning Ritm off takes effect a day later; its Heads-ups go, the Lock stays", () => {
@@ -234,7 +296,7 @@ describe("useBank", () => {
   });
 
   it("a higher Speed bump threshold lets the 300-lei jacket through", () => {
-    store().enableRitm({ ...DEFAULT_RITM_SETTINGS, level: "speedbump" });
+    store().enableRitm({ ...DEFAULT_RITM_SETTINGS, speedBump: true });
     store().setDemoDay(6);
     const pending = { id: "pending", day: 6, ...jacket };
     expect(shouldShowSpeedBump(pending, store().ritm, store().pace)).toBe(true);
@@ -251,24 +313,52 @@ describe("useBank", () => {
     expect(store().pace.pool).toBe(2170);
   });
 
-  it("day stays within 1–30", () => {
+  it("day stays within 0–30", () => {
     store().setDemoDay(45);
     expect(store().demoDay).toBe(30);
-    store().setDemoDay(0);
-    expect(store().demoDay).toBe(1);
+    store().setDemoDay(-3);
+    expect(store().demoDay).toBe(0);
   });
 
-  it("Reset demo goes back to day 1 with nothing added", () => {
+  it("Reset demo goes back to day 0 with nothing added", () => {
     store().enableRitm(DEFAULT_RITM_SETTINGS);
-    store().setLocale("en");
+    store().setLocale("ro");
     store().setDemoDay(6);
     store().addTransaction(jacket);
     store().resetDemo();
-    expect(store().demoDay).toBe(1);
-    expect(store().locale).toBe("ro");
+    expect(store().demoDay).toBe(0);
+    expect(store().locale).toBe("en");
     expect(store().added).toEqual([]);
     expect(store().notifications).toEqual([]);
     expect(store().lock).toBeNull();
     expect(store().pensionContributions).toEqual([]);
+  });
+
+  it("goals can be replaced with several, never with an invalid one", () => {
+    const laptop = { name: "Laptop", amount: 4000, months: 8 };
+    expect(store().setGoals([...DEFAULT_RITM_SETTINGS.goals, laptop])).toBe(true);
+    expect(store().ritm.goals).toHaveLength(2);
+    expect(store().setGoals([{ ...laptop, amount: -1 }])).toBe(false);
+    expect(store().setGoals([])).toBe(false);
+    expect(store().ritm.goals).toHaveLength(2);
+  });
+
+  it("a demo saved with one goal and one level (version 1) comes back with goals and switches", () => {
+    const { goals, headsUp, speedBump, ...ritm } = DEFAULT_RITM_SETTINGS;
+    void [goals, headsUp, speedBump];
+    const saved = { demoDay: 6, ritm: { ...ritm, level: "speedbump", goal: { name: "Laptop", amount: 4000 } } };
+    const migrated = migrateSaved(saved, 1) as { demoDay: number; ritm: Record<string, unknown> };
+    expect(migrated.demoDay).toBe(6);
+    expect(migrated.ritm.goals).toEqual([{ name: "Laptop", amount: 4000, months: 18 }]);
+    expect(migrated.ritm).toMatchObject({ headsUp: true, speedBump: true });
+    expect(migrated.ritm).not.toHaveProperty("goal");
+    expect(migrated.ritm).not.toHaveProperty("level");
+  });
+
+  it("a demo saved with a level and goals (version 2) gets the switches", () => {
+    const { headsUp, speedBump, ...ritm } = DEFAULT_RITM_SETTINGS;
+    void [headsUp, speedBump];
+    const migrated = migrateSaved({ ritm: { ...ritm, level: "headsup" } }, 2) as { ritm: Record<string, unknown> };
+    expect(migrated.ritm).toMatchObject({ headsUp: true, speedBump: false, goals: DEFAULT_RITM_SETTINGS.goals });
   });
 });

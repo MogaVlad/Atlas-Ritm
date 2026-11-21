@@ -35,6 +35,25 @@
           "title": "Din nou salariu",
           "body": "Ziua 30, cei 500 lei păstrați. Gata pentru rezumat."
         }
+      },
+      "jumpTo": "Mergi la ziua {day}",
+      "buy": {
+        "button": "Simulează o plată",
+        "title": "Simulează o plată",
+        "close": "Închide instrumentele de demo",
+        "shop": "Magazin",
+        "amount": "Sumă (lei)",
+        "channel": "Cum plătești",
+        "online": "Online",
+        "inStore": "În magazin",
+        "pay": "Plătește {amount}",
+        "invalid": "Scrie o sumă mai mare de 0.",
+        "inStoreNote": "Plățile în magazin nu se pun pe pauză. Ritm îți arată imediat ce ți-a rămas.",
+        "ritmOff": "Ritm e oprit, așa că plata trece direct.",
+        "enableSpeedBump": "Pornește Pauza",
+        "underThreshold": "Sub {threshold}, deci fără Pauză.",
+        "willPause": "Pauza va opri plata înainte să confirmi.",
+        "speedBumpOff": "Pauza e oprită, așa că Ritm nu oprește plata asta. Pornește-o ca să pună pe pauză plățile mari online."
       }
     },
     "summaryPrompt": {
@@ -69,7 +88,9 @@
       "yesterday": "Ieri",
       "essential": "Esențial",
       "empty": "Încă nu ai tranzacții luna asta.",
-      "planned": "Planificat"
+      "planned": "Planificat",
+      "declined": "Refuzată · fonduri insuficiente",
+      "refund": "Rambursare"
     },
     "categories": {
       "salary": "Salariu",
@@ -99,6 +120,7 @@
       "simulatedNote": "Plățile în magazin nu pot fi puse pe pauză. Primești imediat o notificare cu ce ți-a rămas.",
       "tapToast": "Ai plătit {amount} la {merchant}. Azi mai poți cheltui liniștit {safe}.",
       "tapToastNoRitm": "Ai plătit {amount} la {merchant}.",
+      "insufficient": "Nu ai destui bani pentru {amount} la {merchant}. În contul curent ai {balance}.",
       "tapHintMany": "{count} plăți, între {min} și {max}",
       "sheet": {
         "title": "Alege o plată în magazin",
@@ -125,7 +147,7 @@
       "offConfirmLock": "Banii din Lacăt ({amount}) rămân acolo până în ziua {day}.",
       "offConfirmYes": "Oprește Ritm",
       "offConfirmCancel": "Anulează",
-      "levelTitle": "Cât de strict",
+      "levelTitle": "Ce face Ritm",
       "thresholdTitle": "Pauza pornește de la",
       "thresholdHint": "La nivelurile Pauză și Lacăt, plățile online de la {amount} în sus primesc o pauză scurtă. Plățile în magazin nu sunt oprite niciodată.",
       "essentialsTitle": "Cheltuieli esențiale",
@@ -191,7 +213,8 @@
       "cancel": "Anulează",
       "paidTitle": "Plată aprobată",
       "paidBody": "Ai plătit {amount} la {merchant}.",
-      "backHome": "Înapoi la Atlas"
+      "backHome": "Înapoi la Atlas",
+      "insufficient": "Nu ai destui bani în contul curent. Ai {balance}."
     },
     "speedBump": {
       "title": "O pauză scurtă",
@@ -263,7 +286,8 @@
         "ok": "Ești în ritm",
         "watch": "Puțin peste ritm",
         "spike": "Mult peste ritm"
-      }
+      },
+      "aheadLegend": "Hașurat: {pct}% din banii de cheltuit, folosiți înaintea calendarului."
     },
     "safe": {
       "label": "Poți cheltui azi",
@@ -274,7 +298,7 @@
       }
     },
     "levels": {
-      "label": "Cât de strict să fie Ritm",
+      "label": "Ce face Ritm pentru tine",
       "headsup": {
         "name": "Atenționare",
         "description": "Îți spune când cheltui mai repede decât trece luna. Nu oprește nimic."
@@ -336,7 +360,7 @@
         "goalTitle": "Pentru ce strângi",
         "goalName": "Numele scopului",
         "goalAmount": "Suma de care ai nevoie (lei)",
-        "goalInvalid": "Scrie un nume și o sumă pentru scop.",
+        "goalInvalid": "Fiecare scop are nevoie de un nume, o sumă mai mare de 0 și un termen.",
         "pool": "Bani de cheltuit luna asta",
         "quick": "Sume rapide",
         "preview": "Rămân cam {perDay} pe zi. În ziua {day} primești înapoi {back}, cu dobânda estimată. Asta e {pct}% din {goal}.",
@@ -372,7 +396,7 @@
       },
       "intro": "Poți face ceva acum, dintr-o atingere. Sau nimic, tu decizi.",
       "actions": {
-        "moveToLock": "Mută {amount} în Lacăt",
+        "moveToLock": "Pune {amount} deoparte până în ziua {day}, ca să ai și la final de lună",
         "enableSpeedBump": "Pornește Pauza până la salariu",
         "markPlanned": "{merchant}, {amount}, era planificată"
       },
@@ -405,7 +429,8 @@
       "confirmIn": "Plătesc oricum · {seconds} s",
       "askRitm": "Întreabă Ritm",
       "lockedDone": "Gata. {amount} stau în Lacăt până în ziua {day}.",
-      "backToShop": "Înapoi la magazin"
+      "backToShop": "Înapoi la magazin",
+      "backToAtlas": "Înapoi la Atlas"
     },
     "tab": {
       "title": "Ritm",
@@ -455,12 +480,18 @@
       "emergencyDone": "Gata. {amount} au intrat în contul curent.",
       "cancel": "Renunț",
       "error": {
+        "overLimit": "Poți scoate cel mult {max}.",
+        "reason": "Alege mai întâi un motiv.",
         "alreadyUsed": "Ai folosit deja urgența luna asta.",
         "notLocked": "Nu mai e nimic în Lacăt."
       },
       "unlocked": "Lacătul s-a deschis. {amount} sunt liberi.",
       "chooseCta": "Alege ce faci cu ei",
       "empty": "Nu ai nimic în Lacăt acum.",
+      "pending": "{amount} intră în Lacăt în ziua salariului, când îți vin banii. Se deblochează singuri în ziua {day}.",
+      "setupTitle": "Pune bani deoparte",
+      "setupCta": "Pune {amount} deoparte până în ziua {day}",
+      "setupNoMoney": "Acum nu ai destui bani în contul curent ca să pui deoparte.",
       "mirrorIntro": "Banii nu sunt blocați. Îți arătăm doar ce se schimbă, înainte să decizi.",
       "reasonLabel": "Pentru ce ai nevoie de ei?",
       "reason": {
@@ -547,6 +578,30 @@
       "raiseExample": "De exemplu, la o mărire de {raise}: {saved} merg în economii, iar {kept} rămân la tine.",
       "raiseOn": "Pornit. Îl poți opri oricând.",
       "raiseOff": "Oprit. Nimic nu se mută fără acordul tău."
+    },
+    "goals": {
+      "label": "Scopul {n}",
+      "remove": "Șterge {name}",
+      "reachIn": "Vreau să-l am în",
+      "months": "{months} luni",
+      "monthsOne": "1 lună",
+      "monthly": "Asta înseamnă cam {amount} pe lună.",
+      "add": "Adaugă încă un scop",
+      "total": "Toate scopurile: {amount} pe lună, {pct}% din salariu",
+      "over": "E mai mult de 20% din salariu ({guideline}). Ghidurile de economisire recomandă cam 20%: peste atât îți rămân prea puțini bani de trai și e greu să ții planul. Dă-i unui scop mai mult timp sau scade o sumă.",
+      "within": "Ești în cei 20% din salariu pe care îi recomandă ghidurile de economisire. Un plan pe care îl poți ține.",
+      "plan": "în {months} · {amount} pe lună",
+      "totalLabel": "Toate scopurile",
+      "totalValue": "{amount} pe lună · {pct}% din salariu",
+      "editLink": "Schimbă-ți scopurile",
+      "editTitle": "Scopurile tale",
+      "save": "Salvează scopurile"
+    },
+    "features": {
+      "on": "Pornit",
+      "off": "Oprit",
+      "lockPending": "{amount} intră în ziua salariului.",
+      "lockOff": "Nimic pus deoparte. Apasă ca să-l pornești."
     }
   }
 }
