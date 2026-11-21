@@ -175,3 +175,12 @@
     opacity: 0.82;
   }
 }
+
+/* Atlas (Iustin): a lighter brass for "today" on the ink header (6.9:1 on #0e2f2c). */
+:root {
+  --atlas-brass-light: #d9ae5f;
+}
+@theme inline {
+  --color-atlas-brass: var(--atlas-brass);
+  --color-atlas-brass-light: var(--atlas-brass-light);
+}

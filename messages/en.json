@@ -364,6 +364,24 @@
       "later": "I will look around",
       "reopen": "You can open this guide any time from Home or Profile.",
       "guide": "Guide"
+    },
+    "hero": {
+      "balanceLabel": "In your current account",
+      "savings": "In savings: {amount}",
+      "salaryIn": "{amount} arrived today from {from}.",
+      "dayOf": "day {day} of {total}",
+      "paydayTomorrow": "Payday is tomorrow",
+      "paydayToday": "Payday is today",
+      "daysFew": "{n} days to payday",
+      "daysMany": "{n} days to payday",
+      "beforePayday": "before payday"
+    },
+    "actions": {
+      "label": "What you can do",
+      "transfer": "Transfer",
+      "pay": "Pay",
+      "history": "History",
+      "guide": "Guide"
     }
   },
   "ritm": {
