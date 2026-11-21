@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 import { canAfford, SIMULATED_SHOPS, usePendingPurchase, type Purchase } from "@/components/bank/purchases";
 import { RULES } from "@/lib/engine/config";
-import { formatLei } from "@/lib/format";
+import { cleanAmountInput, formatLei, parseAmount } from "@/lib/format";
 import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { firstDay, useBank } from "./useBank";
@@ -216,7 +216,7 @@ function PurchaseSimulator({ onOnline }: { onOnline: () => void }) {
   const [message, setMessage] = useState<{ error: boolean; text: string } | null>(null);
 
   const shop = SIMULATED_SHOPS[shopIndex];
-  const amount = Number(amountText);
+  const amount = parseAmount(amountText);
   const valid = Number.isFinite(amount) && amount > 0;
   const lei = (value: number) => formatLei(value, locale);
 
@@ -295,17 +295,15 @@ function PurchaseSimulator({ onOnline }: { onOnline: () => void }) {
         </label>
         <input
           id={ids.amount}
-          type="number"
+          type="text"
           inputMode="decimal"
-          min={1}
-          step={1}
+          autoComplete="off"
           value={amountText}
           // No minus sign: a purchase is never negative.
           onChange={(e) => {
-            setAmountText(e.target.value.replace(/-/g, ""));
+            setAmountText(cleanAmountInput(e.target.value));
             setMessage(null);
           }}
-          onKeyDown={(e) => ["-", "+", "e", "E"].includes(e.key) && e.preventDefault()}
           className="min-h-11 rounded-lg border bg-background px-3 tabular-nums"
         />
       </div>

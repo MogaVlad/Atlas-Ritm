@@ -4,7 +4,7 @@ import { Minus, Plus, X } from "lucide-react";
 import { useId } from "react";
 import { DEMO_MONTH } from "@/components/bank/bankData";
 import { goalMonthly, goalPlan, goalsPlan, RULES, type Goal } from "@/lib/engine";
-import { formatLei } from "@/lib/format";
+import { cleanAmountInput, formatLei, parseAmount } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 export type GoalDraft = { name: string; amount: string; months: number };
 
 export const toDraft = (goal: Goal): GoalDraft => ({ name: goal.name, amount: String(goal.amount), months: goal.months });
-export const fromDraft = (draft: GoalDraft): Goal => ({ name: draft.name.trim(), amount: Number(draft.amount), months: draft.months });
+export const fromDraft = (draft: GoalDraft): Goal => ({ name: draft.name.trim(), amount: parseAmount(draft.amount), months: draft.months });
 
 const INPUT =
   "min-h-11 w-full rounded-xl border border-atlas-line bg-white px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ritm";
@@ -100,7 +100,7 @@ export function GoalsEditor({
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    onClick={() => update(i, { amount: String(Math.max(GOAL_STEP, (Math.ceil(Number(goal.amount) / GOAL_STEP) || 1) * GOAL_STEP - GOAL_STEP)) })}
+                    onClick={() => update(i, { amount: String(Math.max(GOAL_STEP, (Math.ceil(parseAmount(goal.amount) / GOAL_STEP) || 1) * GOAL_STEP - GOAL_STEP)) })}
                     aria-label={t("ritm.onboarding.s3.goalMinus", { step: GOAL_STEP })}
                     className={STEP_BUTTON}
                   >
@@ -108,19 +108,17 @@ export function GoalsEditor({
                   </button>
                   <input
                     id={`${id}-amount`}
-                    type="number"
+                    type="text"
                     inputMode="decimal"
-                    min={1}
-                    step={GOAL_STEP}
+                    autoComplete="off"
                     value={goal.amount}
                     // No minus sign: a goal is never negative.
-                    onChange={(e) => update(i, { amount: e.target.value.replace(/-/g, "") })}
-                    onKeyDown={(e) => ["-", "+", "e", "E"].includes(e.key) && e.preventDefault()}
+                    onChange={(e) => update(i, { amount: cleanAmountInput(e.target.value) })}
                     className={cn(INPUT, "min-w-0 flex-1 text-center tabular-nums")}
                   />
                   <button
                     type="button"
-                    onClick={() => update(i, { amount: String((Math.floor(Number(goal.amount) / GOAL_STEP) || 0) * GOAL_STEP + GOAL_STEP) })}
+                    onClick={() => update(i, { amount: String((Math.floor(parseAmount(goal.amount) / GOAL_STEP) || 0) * GOAL_STEP + GOAL_STEP) })}
                     aria-label={t("ritm.onboarding.s3.goalPlus", { step: GOAL_STEP })}
                     className={STEP_BUTTON}
                   >
