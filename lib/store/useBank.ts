@@ -91,6 +91,8 @@ interface PersistedState {
   pensionContributions: PensionContribution[];
   /** Commitment card on day 30: "Next raise: save half of it automatically?" Off until the user turns it on. */
   raiseCommitment: boolean;
+  /** The day-30 popup ("see how the month went") was answered; Reset demo shows it again. */
+  summaryPromptSeen: boolean;
   notifications: HeadsUpNotification[];
   /** Activity entries (salary, live payments) the user cleared from the notification centre. */
   clearedActivityIds: string[];
@@ -138,6 +140,8 @@ interface Actions {
    */
   contributeToPension: (input: { amount: number; source: PensionSource; consent: boolean }) => PensionResult;
   setRaiseCommitment: (on: boolean) => void;
+  /** Close the day-30 popup, whether the user opened the summary or chose "later". */
+  dismissSummaryPrompt: () => void;
   /** Close a notification. `acted: false` counts it as ignored. */
   dismissNotification: (id: string, acted?: boolean) => void;
   /**
@@ -233,6 +237,7 @@ const INITIAL: PersistedState = {
   savings: OPENING_SAVINGS,
   pensionContributions: [],
   raiseCommitment: false,
+  summaryPromptSeen: false,
   notifications: [],
   clearedActivityIds: [],
   alertMemory: INITIAL_ALERT_MEMORY,
@@ -275,6 +280,7 @@ const pick = (s: BankState): PersistedState => ({
   savings: s.savings,
   pensionContributions: s.pensionContributions,
   raiseCommitment: s.raiseCommitment,
+  summaryPromptSeen: s.summaryPromptSeen,
   notifications: s.notifications,
   clearedActivityIds: s.clearedActivityIds,
   alertMemory: s.alertMemory,
@@ -429,6 +435,8 @@ export const useBank = create<BankState>()(
         },
 
         setRaiseCommitment: (on) => update((s) => ({ ...s, raiseCommitment: on })),
+
+        dismissSummaryPrompt: () => update((s) => ({ ...s, summaryPromptSeen: true })),
 
         dismissNotification: (id, acted = false) =>
           update((s) => ({
