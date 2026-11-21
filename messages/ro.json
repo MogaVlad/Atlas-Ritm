@@ -131,6 +131,54 @@
       "title": "Ritm · componente",
       "pickDay": "Alege ziua din lună",
       "day": "Ziua {day}"
+    },
+    "onboarding": {
+      "progress": "Pasul {step} din {total}",
+      "back": "Înapoi",
+      "next": "Continuă",
+      "finish": "Pornește Ritm",
+      "s1": {
+        "title": "Ți-a venit primul salariu",
+        "salaryLabel": "Salariu primit azi",
+        "l1": "Ritm urmărește cât de repede se duc banii de la salariu încoace.",
+        "l2": "Te anunță din timp dacă o iei prea repede, nu după ce s-au dus.",
+        "l3": "Tu alegi cât de strict să fie. Îl poți opri oricând."
+      },
+      "s2": {
+        "title": "Plățile care oricum trebuie făcute",
+        "intro": "Le-am găsit în extrasul tău. Ritm nu le pune la socoteală când îți urmărește ritmul.",
+        "categories": {
+          "rent": "Chirie",
+          "utilities": "Utilități",
+          "phone": "Telefon",
+          "transport": "Abonament transport"
+        },
+        "total": "Plăți fixe pe lună",
+        "plannedTitle": "Cumpărături planificate",
+        "plannedHint": "Știi deja că vei cumpăra ceva luna asta? Adaugă-l aici și nu va declanșa nicio atenționare.",
+        "plannedAdd": "Adaugă o cumpărătură planificată",
+        "plannedName": "Ce cumperi",
+        "plannedAmount": "Cât costă (lei)",
+        "plannedSave": "Adaugă",
+        "plannedCancel": "Renunță",
+        "plannedRemove": "Șterge {name}",
+        "plannedInvalid": "Scrie ce cumperi și cât costă."
+      },
+      "s3": {
+        "title": "Alege cum te ajută Ritm",
+        "lockTitle": "Pune deoparte din salariu",
+        "lockAmount": "Cât pui deoparte",
+        "lockDay": "Când se deblochează",
+        "dayValue": "ziua {day}",
+        "lockExplain": "În ziua salariului mutăm {amount} în economii. Se deblochează singuri în ziua {day}; dacă ai nevoie mai devreme, îi primești după 24 de ore.",
+        "lockNone": "Nu pui nimic deoparte luna asta. Poți schimba oricând.",
+        "goalTitle": "Pentru ce strângi",
+        "goalName": "Numele scopului",
+        "goalAmount": "Suma de care ai nevoie (lei)",
+        "goalInvalid": "Scrie un nume și o sumă pentru scop.",
+        "pool": "Bani de cheltuit luna asta",
+        "poolHint": "Salariul, minus plățile fixe și suma pusă deoparte."
+      }
     }
   }
 }
