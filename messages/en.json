@@ -65,6 +65,10 @@
       "open": "See the summary",
       "later": "Later"
     },
+    "flash": {
+      "saved": "Done! {amount} was added to your savings account.",
+      "backToCurrent": "Done! {amount} went back to your current account."
+    },
     "monthPrompt": {
       "title": "Month 2 starts today",
       "body": "Ritm starts again every month, so you choose how it works. Last month you had:",
