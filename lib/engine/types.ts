@@ -37,18 +37,34 @@ export interface Transaction {
   channel: Channel;
   /** Marked as planned by the user: not counted against the pace. */
   planned?: boolean;
+  /** Display only: a payment the account couldn't cover, so it was never charged. The engine never sees these. */
+  declined?: boolean;
 }
 
-export type RitmLevel = "headsup" | "speedbump" | "lock";
+/** The Ritm features with an on/off switch. The Lock is the third one: on when lock.amount > 0. */
+export type RitmFeature = "headsUp" | "speedBump";
+
+/** Something the user saves for, and the time they give themselves to reach it. */
+export interface Goal {
+  name: string;
+  /** Lei. */
+  amount: number;
+  /** Months until the user wants to have it. */
+  months: number;
+}
 
 export interface RitmSettings {
   enabled: boolean;
-  level: RitmLevel;
+  /** Notifications when the pace gets too fast. On by default. */
+  headsUp: boolean;
+  /** A short pause before big online payments. Off by default. */
+  speedBump: boolean;
   /** Categories that never count (rent, utilities…). */
   essentialCategories: Category[];
   /** Lei per month, taken out of the spending money. */
   essentialsTotal: number;
-  goal: { name: string; amount: number };
+  /** At least one. The first is the main goal: the Speed bump and the Lock talk about it. */
+  goals: Goal[];
   /** Lei. Online payments at or above this can trigger the Speed bump. */
   speedBumpThreshold: number;
   lock: { amount: number; unlockDay: Day };
@@ -99,6 +115,8 @@ export interface LockState {
 export interface AlertMemory {
   lastNotifiedDay: Day | null;
   lastSeverity: Severity;
+  /** Share of spending money used at the last Heads-up (0–1). Missing in older saved demos. */
+  lastPctSpent?: number;
   /** Heads-ups shown and dismissed without an action. */
   ignoredCount: number;
 }

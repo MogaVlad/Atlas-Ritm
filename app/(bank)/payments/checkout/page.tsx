@@ -3,7 +3,7 @@
 import { ArrowLeft, Lock } from "lucide-react";
 import Link from "next/link";
 import { FullScreen } from "@/components/bank/FullScreen";
-import { MODAHUB_JACKET } from "@/components/bank/purchases";
+import { MODAHUB_JACKET, usePendingPurchase } from "@/components/bank/purchases";
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
 
@@ -33,6 +33,7 @@ export default function CheckoutPage() {
   const t = useT();
   const locale = useLocale((s) => s.locale);
   const price = formatLei(MODAHUB_JACKET.amount, locale);
+  const setPurchase = usePendingPurchase((s) => s.setPurchase);
 
   return (
     <FullScreen className="bg-white text-neutral-900">
@@ -82,6 +83,7 @@ export default function CheckoutPage() {
 
         <Link
           href="/payments/confirm"
+          onClick={() => setPurchase(MODAHUB_JACKET)}
           className="mt-auto flex min-h-13 items-center justify-center rounded-xl bg-neutral-900 font-semibold text-white hover:bg-neutral-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900"
         >
           {t("bank.checkout.payWithAtlas")}

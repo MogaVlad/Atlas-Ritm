@@ -29,15 +29,16 @@ export const DEMO_MONTH = new Date(2026, 10, 1);
  */
 export function useVisibleTransactions(): Transaction[] {
   const transactions = useBank((s) => s.transactions);
+  const declined = useBank((s) => s.declined);
   const day = useBank((s) => s.demoDay);
   return useMemo(
     () =>
-      transactions
+      [...transactions, ...declined.map((t) => ({ ...t, declined: true }))]
         .map((t, order) => ({ t, order }))
         .filter(({ t }) => t.day <= day)
         .sort((a, b) => b.t.day - a.t.day || b.order - a.order)
         .map(({ t }) => t),
-    [transactions, day],
+    [transactions, declined, day],
   );
 }
 

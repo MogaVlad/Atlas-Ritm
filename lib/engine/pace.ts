@@ -44,7 +44,8 @@ export function computePace(transactions: readonly Transaction[], settings: Ritm
   const burst = pool > 0 && last48hSpent / pool >= RULES.burst.pct;
 
   // Run-out forecast at the current average daily spend.
-  const dailyAvg = spent / day;
+  // Day 0 (before payday) has no days behind it yet.
+  const dailyAvg = day > 0 ? spent / day : 0;
   let projectedRunOutDay: Day | null = null;
   if (remaining <= 0) projectedRunOutDay = day;
   else if (dailyAvg > 0) {
