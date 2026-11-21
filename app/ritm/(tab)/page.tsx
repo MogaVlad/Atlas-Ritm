@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { FeatureSwitches, useLockLink } from "@/components/ritm/FeatureSwitches";
-import { PaceBar } from "@/components/ritm/PaceBar";
+import { PaceBar, PaceStatus } from "@/components/ritm/PaceBar";
 import { SafeToSpend, safeLineKey } from "@/components/ritm/SafeToSpend";
 import { useHydrated } from "@/components/ritm/useHydrated";
 import { NET_SALARY } from "@/lib/data/persona";
@@ -36,17 +36,32 @@ export default function RitmTab() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="font-display text-[1.7rem] leading-tight font-semibold tracking-[-0.02em]">{t("ritm.tab.title")}</h1>
+      {/* Redesign: the one number that matters, big, on Ritm's cobalt. Then the pace that explains it. */}
+      <section className="-mx-5 -mt-5 flex flex-col gap-4 rounded-b-[32px] bg-ritm px-5 pt-3 pb-7 text-white">
+        <div className="flex items-center justify-between gap-3">
+          <h1 className="font-display text-[1.7rem] leading-tight font-bold tracking-[-0.02em]">{t("ritm.tab.title")}</h1>
+          <span className="rounded-full bg-white/15 px-3 py-1 text-sm font-semibold tabular-nums">
+            {t("ritm.tab.dayPill", { day: Math.max(pace.dayOfCycle, 0), total: pace.cycleLength })}
+          </span>
+        </div>
+        <SafeToSpend amount={pace.safeToSpendToday} line={t(safeLineKey(pace))} tone="inverse" size="hero" />
+      </section>
 
       {/* Not <RitmCard/>: Next keeps this page alive while hidden, and Home already has the card. */}
-      <section className="flex flex-col gap-5 rounded-3xl bg-white p-5 ring-1 ring-atlas-line">
-        <SafeToSpend amount={pace.safeToSpendToday} line={t(safeLineKey(pace))} />
+      <section aria-labelledby="ritm-pace" className="flex flex-col gap-4 rounded-[24px] bg-white p-5 ring-1 ring-atlas-line">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 id="ritm-pace" className="font-display text-lg font-bold">
+            {t("ritm.tab.paceTitle")}
+          </h2>
+          <PaceStatus severity={pace.severity} />
+        </div>
         <PaceBar
           pctSpent={pace.pctSpent}
           pctMonthPassed={pace.pctMonthPassed}
           severity={pace.severity}
           dayOfCycle={pace.dayOfCycle}
           cycleLength={pace.cycleLength}
+          showStatus={false}
         />
       </section>
 

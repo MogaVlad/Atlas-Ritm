@@ -8,7 +8,7 @@ import { useBank } from "@/lib/store/useBank";
 import { cn } from "@/lib/utils";
 import { AtlasWordmark } from "./AtlasMark";
 
-function BellLink({ onInk }: { onInk: boolean }) {
+function BellLink({ onInk, ring }: { onInk: boolean; ring: string }) {
   const t = useT();
   const unread = useBank((s) => s.notifications.length);
   const label =
@@ -33,7 +33,7 @@ function BellLink({ onInk }: { onInk: boolean }) {
           aria-hidden="true"
           className={cn(
             "absolute top-1.5 right-1.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-ritm-spike px-1 text-[0.68rem] leading-none font-semibold text-white ring-2 tabular-nums",
-            onInk ? "ring-atlas-ink" : "ring-atlas-paper",
+            ring,
           )}
         >
           {unread}
@@ -43,17 +43,22 @@ function BellLink({ onInk }: { onInk: boolean }) {
   );
 }
 
-/** On Home the bar is ink and runs straight into the month header below it; elsewhere it is paper. */
+/**
+ * On Home the bar is ink and runs straight into the month header below it; on the Ritm tab it is
+ * cobalt and runs into Ritm's panel; elsewhere it is paper.
+ */
 export function TopBar() {
   useHtmlLang();
   const t = useT();
-  const onInk = usePathname() === "/";
+  const pathname = usePathname();
+  const surface = pathname === "/" ? "ink" : pathname === "/ritm" ? "ritm" : "paper";
+  const onInk = surface !== "paper";
 
   return (
     <header
       className={cn(
         "sticky top-0 z-20 flex items-center justify-between px-5 pt-3 pb-2",
-        onInk ? "bg-atlas-ink" : "border-b border-atlas-line/70 bg-atlas-paper/95 backdrop-blur",
+        surface === "ink" ? "bg-atlas-ink" : surface === "ritm" ? "bg-ritm" : "border-b border-atlas-line/70 bg-atlas-paper/95 backdrop-blur",
       )}
     >
       <Link
@@ -67,7 +72,7 @@ export function TopBar() {
         <AtlasWordmark tone={onInk ? "light" : "ink"} />
       </Link>
       {/* The language is a setting in Profile, not a switch on every screen. */}
-      <BellLink onInk={onInk} />
+      <BellLink onInk={onInk} ring={surface === "ink" ? "ring-atlas-ink" : surface === "ritm" ? "ring-ritm" : "ring-atlas-paper"} />
     </header>
   );
 }

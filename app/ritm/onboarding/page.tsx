@@ -168,12 +168,14 @@ export default function RitmOnboarding() {
               </p>
             </section>
             <ul className="flex flex-col gap-4">
-              {(["l1", "l2", "l3"] as const).map((k) => (
-                <li key={k} className="flex gap-3 text-[1.05rem] leading-snug">
+              {(["l1", "l2", "l3"] as const).map((k, i) => (
+                <li key={k} className="flex items-start gap-3 text-[1.05rem] leading-snug">
                   <span
                     aria-hidden
-                    className="mt-2 size-2 shrink-0 rounded-full bg-ritm"
-                  />
+                    className="flex size-7 shrink-0 items-center justify-center rounded-full bg-ritm font-display text-sm font-bold text-white"
+                  >
+                    {i + 1}
+                  </span>
                   {t(`ritm.onboarding.s1.${k}`)}
                 </li>
               ))}
