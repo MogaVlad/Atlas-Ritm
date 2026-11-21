@@ -92,6 +92,12 @@ export default function RitmTab() {
         >
           {t("ritm.tab.settingsLink")}
         </Link>
+        <Link
+          href="/ritm/summary"
+          className="flex min-h-11 items-center self-start rounded-lg px-1 text-sm font-medium text-ritm underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-ritm"
+        >
+          {t("ritm.tab.summaryLink")}
+        </Link>
       </section>
     </div>
   );

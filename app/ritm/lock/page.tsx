@@ -187,10 +187,10 @@ export default function LockScreen() {
 function Screen({ children }: { children: ReactNode }) {
   return (
     <>
-      <div className="flex items-center justify-between gap-4 px-5 pt-3">
+      <header className="flex items-center justify-between gap-4 px-5 pt-3">
         <RitmBack />
         <LocaleToggle />
-      </div>
+      </header>
       <main className="flex flex-1 flex-col gap-6 px-5 pt-4 pb-8">{children}</main>
     </>
   );

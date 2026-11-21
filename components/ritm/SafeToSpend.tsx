@@ -17,10 +17,10 @@ export function SafeToSpend({ amount, line }: Props) {
 
   return (
     <section className="flex flex-col gap-1">
-      <h2 className="text-sm text-muted-foreground">{t("ritm.safe.label")}</h2>
+      <h2 className="text-sm text-atlas-muted">{t("ritm.safe.label")}</h2>
       <p className="flex items-baseline gap-1.5">
         <span className="text-5xl font-semibold leading-none tracking-tight tabular-nums">{number}</span>
-        <span className="text-lg font-medium text-muted-foreground">lei</span>
+        <span className="text-lg font-medium text-atlas-muted">lei</span>
       </p>
       {line && <p className="mt-1 max-w-[30ch] text-sm">{line}</p>}
     </section>
