@@ -287,14 +287,14 @@
     "askRitm": {
       "title": "Ask Ritm",
       "close": "Close",
-      "intro": "I can explain the pause, the numbers on your screen and your options. I won’t tell you what to buy: the choice stays yours.",
+      "intro": "Ritm is an AI assistant. Answers may be wrong, so check the numbers on screen. I can explain the pause, the numbers on your screen and your options. I won’t tell you what to buy: the choice stays yours.",
       "suggestions": {
         "pillar": "What is Pillar III?",
         "pause": "Why the pause?",
         "today": "How much can I spend today?",
         "goal": "How do I reach my goal?"
       },
-      "introHome": "I can explain your month’s pace, the numbers on your screen and your options. I won’t tell you what to buy: the choice stays yours.",
+      "introHome": "Ritm is an AI assistant. Answers may be wrong, so check the numbers on screen. I can explain your month’s pace, the numbers on your screen and your options. I won’t tell you what to buy: the choice stays yours.",
       "inputLabel": "Your question",
       "placeholder": "Type a question…",
       "send": "Send",
@@ -389,7 +389,8 @@
         "salaryLabel": "Salary received today",
         "l1": "Ritm watches how fast your money goes since payday.",
         "l2": "It tells you early if you're going too fast, not after the money is gone.",
-        "l3": "You choose how strict it is. You can turn it off anytime."
+        "l3": "You choose how strict it is. You can turn it off anytime.",
+        "data": "Ritm uses the transactions Atlas already has. It never comments on health purchases."
       },
       "s2": {
         "title": "The payments you have to make anyway",
@@ -434,7 +435,17 @@
         "planLock": "Put aside",
         "planPerDay": "That's about {amount} a day.",
         "goalMinus": "{step} RON less",
-        "goalPlus": "{step} RON more"
+        "goalPlus": "{step} RON more",
+        "lockTerms": {
+          "title": "Lock savings account: the terms",
+          "t1": "The Lock is a separate savings account that earns interest.",
+          "t2": "The money comes back by itself on day {day}.",
+          "t3": "You can ask for it earlier anytime: you get it {hours} hours later.",
+          "t4": "Up to {emergency} for an emergency, right away, once a month.",
+          "t5": "Turning Ritm off takes effect after {hours} hours.",
+          "t6": "Protected by FGDB up to 100,000 EUR per person.",
+          "accept": "Turning on Ritm with the Lock opens this account on these terms."
+        }
       }
     },
     "card": {
@@ -512,7 +523,7 @@
       "holdHint": "Hold for {seconds} seconds to pay.",
       "notNowHint": "Your safe-to-spend stays at {safe} today.",
       "moveToLockNumber": "+~{interest} interest by day {day}, then it's yours again.",
-      "pensionNumber": "Up to {tax} less tax. Available from age 60.",
+      "pensionNumber": "Up to {tax} less tax. The money stays in the fund until age 60.",
       "detailsTitle": "How we got these numbers",
       "detailsSafe": "Safe to spend today: what's left, split over the days to payday, minus what you spent today.",
       "detailsLock": "Interest: an estimate at {rate}% a year on savings, after 10% tax, until day {day}.",
@@ -538,17 +549,18 @@
       "getTitle": "What you get",
       "get": "What you put in comes off your taxable income, up to {limit} a year (400 EUR, shared with private health insurance). For {amount}, your tax goes down by up to {tax}.",
       "catchTitle": "What to know",
-      "catch": "The money can't be taken out before retirement. The fund's value goes up and down with the markets, so there are no promised returns.",
+      "catch": "The money stays in the fund until age 60, after at least 90 monthly payments. The fund's value goes up and down with the markets, so there are no promised returns.",
+      "fees": "Fees: up to 5% of each payment and a small monthly fee on the balance. See the fund's prospectus.",
       "fund": "Atlas Pensii is Atlas's own fund, not the only one. You can compare every fund on the",
       "asfLink": "ASF website",
       "amount": "Amount (RON)",
-      "consent": "I understand this money is for retirement and I can't use it before then.",
+      "consent": "I understand this money stays in the fund until age 60 and I can't use it before then.",
       "contribute": "Contribute {amount}",
       "notNow": "Not now",
       "donePopup": {
         "title": "Done! {amount} went to Atlas Pensii",
         "tax": "Your tax goes down by up to {tax}",
-        "note": "The money stays invested for retirement. Atlas Pensii is Atlas's own fund; you can compare every fund on the ASF website.",
+        "note": "The money stays in the fund until age 60, after at least 90 monthly payments. Atlas Pensii is Atlas's own fund; you can compare every fund on the ASF website.",
         "ok": "Got it"
       },
       "done": "Done. {amount} went to Atlas Pensii. Your tax goes down by up to {tax}.",
@@ -560,7 +572,22 @@
       "step": "Step {step} of {total}",
       "getBig": "Up to {tax} less tax",
       "next": "Next",
-      "back": "Back"
+      "back": "Back",
+      "join": {
+        "title": "Join Atlas Pensii",
+        "intro": "To put money in a pension fund, you first join it by signing an adhesion act. It takes about 2 minutes.",
+        "agent": "Atlas is registered with ASF as a marketing agent for Atlas Pensii, the pension fund of the Atlas group.",
+        "summaryTitle": "Prospectus summary",
+        "s1": "Administrator: Atlas Pensii SAFPP (fictional).",
+        "s2": "Investments: mostly government bonds, some shares. Risk: medium.",
+        "s3": "Fees: up to 5% of each payment and a small monthly fee on the balance.",
+        "s4": "Payout: from age 60, after at least 90 monthly payments. With fewer, you get a lump sum instead of a pension.",
+        "s5": "You can stop paying anytime and move to another fund.",
+        "read": "I read the prospectus summary and I want to sign the adhesion act.",
+        "sign": "Sign the adhesion act",
+        "signed": "Adhesion act signed. You're now a member of Atlas Pensii."
+      },
+      "contributeTitle": "Your payment"
     },
     "lock": {
       "title": "Your Lock",
@@ -658,7 +685,7 @@
         },
         "pillar3": {
           "name": "Pillar III (Atlas Pensii)",
-          "tradeoff": "You pay less tax now, but the money stays locked until retirement.",
+          "tradeoff": "You pay less tax now, but the money stays in the fund until age 60.",
           "note": "Atlas Pensii is Atlas's own fund. You can compare funds on the ASF website."
         }
       },

@@ -169,10 +169,18 @@ test("after the money goes to Pillar III, Back to Atlas leads home and back does
   await speedBump.getByRole("button", { name: m.ritm.speedBump.notNow }).click();
   await expect(speedBump.getByText(fill(m.ritm.speedBump.keptTitle, { amount: "300,00 RON" }))).toBeVisible();
   await speedBump.getByRole("button", { name: starts(m.ritm.speedBump.pension) }).click();
-  // The explainer is 3 short steps: what it is → what you get → the catch (with the checkbox).
+  // The explainer: what it is → what you get → what to know (fees) → join (first time) → the payment.
   await page.getByRole("button", { name: m.ritm.pension.next, exact: true }).click();
   await expect(page.getByText(fill(m.ritm.pension.getBig, { tax: "30,00 RON" }), { exact: true })).toBeVisible();
   await page.getByRole("button", { name: m.ritm.pension.next, exact: true }).click();
+  await expect(page.getByText(m.ritm.pension.fees)).toBeVisible();
+  await page.getByRole("button", { name: m.ritm.pension.next, exact: true }).click();
+  // Not a member yet: the adhesion act is signed only after ticking that the summary was read.
+  const sign = page.getByRole("button", { name: m.ritm.pension.join.sign });
+  await expect(sign).toBeDisabled();
+  await page.getByRole("checkbox", { name: m.ritm.pension.join.read }).check();
+  await sign.click();
+  await expect(page.getByText(m.ritm.pension.join.signed)).toBeVisible();
   await page.getByRole("checkbox", { name: m.ritm.pension.consent }).check();
   await page.getByRole("button", { name: starts(fill(m.ritm.pension.contribute, { amount: "" })) }).click();
 
