@@ -42,6 +42,10 @@ export const RULES = {
   turnOffDelayDays: 1,
   /** Tax on savings interest. */
   interestTax: 0.1,
+  savings: {
+    /** Flexible savings, yearly. Placeholder until the Pitcher's sources table gives the real rate. */
+    annualRate: 0.04,
+  },
   /** Day-30 commitment card: "Next raise: save half of it automatically?" */
   raise: {
     saveShare: 0.5,
