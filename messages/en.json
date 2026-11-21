@@ -7,6 +7,8 @@
       "title": "Demo",
       "button": "Demo · day {day}",
       "day": "Day {day}",
+      "prevDay": "Previous day",
+      "nextDay": "Next day",
       "slider": "Day of the month",
       "reset": "Reset demo",
       "severity": {

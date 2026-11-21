@@ -7,6 +7,8 @@
       "title": "Demo",
       "button": "Demo · ziua {day}",
       "day": "Ziua {day}",
+      "prevDay": "Ziua anterioară",
+      "nextDay": "Ziua următoare",
       "slider": "Ziua din lună",
       "reset": "Resetează demo-ul",
       "severity": {
