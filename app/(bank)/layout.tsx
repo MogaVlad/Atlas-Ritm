@@ -5,6 +5,7 @@ import { BottomNav } from "@/components/bank/BottomNav";
 import { NotificationBanner } from "@/components/bank/NotificationBanner";
 import { PhoneFrame } from "@/components/bank/PhoneFrame";
 import { TopBar } from "@/components/bank/TopBar";
+import { FlashToast } from "@/lib/store/FlashToast";
 
 const display = Bricolage_Grotesque({
   variable: "--font-atlas-display",
@@ -28,6 +29,7 @@ export default function BankLayout({ children }: { children: ReactNode }) {
       <div className={`${display.variable} flex min-h-full flex-1 flex-col bg-atlas-paper text-atlas-ink`}>
         <TopBar />
         <main className="flex flex-1 flex-col px-5 pt-5 pb-8">{children}</main>
+        <FlashToast />
         <BottomNav />
         <NotificationBanner />
       </div>
