@@ -187,32 +187,6 @@ export type EmergencyResult =
 
 /* ─── Section 11: plan, Lock preview, the mirror ─────────────────────────── */
 
-/** What onboarding step 2 ("My month plan") and the Lock slider work from. */
-export interface MonthPlan {
-  netSalary: number;
-  essentialsTotal: number;
-  goal: { name: string; amount: number };
-  /** Already saved towards the goal (lei). */
-  saved: number;
-  unlockDay: Day;
-}
-
-export interface LockPreview {
-  lockAmount: number;
-  /** Net salary − essentials − Lock. */
-  spendingMoney: number;
-  /** Spending money ÷ days left including today, rounded down to whole lei. */
-  perDay: number;
-  /** Interest estimate (after tax) from today to the unlock day. Labelled as an estimate in the UI. */
-  interest: number;
-  /** Lock + interest, back on the unlock day. */
-  backOnUnlockDay: number;
-  /** 0–1: (saved + Lock) ÷ goal amount. */
-  goalPct: number;
-  /** Under RULES.plan.tightPerDayLei a day. */
-  tight: boolean;
-}
-
 export interface GoalPlanInput {
   amount: number;
   saved: number;
@@ -250,14 +224,6 @@ export type UnlockDecision =
   | { ok: true; path: "emergency"; lock: LockState; released: number; record: UnlockRecord }
   | { ok: true; path: "wait"; lock: LockState; releaseDay: Day; record: UnlockRecord }
   | { ok: false; reason: "notLocked" | "invalidAmount" };
-
-/** The mirror: facts only, shown before the reason buttons. */
-export interface UnlockFacts {
-  goalPctBefore: number;
-  goalPctAfter: number;
-  /** 1 = first unlock this month. */
-  unlockNumber: number;
-}
 
 export type PlanEditResult =
   | { kind: "applied"; settings: RitmSettings }

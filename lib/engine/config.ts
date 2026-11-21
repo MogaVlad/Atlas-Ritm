@@ -39,9 +39,7 @@ export const RULES = {
     emergencyMaxLei: 300,
     /** Quick buttons next to the Lock slider (section 11 B). */
     quickAmounts: [300, 500, 800],
-  },
-  plan: {
-    /** Under this many lei a day of spending money, the Lock preview shows the gentle "tight" warning. */
+    /** Lock preview: under this many lei a day of spending money, show the gentle "that's tight" note. */
     tightPerDayLei: 30,
   },
   /** Turning Ritm off takes effect this many days later (24h). */
