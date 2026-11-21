@@ -8,11 +8,11 @@ import { RULES } from "@/lib/engine/config";
 import { formatLei } from "@/lib/format";
 import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
-import { useBank } from "./useBank";
+import { firstDay, useBank } from "./useBank";
 
 const MODE_KEY = "atlas-demo-mode";
 
-/** One-tap jumps: day 0 (before payday), payday, then every 6 days to the next payday. */
+/** One-tap jumps: day 0 (before payday, month 1 only), payday, then every 6 days to the next payday. */
 const JUMPS = [0, 1, 6, 12, 18, 24, 30] as const;
 
 /** Demo mode is remembered in this browser, so a reload or a typed URL keeps the controls. */
@@ -50,12 +50,15 @@ export function DemoControls() {
   // A fresh demo starts on Home, whatever screen it was reset from.
   const month = useBank((s) => s.month);
   const setMonth = useBank((s) => s.setMonth);
-  // Month 2 starts on day 0 with month 1 as its history (habits, personal pace); settings and goals stay.
+  // Month 2 starts on payday with month 1's balances and asks again how to set Ritm up.
   const switchMonth = (m: 1 | 2) => {
     setMonth(m);
     setPanelOpen(false);
-    router.push("/");
+    router.push(m === 2 ? "/ritm/onboarding" : "/");
   };
+  const lastDayOfDemo = month === 2 && demoDay >= RULES.cycleLength;
+  // Day 30 of month 1 → "next" opens month 2 on day 1.
+  const next = () => (month === 1 && demoDay >= RULES.cycleLength ? switchMonth(2) : setDemoDay(demoDay + 1));
   const monthButtons = (className: string) =>
     ([1, 2] as const).map((m) => (
       <button key={m} type="button" onClick={() => switchMonth(m)} aria-pressed={month === m} className={className}>
@@ -77,7 +80,7 @@ export function DemoControls() {
   if (!mode) return null;
 
   const jumpButtons = (className: string) =>
-    JUMPS.map((day) => (
+    JUMPS.filter((day) => day >= firstDay(month)).map((day) => (
       <button
         key={day}
         type="button"
@@ -103,7 +106,7 @@ export function DemoControls() {
           <button
             type="button"
             onClick={() => setDemoDay(demoDay - 1)}
-            disabled={demoDay <= 0}
+            disabled={demoDay <= firstDay(month)}
             aria-label={t("common.demo.prevDay")}
             className={ARROW}
           >
@@ -120,9 +123,9 @@ export function DemoControls() {
           </button>
           <button
             type="button"
-            onClick={() => setDemoDay(demoDay + 1)}
-            disabled={demoDay >= RULES.cycleLength}
-            aria-label={t("common.demo.nextDay")}
+            onClick={next}
+            disabled={lastDayOfDemo}
+            aria-label={t(month === 1 && demoDay >= RULES.cycleLength ? "common.demo.nextMonth" : "common.demo.nextDay")}
             className={ARROW}
           >
             <ChevronRight className="size-5" aria-hidden="true" />
@@ -171,7 +174,7 @@ export function DemoControls() {
                 "min-h-11 rounded-lg bg-muted font-medium aria-pressed:bg-foreground aria-pressed:text-background focus-visible:outline-2 focus-visible:outline-ring",
               )}
             </div>
-            <div className="grid grid-cols-7 gap-1">
+            <div className={cn("grid gap-1", month === 2 ? "grid-cols-6" : "grid-cols-7")}>
               {jumpButtons(
                 "min-h-11 rounded-lg bg-muted font-medium tabular-nums aria-pressed:bg-foreground aria-pressed:text-background focus-visible:outline-2 focus-visible:outline-ring",
               )}

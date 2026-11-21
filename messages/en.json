@@ -9,6 +9,7 @@
       "day": "Day {day}",
       "prevDay": "Previous day",
       "nextDay": "Next day",
+      "nextMonth": "Next day: month 2 starts",
       "slider": "Day of the month",
       "reset": "Reset demo",
       "severity": {
