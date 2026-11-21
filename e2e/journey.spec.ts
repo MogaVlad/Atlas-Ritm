@@ -13,12 +13,13 @@ const exact = (text: string) => new RegExp(`^${text.replace(/[.*+?^${}()|[\]\\]/
 const starts = (text: string) => new RegExp(`^${text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`);
 
 async function jumpToDay(page: Page, day: number) {
-  const toggle = page.getByRole("button", { name: /^Demo · ziua \d+$/ });
-  await toggle.click();
-  const panel = page.getByRole("region", { name: ro.common.demo.title });
-  await panel.getByRole("button", { name: String(day), exact: true }).click();
-  await expect(page.getByRole("button", { name: `Demo · ziua ${day}` })).toBeVisible();
-  await toggle.click(); // close the panel so it doesn't cover the screen
+  const clock = page.getByRole("group", { name: ro.common.demo.title });
+  const next = clock.getByRole("button", { name: ro.common.demo.nextDay });
+  const label = (d: number) => clock.getByText(fill(ro.common.demo.day, { day: d }), { exact: true });
+  for (let d = 2; d <= day; d++) {
+    await next.click();
+    await expect(label(d)).toBeVisible();
+  }
 }
 
 async function payForJacket(page: Page) {
