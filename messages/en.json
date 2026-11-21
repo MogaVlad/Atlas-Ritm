@@ -346,7 +346,9 @@
     "card": {
       "title": "Ritm",
       "lock": "{amount} put aside, unlocks on day {day}.",
-      "headsUpCta": "See why Ritm gave you a heads-up"
+      "headsUpCta": "See why Ritm gave you a heads-up",
+      "lockOpen": "The Lock is open: {amount} is free.",
+      "summaryCta": "See how your month went"
     },
     "reason": {
       "pctSpent": "Day {day}: you've already used {pct}% of your spending money.",
@@ -405,7 +407,132 @@
       "lockValue": "{amount}, until day {day}",
       "lockNone": "Nothing put aside",
       "essentials": "Fixed payments per month",
-      "settingsLink": "More Ritm settings in Profile"
+      "settingsLink": "More Ritm settings in Profile",
+      "lockOpen": "Open: {amount} free",
+      "summaryLink": "Month summary"
+    },
+    "pension": {
+      "title": "How Pillar III works",
+      "whatTitle": "What it is",
+      "what": "A private pension you choose yourself. The money is invested in a fund until you retire.",
+      "getTitle": "What you get",
+      "get": "What you put in comes off your taxable income, up to {limit} a year (400 EUR, shared with private health insurance). For {amount}, your tax goes down by up to {tax}.",
+      "catchTitle": "What to know",
+      "catch": "The money can't be taken out before retirement. The fund's value goes up and down with the markets, so there are no promised returns.",
+      "fund": "Atlas Pensii is Atlas's own fund, not the only one. You can compare every fund on the",
+      "asfLink": "ASF website",
+      "amount": "Amount (lei)",
+      "consent": "I understand this money is for retirement and I can't use it before then.",
+      "contribute": "Contribute {amount}",
+      "notNow": "Not now",
+      "done": "Done. {amount} went to Atlas Pensii. Your tax goes down by up to {tax}.",
+      "error": {
+        "noConsent": "First tick that you understand.",
+        "invalidAmount": "Enter an amount above 0.",
+        "notEnoughMoney": "You don't have enough money for this amount."
+      }
+    },
+    "lock": {
+      "title": "Your Lock",
+      "amountLabel": "Put aside",
+      "unlockOn": "Opens by itself on day {day}. {days} days to go.",
+      "unlockTomorrow": "Opens by itself tomorrow, on day {day}.",
+      "interest": "Until then, interest adds about {amount}.",
+      "interestNote": "Estimate: {rate}% a year on savings, after 10% tax. In the demo, interest is simulated.",
+      "waysOut": "If you need the money sooner",
+      "earlyTitle": "Unlock early",
+      "earlyHint": "You get all the money after 24 hours.",
+      "earlyExplain": "You ask now, and {amount} leaves the Lock tomorrow, on day {day}. That money stops being set aside for {goal}.",
+      "earlyConfirm": "Request unlock",
+      "requested": "Unlock requested. {amount} leaves the Lock tomorrow, on day {day}.",
+      "emergencyTitle": "Emergency: up to {max} now",
+      "emergencyHint": "The money arrives right away. Once a month.",
+      "emergencyExplain": "The money goes straight to your current account and the rest stays in the Lock. You can do this once a month.",
+      "emergencyAmount": "How much you need (lei)",
+      "emergencyReason": "What for? One word is enough.",
+      "emergencyConfirm": "Take out {amount} now",
+      "emergencyDone": "Done. {amount} is in your current account.",
+      "emergencyUsed": "You've already used the emergency release this month. Unlocking with the 24-hour wait is still there.",
+      "cancel": "Never mind",
+      "error": {
+        "overLimit": "You can take out up to {max}.",
+        "reason": "Write briefly what you need the money for.",
+        "alreadyUsed": "You've already used the emergency release this month.",
+        "notLocked": "There's nothing left in the Lock."
+      },
+      "unlocked": "The Lock is open. {amount} is free.",
+      "chooseCta": "Choose what to do with it",
+      "empty": "Nothing in the Lock right now."
+    },
+    "unlock": {
+      "title": "You made it to day {day} without it.",
+      "intro": "{amount} is free. You choose how much stays aside.",
+      "keepLabel": "How much you keep in savings",
+      "keepValue": "You keep {keep}, and {back} goes to your current account.",
+      "confirmKeep": "Keep {amount}",
+      "confirmNone": "Move it all to my current account",
+      "done": "Done. {keep} stays in savings, {back} is in your current account.",
+      "notYet": "The Lock opens on day {day}. Until then, the money stays aside.",
+      "notYetCta": "See the Lock",
+      "empty": "Nothing to unlock.",
+      "compareTitle": "Where kept money can go",
+      "compareIntro": "Compared by how soon you can reach the money, risk and how long it stays. No promised returns.",
+      "pensionCta": "See how it works",
+      "access": "Access",
+      "risk": "Risk",
+      "horizon": "Length",
+      "accessValue": {
+        "anytime": "Anytime",
+        "atMaturity": "At maturity",
+        "atRetirement": "At retirement"
+      },
+      "riskValue": {
+        "veryLow": "Very low",
+        "low": "Low",
+        "medium": "Medium"
+      },
+      "horizonValue": {
+        "short": "Months",
+        "medium": "1–5 years",
+        "long": "Until retirement"
+      },
+      "options": {
+        "flexibleSavings": {
+          "name": "Atlas flexible savings",
+          "tradeoff": "Take the money out anytime, but the interest is low.",
+          "note": "An Atlas product. This is where the money is now."
+        },
+        "governmentBonds": {
+          "name": "Government bonds (Tezaur, Fidelis)",
+          "tradeoff": "The interest is fixed, but you get the money back only at maturity, after 1–5 years.",
+          "note": "Issued by the Romanian state, not Atlas."
+        },
+        "pillar3": {
+          "name": "Pillar III (Atlas Pensii)",
+          "tradeoff": "You pay less tax now, but the money stays locked until retirement.",
+          "note": "Atlas Pensii is Atlas's own fund. You can compare funds on the ASF website."
+        }
+      }
+    },
+    "summary": {
+      "titlePayday": "You made it to payday.",
+      "titleSoFar": "Your month, up to day {day}",
+      "leftLabel": "Left of your spending money",
+      "leftLine": "Out of the {pool} you had to spend this month.",
+      "overLabel": "You spent over plan",
+      "overLine": "It happens. Next month, Ritm will tell you sooner.",
+      "kept": "Put aside, in savings",
+      "pension": "In Atlas Pensii",
+      "spent": "Spent from your spending money",
+      "paceTitle": "How the month went",
+      "paceAria": "Chart: money used, compared with the days of the month passed. You were on pace {ok} of {days} days.",
+      "daysOnPace": "You were on pace {ok} of {days} days.",
+      "legendSpent": "Money used",
+      "legendMonth": "Days passed",
+      "raiseTitle": "Next raise: put half of it aside automatically?",
+      "raiseExample": "For example, with a {raise} raise: {saved} goes to savings and {kept} stays with you.",
+      "raiseOn": "On. You can turn it off anytime.",
+      "raiseOff": "Off. Nothing moves without your OK."
     }
   }
 }

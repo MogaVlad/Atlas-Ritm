@@ -72,10 +72,10 @@ export function PaceBar({ pctSpent, pctMonthPassed, severity, dayOfCycle, cycleL
       <figcaption className="flex items-start justify-between gap-4 text-sm">
         <span>
           <span className="font-semibold tabular-nums">{spent}%</span>{" "}
-          <span className="text-muted-foreground">{t("ritm.pace.spent")}</span>
+          <span className="text-atlas-muted">{t("ritm.pace.spent")}</span>
         </span>
         <span className="text-right">
-          <span className="text-muted-foreground">{t("ritm.pace.today", { day: dayOfCycle, total: cycleLength })}</span>{" "}
+          <span className="text-atlas-muted">{t("ritm.pace.today", { day: dayOfCycle, total: cycleLength })}</span>{" "}
           <span className="font-semibold tabular-nums">{month}%</span>
         </span>
       </figcaption>

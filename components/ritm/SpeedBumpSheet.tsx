@@ -6,6 +6,7 @@ import { RULES, type PaceState } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
 import { useBank } from "@/lib/store/useBank";
+import { PensionExplainer } from "./PensionExplainer";
 
 export interface SpeedBumpSheetProps {
   purchase: { merchant: string; amount: number };
@@ -14,14 +15,12 @@ export interface SpeedBumpSheetProps {
   onConfirm: () => void;
   /** Don't buy now: back to the shop. */
   onNotNow: () => void;
-  /** Opens the pension explainer (H6). Hidden until passed. */
-  onPension?: (amount: number) => void;
   /** Opens Ask Ritm (I4). Hidden until passed. */
   onAskRitm?: () => void;
 }
 
 /** The pause before a big online payment: the purchase in month and goal terms, then the user's choice. */
-export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onPension, onAskRitm }: SpeedBumpSheetProps) {
+export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onAskRitm }: SpeedBumpSheetProps) {
   const t = useT();
   const locale = useLocale((s) => s.locale);
   const reduce = useReducedMotion();
@@ -30,6 +29,8 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onPension,
   const delay = RULES.speedBump.confirmDelaySeconds;
   const [left, setLeft] = useState<number>(delay);
   const [locked, setLocked] = useState(false);
+  const [pensionOpen, setPensionOpen] = useState(false);
+  const [pensioned, setPensioned] = useState<{ amount: number; taxSavedUpTo: number } | null>(null);
 
   const goal = useBank((s) => s.ritm.goal);
   const monthlySaving = useBank((s) => s.ritm.lock.amount);
@@ -46,6 +47,8 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onPension,
     () => () => {
       setLeft(delay);
       setLocked(false);
+      setPensionOpen(false);
+      setPensioned(null);
     },
     [delay],
   );
@@ -65,7 +68,7 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onPension,
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        onKeyDown={(e) => e.key === "Escape" && onNotNow()}
+        onKeyDown={(e) => e.key === "Escape" && !pensionOpen && onNotNow()}
         initial={reduce ? { opacity: 0 } : { y: "100%" }}
         animate={reduce ? { opacity: 1 } : { y: 0 }}
         transition={{ duration: reduce ? 0.1 : 0.3, ease: "easeOut" }}
@@ -96,10 +99,12 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onPension,
           <li>{t("ritm.speedBump.safe", { amount: formatLei(pace.safeToSpendToday, locale) })}</li>
         </ul>
 
-        {locked ? (
+        {locked || pensioned ? (
           <div className="mt-6 flex flex-col gap-3">
             <p role="status" className="rounded-2xl bg-ritm-tint px-4 py-3 font-medium text-ritm">
-              {t("ritm.speedBump.lockedDone", { amount, day: unlockDay })}
+              {pensioned
+                ? t("ritm.pension.done", { amount: formatLei(pensioned.amount, locale), tax: formatLei(pensioned.taxSavedUpTo, locale) })
+                : t("ritm.speedBump.lockedDone", { amount, day: unlockDay })}
             </p>
             <button type="button" onClick={onNotNow} className={PRIMARY}>
               {t("ritm.speedBump.backToShop")}
@@ -112,9 +117,7 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onPension,
               {t("ritm.speedBump.notNow")}
             </button>
             <Option label={t("ritm.speedBump.moveToLock", { amount })} hint={t("ritm.speedBump.moveToLockHint", { day: unlockDay })} onClick={moveToLock} />
-            {onPension && (
-              <Option label={t("ritm.speedBump.pension")} hint={t("ritm.speedBump.pensionHint")} onClick={() => onPension(purchase.amount)} />
-            )}
+            <Option label={t("ritm.speedBump.pension")} hint={t("ritm.speedBump.pensionHint")} onClick={() => setPensionOpen(true)} />
             <button
               type="button"
               onClick={onConfirm}
@@ -136,6 +139,17 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onPension,
           </div>
         )}
       </motion.section>
+      {pensionOpen && (
+        <PensionExplainer
+          amount={purchase.amount}
+          source="currentAccount"
+          onClose={() => setPensionOpen(false)}
+          onDone={(result) => {
+            setPensionOpen(false);
+            setPensioned(result);
+          }}
+        />
+      )}
     </div>
   );
 }

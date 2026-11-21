@@ -30,7 +30,7 @@ export function LevelChips({ value, onChange }: Props) {
           </button>
         ))}
       </div>
-      <p className="text-sm text-muted-foreground" aria-live="polite">
+      <p className="text-sm text-atlas-muted" aria-live="polite">
         {t(`ritm.levels.${value}.description`)}
       </p>
     </div>
