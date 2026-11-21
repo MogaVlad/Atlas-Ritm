@@ -21,15 +21,18 @@ export function NotificationBanner() {
   const t = useT();
   const reduce = useReducedMotion();
   const queue = useBank((s) => s.notifications);
-  const [current, setCurrent] = useState<HeadsUpNotification | null>(() => nextUnbannered(useBank.getState().notifications));
+  const [current, setCurrent] = useState<HeadsUpNotification | null>(() => {
+    const s = useBank.getState();
+    return nextUnbannered(s.notifications, s.demoDay);
+  });
   const [sheet, setSheet] = useState<HeadsUpNotification | null>(null);
 
   // New Heads-ups (day jumps, or the saved demo loading after a reload) → show the newest unseen one.
   useEffect(
     () =>
       useBank.subscribe((s, prev) => {
-        if (s.notifications === prev.notifications) return;
-        const next = nextUnbannered(s.notifications);
+        if (s.notifications === prev.notifications && s.demoDay === prev.demoDay) return;
+        const next = nextUnbannered(s.notifications, s.demoDay);
         if (next) setCurrent(next);
       }),
     [],

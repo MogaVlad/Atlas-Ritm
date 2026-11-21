@@ -7,6 +7,8 @@ import { CARD_LAST4, useBalances, useVisibleTransactions } from "@/components/ba
 import { RitmSlot } from "@/components/bank/RitmSlot";
 import { SalaryMoment } from "@/components/bank/SalaryMoment";
 import { TransactionRow } from "@/components/bank/TransactionRow";
+import { GuideButton } from "@/components/bank/Welcome";
+import { useWelcome } from "@/components/bank/welcomeGuide";
 import { PERSONA } from "@/lib/data/persona";
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
@@ -19,9 +21,12 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col gap-5">
-      <h1 className="font-display text-[1.7rem] leading-tight font-semibold tracking-[-0.02em]">
-        {t("bank.home.greeting", { name: PERSONA.name })}
-      </h1>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="font-display text-[1.7rem] leading-tight font-semibold tracking-[-0.02em]">
+          {t("bank.home.greeting", { name: PERSONA.name })}
+        </h1>
+        <GuideButton className="shrink-0" />
+      </div>
 
       <SalaryMoment />
 
@@ -44,18 +49,34 @@ export default function HomePage() {
           <h2 id="recent-title" className="font-display text-lg font-semibold">
             {t("bank.home.recentTitle")}
           </h2>
-          <Link
-            href="/transactions"
-            className="-mr-2 flex min-h-11 items-center rounded-lg px-2 text-sm font-medium text-atlas-pine underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-atlas-pine"
-          >
-            {t("bank.home.seeAll")}
-          </Link>
+          {recent.length > 0 && (
+            <Link
+              href="/transactions"
+              className="-mr-2 flex min-h-11 items-center rounded-lg px-2 text-sm font-medium text-atlas-pine underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-atlas-pine"
+            >
+              {t("bank.home.seeAll")}
+            </Link>
+          )}
         </div>
-        <ul className="mt-1 divide-y divide-atlas-line">
-          {recent.map((tx) => (
-            <TransactionRow key={tx.id} tx={tx} />
-          ))}
-        </ul>
+        {recent.length > 0 ? (
+          <ul className="mt-1 divide-y divide-atlas-line">
+            {recent.map((tx) => (
+              <TransactionRow key={tx.id} tx={tx} />
+            ))}
+          </ul>
+        ) : (
+          // Day 0 (before the first payday): say why the list is empty and where the story starts.
+          <div className="mt-3 rounded-2xl border border-dashed border-atlas-line p-5 text-center">
+            <p className="text-sm leading-relaxed text-atlas-muted">{t("bank.home.emptyRecent")}</p>
+            <button
+              type="button"
+              onClick={() => useWelcome.getState().show()}
+              className="mt-2 min-h-11 rounded-full px-4 text-sm font-medium text-atlas-pine underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-atlas-pine"
+            >
+              {t("bank.home.emptyRecentCta")}
+            </button>
+          </div>
+        )}
       </section>
     </div>
   );
