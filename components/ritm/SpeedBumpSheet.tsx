@@ -6,6 +6,7 @@ import { interestEstimate, pensionDeductibleLimit, pensionTaxBenefit, RULES, typ
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
 import { useBank } from "@/lib/store/useBank";
+import { PensionDoneDialog } from "./PensionDoneDialog";
 import { PensionExplainer } from "./PensionExplainer";
 
 export interface SpeedBumpSheetProps {
@@ -32,6 +33,8 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAt
   const [locked, setLocked] = useState(false);
   const [pensionOpen, setPensionOpen] = useState(false);
   const [pensioned, setPensioned] = useState<{ amount: number; taxSavedUpTo: number } | null>(null);
+  /** The "Done" popup right after the pension contribution is confirmed. */
+  const [doneOpen, setDoneOpen] = useState(false);
 
   // The main goal (the first one).
   const goal = useBank((s) => s.ritm.goals[0]);
@@ -47,6 +50,7 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAt
       setLocked(false);
       setPensionOpen(false);
       setPensioned(null);
+      setDoneOpen(false);
     },
     [],
   );
@@ -170,9 +174,11 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAt
           onDone={(result) => {
             setPensionOpen(false);
             setPensioned(result);
+            setDoneOpen(true);
           }}
         />
       )}
+      {doneOpen && pensioned && <PensionDoneDialog result={pensioned} onClose={() => setDoneOpen(false)} />}
     </div>
   );
 }
