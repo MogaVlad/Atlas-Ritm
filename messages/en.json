@@ -98,7 +98,17 @@
       "tapHint": "{merchant}, {amount}",
       "simulatedNote": "In-store payments can’t be paused. You get a message right away with what you have left.",
       "tapToast": "You just spent {amount} at {merchant}. Safe to spend today: {safe}.",
-      "tapToastNoRitm": "You just spent {amount} at {merchant}."
+      "tapToastNoRitm": "You just spent {amount} at {merchant}.",
+      "tapHintMany": "{count} payments, from {min} to {max}",
+      "sheet": {
+        "title": "Pick an in-store payment",
+        "close": "Close",
+        "balance": "Current balance:",
+        "paid": "You paid {amount} at {merchant}.",
+        "balanceChange": "{before} → {after}",
+        "safe": "You can still spend {safe} today, calmly.",
+        "hint": "Pick another payment or close this window."
+      }
     },
     "profile": {
       "title": "Profile",
