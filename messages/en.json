@@ -182,6 +182,54 @@
       "title": "Ritm · components",
       "pickDay": "Pick a day of the month",
       "day": "Day {day}"
+    },
+    "onboarding": {
+      "progress": "Step {step} of {total}",
+      "back": "Back",
+      "next": "Continue",
+      "finish": "Turn on Ritm",
+      "s1": {
+        "title": "Your first salary is here",
+        "salaryLabel": "Salary received today",
+        "l1": "Ritm watches how fast your money goes since payday.",
+        "l2": "It tells you early if you're going too fast, not after the money is gone.",
+        "l3": "You choose how strict it is. You can turn it off anytime."
+      },
+      "s2": {
+        "title": "The payments you have to make anyway",
+        "intro": "We found these in your statement. Ritm leaves them out when it watches your pace.",
+        "categories": {
+          "rent": "Rent",
+          "utilities": "Utilities",
+          "phone": "Phone",
+          "transport": "Transport pass"
+        },
+        "total": "Fixed payments per month",
+        "plannedTitle": "Planned purchases",
+        "plannedHint": "Already know you'll buy something this month? Add it here and it won't trigger any heads-up.",
+        "plannedAdd": "Add a planned purchase",
+        "plannedName": "What you're buying",
+        "plannedAmount": "How much it costs (lei)",
+        "plannedSave": "Add",
+        "plannedCancel": "Cancel",
+        "plannedRemove": "Remove {name}",
+        "plannedInvalid": "Write what you're buying and how much it costs."
+      },
+      "s3": {
+        "title": "Choose how Ritm helps you",
+        "lockTitle": "Put some of your salary aside",
+        "lockAmount": "How much to put aside",
+        "lockDay": "When it unlocks",
+        "dayValue": "day {day}",
+        "lockExplain": "On payday we move {amount} to savings. It unlocks by itself on day {day}; if you need it sooner, you get it 24 hours after asking.",
+        "lockNone": "You're not putting anything aside this month. You can change this anytime.",
+        "goalTitle": "What you're saving for",
+        "goalName": "Goal name",
+        "goalAmount": "Amount you need (lei)",
+        "goalInvalid": "Write a name and an amount for your goal.",
+        "pool": "Spending money this month",
+        "poolHint": "Your salary, minus fixed payments and the amount put aside."
+      }
     }
   }
 }

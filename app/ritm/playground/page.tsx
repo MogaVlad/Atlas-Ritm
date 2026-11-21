@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { LocaleToggle } from "@/components/bank/LocaleToggle";
-import { PhoneFrame } from "@/components/bank/PhoneFrame";
 import { LevelChips, type RitmLevel } from "@/components/ritm/LevelChips";
 import { PaceBar, type PaceSeverity } from "@/components/ritm/PaceBar";
 import { SafeToSpend } from "@/components/ritm/SafeToSpend";
@@ -23,7 +22,7 @@ export default function RitmPlayground() {
   const s = STATES[i];
 
   return (
-    <PhoneFrame>
+    <>
       <header className="flex items-center justify-between px-5 pt-6">
         <h1 className="text-lg font-semibold">{t("ritm.playground.title")}</h1>
         <LocaleToggle />
@@ -52,6 +51,6 @@ export default function RitmPlayground() {
           <LevelChips value={level} onChange={setLevel} />
         </section>
       </main>
-    </PhoneFrame>
+    </>
   );
 }
