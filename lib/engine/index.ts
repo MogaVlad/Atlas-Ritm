@@ -1,7 +1,7 @@
 // Import everything from "@/lib/engine". Function names are final (C2 contract).
 export * from "./types";
 export { RULES } from "./config";
-export { computePace } from "./pace";
-export { shouldNotify, alertActions } from "./alerts";
+export { computePace, isCounted } from "./pace";
+export { shouldNotify, alertActions, INITIAL_ALERT_MEMORY } from "./alerts";
 export { shouldShowSpeedBump } from "./speedbump";
-export { requestUnlock, emergencyRelease, interestEstimate } from "./lock";
+export { createLock, requestUnlock, resolveLock, emergencyRelease, interestEstimate } from "./lock";
