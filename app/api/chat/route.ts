@@ -2,7 +2,9 @@ import { askRitm, validateChatRequest } from "@/lib/chat/askRitm";
 
 /**
  * "Ask Ritm" (task C6). POST { messages, context } → { reply, source }.
- * The key and model come from server env only (ANTHROPIC_API_KEY, ANTHROPIC_MODEL) and never reach the browser.
+ * Keys and models come from server env only and never reach the browser:
+ * GEMINI_API_KEY (+ optional GEMINI_MODEL, default a free-tier Flash-Lite) is used first,
+ * then ANTHROPIC_API_KEY (+ ANTHROPIC_MODEL).
  * Without a key, on any error or after 8 s it answers from lib/chat/fallbacks.ts.
  */
 export async function POST(request: Request) {
@@ -17,6 +19,8 @@ export async function POST(request: Request) {
   if (!checked.ok) return Response.json({ error: checked.error }, { status: 400 });
 
   const result = await askRitm(checked.request, {
+    geminiKey: process.env.GEMINI_API_KEY,
+    geminiModel: process.env.GEMINI_MODEL,
     apiKey: process.env.ANTHROPIC_API_KEY,
     model: process.env.ANTHROPIC_MODEL,
   });

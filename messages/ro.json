@@ -81,7 +81,8 @@
       "home": "Acasă",
       "payments": "Plăți",
       "ritm": "Ritm",
-      "profile": "Profil"
+      "profile": "Profil",
+      "transfers": "Transferuri"
     },
     "home": {
       "greeting": "Bună, {name}!",
@@ -281,6 +282,33 @@
       "disclaimer": "Ritm explică; nu decide în locul tău.",
       "you": "Tu",
       "ritm": "Ritm"
+    },
+    "transfers": {
+      "title": "Transferuri",
+      "intro": "Mută bani între contul curent și economii.",
+      "direction": "Din ce cont în ce cont",
+      "from": "Din",
+      "to": "În",
+      "swap": "Schimbă direcția",
+      "account": {
+        "current": "Cont curent",
+        "savings": "Cont de economii"
+      },
+      "locked": "{amount} în Lacăt",
+      "amount": "Suma",
+      "available": "Poți muta până la {amount}.",
+      "lockedNote": "Banii din Lacăt rămân acolo până se deblochează.",
+      "toSavings": "Mută în economii",
+      "toCurrent": "Mută în contul curent",
+      "doneToSavings": "Ai mutat {amount} în economii.",
+      "doneToCurrent": "Ai mutat {amount} în contul curent.",
+      "currentChange": "Cont curent: {before} → {after}",
+      "savingsChange": "Economii: {before} → {after}",
+      "notEnough": "Poți muta cel mult {amount}.",
+      "invalid": "Scrie o sumă mai mare de zero.",
+      "history": "Transferurile tale",
+      "rowToSavings": "În economii",
+      "rowToCurrent": "În contul curent"
     }
   },
   "ritm": {
@@ -408,20 +436,29 @@
       "actions": {
         "moveToLock": "Pune {amount} deoparte până în ziua {day}: ajung pentru ultimele {days} zile din lună",
         "enableSpeedBump": "Pornește Pauza până la salariu",
-        "markPlanned": "{merchant}, {amount}, era planificată"
+        "markPlanned": "Unele plăți erau planificate"
       },
       "hint": {
         "moveToLock": "Banii stau deoparte și se deblochează singuri în ziua {day}.",
         "enableSpeedBump": "Înainte de plățile online mari îți arătăm cifrele și confirmi după 5 secunde.",
-        "markPlanned": "Nu mai intră în calculul ritmului."
+        "markPlanned": "Alegi tu care. Nu mai intră în calculul ritmului."
       },
       "done": {
         "moveToLock": "Gata. Am mutat {amount} în Lacăt, până în ziua {day}.",
         "enableSpeedBump": "Gata. Pauza e pornită până la salariu.",
-        "markPlanned": "Gata. {merchant} nu mai intră în ritm."
+        "markPlanned": "Gata. {merchant} nu mai intră în ritm.",
+        "markPlannedMany": "Gata. {count} plăți ({amount}) nu mai intră în ritm."
       },
       "later": "Nu acum",
       "close": "Închide",
+      "pick": {
+        "title": "Care plăți erau planificate?",
+        "hint": "Poți alege una sau mai multe.",
+        "day": "ziua {day}",
+        "none": "Alege cel puțin o plată",
+        "confirm": "Marchează ca planificate ({count})",
+        "back": "Înapoi"
+      },
       "habit": {
         "title": "Ritmul tău obișnuit",
         "body": "Mare parte sunt obiceiurile tale: {habits}. În ziua ta obișnuită, banii ajung până la salariu.",
