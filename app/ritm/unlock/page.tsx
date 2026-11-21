@@ -5,7 +5,9 @@ import { useLayoutEffect, useState, type ReactNode } from "react";
 import { PensionExplainer } from "@/components/ritm/PensionExplainer";
 import { RitmBack } from "@/components/ritm/RitmBack";
 import { useHydrated } from "@/components/ritm/useHydrated";
-import { SAVINGS_OPTIONS } from "@/lib/data/savingsOptions";
+import { PERSONA } from "@/lib/data/persona";
+import { SAVINGS_OPTIONS, type SavingsOption } from "@/lib/data/savingsOptions";
+import { pensionDeductibleLimit, pensionTaxBenefit } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
 import { useHtmlLang, useLocale, useT } from "@/lib/i18n";
 import { useBank } from "@/lib/store/useBank";
@@ -116,33 +118,28 @@ export default function UnlockScreen() {
           {t("ritm.unlock.compareTitle")}
         </h2>
         <p className="text-sm text-atlas-muted">{t("ritm.unlock.compareIntro")}</p>
-        <ul className="flex flex-col gap-3">
-          {SAVINGS_OPTIONS.map((o) => (
-            <li key={o.id} className="flex flex-col gap-3 rounded-2xl border border-atlas-line bg-white p-4">
-              <div className="flex flex-col gap-1">
-                <h3 className="font-medium">{t(`ritm.unlock.options.${o.id}.name`)}</h3>
-                <p className="text-sm">{t(`ritm.unlock.options.${o.id}.tradeoff`)}</p>
-              </div>
-              <dl className="grid grid-cols-3 gap-2 text-sm">
-                <Fact label={t("ritm.unlock.access")} value={t(`ritm.unlock.accessValue.${o.access}`)} />
-                <Fact label={t("ritm.unlock.risk")} value={t(`ritm.unlock.riskValue.${o.risk}`)} />
-                <Fact label={t("ritm.unlock.horizon")} value={t(`ritm.unlock.horizonValue.${o.horizon}`)} />
+
+        {featured && (
+          <FeaturedPension
+            option={featured}
+            amount={total}
+            pensioned={pensioned}
+            onLearnMore={() => setPensionOpen(true)}
+          />
+        )}
+
+        <h3 className="mt-3 text-sm font-medium text-atlas-muted">{t("ritm.unlock.others")}</h3>
+        <ul className="flex flex-col divide-y divide-atlas-line rounded-2xl border border-atlas-line bg-white px-4">
+          {others.map((o) => (
+            <li key={o.id} className="flex flex-col gap-2 py-4">
+              <h4 className="font-medium">{t(`ritm.unlock.options.${o.id}.name`)}</h4>
+              <p className="text-sm leading-snug">{t(`ritm.unlock.options.${o.id}.tradeoff`)}</p>
+              <dl className="flex flex-wrap gap-1.5 text-xs">
+                <Chip label={t("ritm.unlock.access")} value={t(`ritm.unlock.accessValue.${o.access}`)} />
+                <Chip label={t("ritm.unlock.risk")} value={t(`ritm.unlock.riskValue.${o.risk}`)} />
+                <Chip label={t("ritm.unlock.horizon")} value={t(`ritm.unlock.horizonValue.${o.horizon}`)} />
               </dl>
               <p className="text-xs text-atlas-muted">{t(`ritm.unlock.options.${o.id}.note`)}</p>
-              {o.needsExplainer &&
-                (pensioned ? (
-                  <p role="status" className="rounded-xl bg-ritm-tint p-3 text-sm">
-                    {t("ritm.pension.done", { amount: lei(pensioned.amount), tax: lei(pensioned.taxSavedUpTo) })}
-                  </p>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => setPensionOpen(true)}
-                    className="min-h-11 self-start rounded-full border border-atlas-line px-4 text-sm font-medium text-ritm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm"
-                  >
-                    {t("ritm.unlock.pensionCta")}
-                  </button>
-                ))}
             </li>
           ))}
         </ul>
@@ -163,10 +160,101 @@ export default function UnlockScreen() {
   );
 }
 
-function Fact({ label, value }: { label: string; value: string }) {
+/** Pillar III is shown first and larger; the other two stay listed below (the comparison is the point). */
+const featured = SAVINGS_OPTIONS.find((o) => o.needsExplainer);
+const others = SAVINGS_OPTIONS.filter((o) => !o.needsExplainer);
+
+/**
+ * Pillar III, featured. The picture is the trade-off itself: a long line from today to retirement.
+ * No return estimate anywhere; the tax figure comes from the engine. Nothing is pre-selected:
+ * the button only opens the explainer (checkbox + explicit button).
+ */
+function FeaturedPension({
+  option,
+  amount,
+  pensioned,
+  onLearnMore,
+}: {
+  option: SavingsOption;
+  amount: number;
+  pensioned: { amount: number; taxSavedUpTo: number } | null;
+  onLearnMore: () => void;
+}) {
+  const t = useT();
+  const locale = useLocale((s) => s.locale);
+  const lei = (n: number) => formatLei(n, locale);
+  const { taxSavedUpTo } = pensionTaxBenefit(amount);
+
   return (
-    <div className="flex flex-col gap-0.5 rounded-xl bg-atlas-paper px-2 py-2">
-      <dt className="text-xs text-atlas-muted">{label}</dt>
+    <article
+      aria-labelledby="pillar3-title"
+      className="relative overflow-hidden rounded-[28px] bg-ritm p-5 text-white shadow-[0_18px_40px_-18px_rgb(91_63_143/0.7)]"
+    >
+      <h3 id="pillar3-title" className="font-display text-xl leading-tight font-semibold">
+        {t(`ritm.unlock.options.${option.id}.name`)}
+      </h3>
+      <p className="mt-1.5 leading-snug text-white/85">{t(`ritm.unlock.options.${option.id}.tradeoff`)}</p>
+
+      {/* Today → retirement: how long the money stays, said with a line instead of a number. */}
+      <div className="mt-6" aria-hidden="true">
+        <div className="relative h-3">
+          <span className="absolute top-1/2 right-1.5 left-1.5 h-px -translate-y-1/2 bg-[repeating-linear-gradient(90deg,rgb(255_255_255/0.75)_0_6px,transparent_6px_11px)]" />
+          <span className="absolute top-1/2 left-0 size-3 -translate-y-1/2 rounded-full bg-white shadow-[0_0_0_4px_rgb(255_255_255/0.2)]" />
+          <span className="absolute top-1/2 right-0 size-3 -translate-y-1/2 rounded-full border-2 border-white" />
+        </div>
+        <div className="mt-2 flex justify-between text-xs text-white/80">
+          <span>{t("ritm.unlock.featured.today", { age: PERSONA.age })}</span>
+          <span>{t("ritm.unlock.featured.retirement")}</span>
+        </div>
+      </div>
+
+      <div className="mt-6 rounded-2xl bg-white/12 p-4">
+        <p className="text-sm text-balance text-white/80">{t("ritm.unlock.featured.taxLabel", { amount: lei(amount) })}</p>
+        <p className="mt-0.5 font-display text-[1.55rem] leading-tight font-semibold tabular-nums min-[380px]:text-[1.9rem]">
+          {t("ritm.unlock.featured.taxValue", { tax: lei(taxSavedUpTo) })}
+        </p>
+        <p className="mt-1 text-xs leading-snug text-white/75">
+          {t("ritm.unlock.featured.taxNote", { limit: lei(pensionDeductibleLimit()) })}
+        </p>
+      </div>
+
+      <dl className="mt-4 grid grid-cols-3 gap-2 text-sm">
+        {(
+          [
+            ["access", `accessValue.${option.access}`],
+            ["risk", `riskValue.${option.risk}`],
+            ["horizon", `horizonValue.${option.horizon}`],
+          ] as const
+        ).map(([label, value]) => (
+          <div key={label} className="flex flex-col gap-0.5 rounded-xl bg-white/12 px-2.5 py-2">
+            <dt className="text-xs text-white/75">{t(`ritm.unlock.${label}`)}</dt>
+            <dd className="font-medium">{t(`ritm.unlock.${value}`)}</dd>
+          </div>
+        ))}
+      </dl>
+
+      {pensioned ? (
+        <p role="status" className="mt-5 rounded-2xl bg-white p-4 text-sm font-medium text-ritm">
+          {t("ritm.pension.done", { amount: lei(pensioned.amount), tax: lei(pensioned.taxSavedUpTo) })}
+        </p>
+      ) : (
+        <button
+          type="button"
+          onClick={onLearnMore}
+          className="mt-5 flex min-h-12 w-full items-center justify-center rounded-full bg-white px-5 font-medium text-ritm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        >
+          {t("ritm.unlock.pensionCta")}
+        </button>
+      )}
+      <p className="mt-3 text-xs leading-snug text-white/75">{t(`ritm.unlock.options.${option.id}.note`)}</p>
+    </article>
+  );
+}
+
+function Chip({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-baseline gap-1 rounded-full bg-atlas-paper px-2.5 py-1">
+      <dt className="text-atlas-muted">{label}</dt>
       <dd className="font-medium">{value}</dd>
     </div>
   );
