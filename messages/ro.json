@@ -270,8 +270,11 @@
       "intro": "Îți explic pauza, cifrele de pe ecran și opțiunile tale. Nu-ți spun ce să cumperi: alegerea rămâne a ta.",
       "suggestions": {
         "pillar": "Ce este Pilonul III?",
-        "pause": "De ce a apărut pauza?"
+        "pause": "De ce a apărut pauza?",
+        "today": "Cât pot cheltui azi?",
+        "goal": "Cum ajung la obiectiv?"
       },
+      "introHome": "Îți explic ritmul lunii, cifrele de pe ecran și opțiunile tale. Nu-ți spun ce să cumperi: alegerea rămâne a ta.",
       "inputLabel": "Întrebarea ta",
       "placeholder": "Scrie o întrebare…",
       "send": "Trimite",
@@ -419,7 +422,8 @@
       "lock": "{amount} puși deoparte, se deblochează în ziua {day}.",
       "headsUpCta": "Vezi de ce te-a atenționat Ritm",
       "lockOpen": "Lacătul s-a deschis: {amount} sunt liberi.",
-      "summaryCta": "Vezi cum a fost luna"
+      "summaryCta": "Vezi cum a fost luna",
+      "askCta": "Întreabă Ritm"
     },
     "reason": {
       "pctSpent": "Ziua {day}: ai folosit deja {pct}% din banii de cheltuit.",

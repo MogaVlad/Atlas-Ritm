@@ -5,7 +5,7 @@
 
 export type ChatLocale = "ro" | "en";
 
-type Topic = "pension" | "pause" | "unlock" | "ritm" | "other";
+type Topic = "pension" | "pause" | "unlock" | "today" | "goal" | "ritm" | "other";
 
 const ANSWERS: Record<Topic, Record<ChatLocale, string>> = {
   ritm: {
@@ -24,6 +24,14 @@ const ANSWERS: Record<Topic, Record<ChatLocale, string>> = {
     ro: "Lock se deblochează singur în ziua aleasă. Poți cere deblocarea mai devreme și banii vin după 24 de ore, iar o dată pe lună poți scoate imediat până la 300 RON pentru o urgență.",
     en: "The Lock opens by itself on the day you chose. You can ask to unlock early and the money arrives after 24 hours, and once a month you can take out up to 300 RON right away for an emergency.",
   },
+  today: {
+    ro: "Cifra „Poți cheltui azi” de pe cardul Ritm îți spune cât poți cheltui azi ca să ajungi liniștit până la salariu: banii rămași împărțiți la zilele care au mai rămas, inclusiv azi. Dacă azi cheltui mai puțin, mâine cifra crește.",
+    en: "The “Safe to spend today” number on the Ritm card is how much you can spend today and still reach payday calmly: the money left, split over the days left, today included. Spend less today and tomorrow's number goes up.",
+  },
+  goal: {
+    ro: "Banii din Lacăt merg spre obiectivul tău: în ziua aleasă se deblochează și poți păstra tot sau o parte în economii. Cu cât păstrezi mai mult, cu atât ajungi mai repede. Pe ecranul Lacătului vezi cât ai strâns până acum.",
+    en: "The money in the Lock goes towards your goal: it unlocks on the day you chose and you can keep all or part of it in savings. The more you keep, the sooner you get there. The Lock screen shows how much you've saved so far.",
+  },
   other: {
     ro: "Te pot ajuta doar cu Ritm și cu banii din această aplicație. Întreabă-mă, de exemplu, ce este Ritm, de ce a apărut pauza sau ce este Pilonul III.",
     en: "I can only help with Ritm and the money in this app. Try asking what Ritm is, why the pause appeared or what Pillar III is.",
@@ -34,6 +42,8 @@ const ANSWERS: Record<Topic, Record<ChatLocale, string>> = {
 const KEYWORDS: [Topic, string[]][] = [
   ["pension", ["pilon", "pillar", "pensi", "pension", "asf"]],
   ["unlock", ["deblo", "unlock", "lock", "seif", "urgent", "emergency", "scot", "withdraw"]],
+  ["today", ["azi", "astazi", "today", "pot cheltui", "can i spend", "safe to spend"]],
+  ["goal", ["obiectiv", "goal", "scop", "masina"]],
   ["pause", ["pauz", "pause", "speed bump", "speedbump", "de ce", "why", "confirm", "astept", "wait"]],
   ["ritm", ["ritm", "heads-up", "headsup", "cum functioneaza", "how does", "what is", "ce este", "ce e"]],
 ];

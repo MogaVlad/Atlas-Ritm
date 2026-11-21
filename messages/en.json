@@ -270,8 +270,11 @@
       "intro": "I can explain the pause, the numbers on your screen and your options. I won’t tell you what to buy: the choice stays yours.",
       "suggestions": {
         "pillar": "What is Pillar III?",
-        "pause": "Why the pause?"
+        "pause": "Why the pause?",
+        "today": "How much can I spend today?",
+        "goal": "How do I reach my goal?"
       },
+      "introHome": "I can explain your month’s pace, the numbers on your screen and your options. I won’t tell you what to buy: the choice stays yours.",
       "inputLabel": "Your question",
       "placeholder": "Type a question…",
       "send": "Send",
@@ -419,7 +422,8 @@
       "lock": "{amount} put aside, unlocks on day {day}.",
       "headsUpCta": "See why Ritm gave you a heads-up",
       "lockOpen": "The Lock is open: {amount} is free.",
-      "summaryCta": "See how your month went"
+      "summaryCta": "See how your month went",
+      "askCta": "Ask Ritm"
     },
     "reason": {
       "pctSpent": "Day {day}: you've already used {pct}% of your spending money.",
