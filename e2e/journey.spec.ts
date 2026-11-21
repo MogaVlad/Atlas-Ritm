@@ -263,13 +263,14 @@ test("month 2: Ritm knows the habits, day 6 brings the soft note, the summary re
   await jumpToDay(page, 30, 20);
   await page.getByRole("button", { name: exact(m.common.summaryPrompt.later) }).click();
 
-  // "Next" on day 30 opens month 2 on payday (no day 0) and Ritm asks again how to start.
+  // "Next" on day 30 opens month 2 on payday (no day 0). A popup says Ritm starts again,
+  // shows last month's settings, and keeping them turns Ritm back on.
   await clock.getByRole("button", { name: m.common.demo.nextMonth }).click();
   await expect(clock.getByText(fill(m.common.demo.day, { day: 1 }), { exact: true })).toBeVisible();
-  await expect(page).toHaveURL(/\/ritm\/onboarding/);
-  await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
-  await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
-  await page.getByRole("button", { name: m.ritm.onboarding.finish }).click();
+  const monthPrompt = page.getByRole("dialog", { name: m.common.monthPrompt.title });
+  await expect(monthPrompt.getByText(fill(m.common.monthPrompt.lockValue, { amount: "500,00 RON", day: 20 }))).toBeVisible();
+  await monthPrompt.getByRole("button", { name: m.common.monthPrompt.keep }).click();
+  await expect(monthPrompt).toHaveCount(0);
 
   // Day 6: his habits came more often, but the money lasts: the soft note, no push.
   await jumpToDay(page, 6);

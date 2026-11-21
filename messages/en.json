@@ -65,6 +65,21 @@
       "open": "See the summary",
       "later": "Later"
     },
+    "monthPrompt": {
+      "title": "Month 2 starts today",
+      "body": "Ritm starts again every month, so you choose how it works. Last month you had:",
+      "levels": "Levels",
+      "none": "None",
+      "lockValue": "{amount} until day {day}",
+      "threshold": "Pause from",
+      "goal": "Main goal",
+      "goalValue": "{name}, {amount}",
+      "essentials": "Essentials",
+      "perMonth": "{amount} a month",
+      "lockNote": "If you keep them, {amount} goes to savings today and unlocks on day {day}.",
+      "keep": "Keep last month's settings",
+      "change": "Change settings"
+    },
     "lockPrompt": {
       "title": "Your Lock is open",
       "body": "You made it to day {day} without it. {amount} is free now.",
@@ -644,6 +659,7 @@
       }
     },
     "summary": {
+      "close": "Close",
       "titlePayday": "You made it to payday.",
       "titleSoFar": "Your month, up to day {day}",
       "leftLabel": "Left of your spending money",
