@@ -6,7 +6,8 @@ const LOCALES: Locale[] = ["ro", "en"];
 
 export function LocaleToggle() {
   const t = useT();
-  const { locale, setLocale } = useLocale();
+  const locale = useLocale((s) => s.locale);
+  const setLocale = useLocale((s) => s.setLocale);
 
   return (
     <div role="group" aria-label={t("common.language")} className="flex rounded-full bg-muted p-1 text-sm font-medium">
