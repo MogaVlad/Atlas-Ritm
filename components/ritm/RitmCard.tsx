@@ -1,8 +1,9 @@
 "use client";
 
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { useLayoutEffect, useState } from "react";
+import { AskRitmSheet } from "@/components/bank/AskRitmSheet";
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
 import { useBank, type HeadsUpNotification } from "@/lib/store/useBank";
@@ -27,8 +28,15 @@ export function RitmCard() {
   );
   const latest = useBank((s) => s.notifications.at(-1));
   const [sheet, setSheet] = useState<HeadsUpNotification | null>(null);
+  const [askOpen, setAskOpen] = useState(false);
   // Next keeps hidden routes alive (<Activity>): don't come back to a sheet left open.
-  useLayoutEffect(() => () => setSheet(null), []);
+  useLayoutEffect(
+    () => () => {
+      setSheet(null);
+      setAskOpen(false);
+    },
+    [],
+  );
 
   return (
     <section aria-labelledby="ritm-card-title" className="flex flex-col gap-5 rounded-3xl bg-white p-5 ring-1 ring-atlas-line">
@@ -92,7 +100,18 @@ export function RitmCard() {
         </button>
       )}
 
+      <button
+        type="button"
+        onClick={() => setAskOpen(true)}
+        aria-haspopup="dialog"
+        className="flex min-h-12 items-center justify-center gap-2 rounded-full border border-atlas-line px-5 font-medium text-ritm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm"
+      >
+        <MessageCircle className="size-5" aria-hidden="true" />
+        {t("ritm.card.askCta")}
+      </button>
+
       {sheet && <HeadsUpSheet notification={sheet} onClose={() => setSheet(null)} />}
+      {askOpen && <AskRitmSheet onClose={() => setAskOpen(false)} />}
     </section>
   );
 }
