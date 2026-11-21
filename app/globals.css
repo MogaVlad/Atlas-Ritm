@@ -46,6 +46,14 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  /* Ritm (Horia): one accent + two pace states */
+  --color-ritm: var(--ritm);
+  --color-ritm-tint: var(--ritm-tint);
+  --color-ritm-watch: var(--ritm-watch);
+  --color-ritm-watch-tint: var(--ritm-watch-tint);
+  --color-ritm-spike: var(--ritm-spike);
+  --color-ritm-spike-tint: var(--ritm-spike-tint);
+  --color-ritm-track: var(--ritm-track);
 }
 
 :root {
@@ -81,6 +89,14 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  /* Ritm: plum = calm and on pace; amber = watch; crimson = spike. All ≥ 4.5:1 on white. */
+  --ritm: #5b3f8f;
+  --ritm-tint: #f1ecf8;
+  --ritm-watch: #a35f00;
+  --ritm-watch-tint: #fbf0df;
+  --ritm-spike: #b0264a;
+  --ritm-spike-tint: #fbe7ec;
+  --ritm-track: #e7e3ee;
 }
 
 .dark {
@@ -127,4 +143,24 @@
   html {
     @apply font-sans;
   }
+}
+/* Atlas bank (Iustin): map-paper base, pine ink, one brass pin. Original palette, not a real bank's. */
+:root {
+  --atlas-ink: #0e2f2c;
+  --atlas-pine: #1f5f57;
+  --atlas-sea: #dcebe6;
+  --atlas-paper: #f6f7f4;
+  --atlas-line: #d7ddd8;
+  --atlas-muted: #56635f;
+  --atlas-brass: #b7893a;
+}
+
+@theme inline {
+  --color-atlas-ink: var(--atlas-ink);
+  --color-atlas-pine: var(--atlas-pine);
+  --color-atlas-sea: var(--atlas-sea);
+  --color-atlas-paper: var(--atlas-paper);
+  --color-atlas-line: var(--atlas-line);
+  --color-atlas-muted: var(--atlas-muted);
+  --font-display: var(--font-atlas-display), var(--font-sans);
 }
