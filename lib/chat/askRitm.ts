@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { detectLocale, fallbackAnswer, type ChatLocale } from "./fallbacks";
+import { askGemini } from "./gemini";
 import { buildSystemPrompt, sanitizeContext, type ChatContext } from "./systemPrompt";
 
 /** Server-side "Ask Ritm" logic. app/api/chat/route.ts is a thin wrapper around this. */
@@ -30,7 +31,7 @@ export type ChatRequest = {
   locale?: ChatLocale;
 };
 
-export type ChatReply = { reply: string; source: "claude" | "fallback" };
+export type ChatReply = { reply: string; source: "gemini" | "claude" | "fallback" };
 
 export type Validation = { ok: true; request: ChatRequest } | { ok: false; error: string };
 
@@ -66,19 +67,41 @@ export function validateChatRequest(body: unknown): Validation {
 }
 
 export type AskOptions = {
+  /** Google Gemini key (GEMINI_API_KEY). When set, Gemini answers (free-tier model by default). */
+  geminiKey?: string;
+  geminiModel?: string;
+  /** Tests pass a fake fetch for Gemini. */
+  fetchImpl?: typeof fetch;
   apiKey?: string;
   model?: string;
   /** Tests pass a fake client; the real one is built from apiKey. */
   client?: Pick<Anthropic, "beta">;
 };
 
-/** Asks Claude; on a missing key, any error, a timeout or an empty answer, returns the offline answer. */
+/**
+ * Asks Gemini when GEMINI_API_KEY is set, otherwise Claude when ANTHROPIC_API_KEY is set. On a
+ * missing key, any error, a block, a timeout or an empty answer, returns the offline answer.
+ */
 export async function askRitm(request: ChatRequest, options: AskOptions = {}): Promise<ChatReply> {
   const question = request.messages[request.messages.length - 1].content;
   const fallback = (): ChatReply => ({
     reply: fallbackAnswer(question, detectLocale(question, request.locale ?? "ro")),
     source: "fallback",
   });
+
+  const geminiKey = options.geminiKey?.trim();
+  if (geminiKey) {
+    const text = await askGemini({
+      apiKey: geminiKey,
+      model: options.geminiModel,
+      system: buildSystemPrompt(request.context, request.locale),
+      messages: request.messages,
+      maxOutputTokens: CHAT_LIMITS.maxTokens,
+      timeoutMs: CHAT_LIMITS.timeoutMs,
+      fetchImpl: options.fetchImpl,
+    });
+    return text ? { reply: text, source: "gemini" } : fallback();
+  }
 
   const apiKey = options.apiKey?.trim();
   if (!options.client && !apiKey) return fallback();
@@ -92,7 +115,7 @@ export async function askRitm(request: ChatRequest, options: AskOptions = {}): P
       {
         model,
         max_tokens: CHAT_LIMITS.maxTokens,
-        system: buildSystemPrompt(request.context),
+        system: buildSystemPrompt(request.context, request.locale),
         messages: request.messages,
         // Short, simple answers: low effort keeps them fast and cheap.
         output_config: { effort: "low" },
