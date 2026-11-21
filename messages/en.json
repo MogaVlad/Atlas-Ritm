@@ -266,6 +266,24 @@
       },
       "later": "Not now",
       "close": "Close"
+    },
+    "speedBump": {
+      "tag": "Speed bump · day {day}",
+      "title": "Quick check before you buy",
+      "progress": "Day {day} of {total}: you've used {pct}% of your spending money.",
+      "goal": "This amount is {days} days of saving for {goal}.",
+      "safe": "Safe to spend today: {amount}.",
+      "choice": "It's your choice. You can still pay.",
+      "notNow": "Not now",
+      "moveToLock": "Put {amount} in the Lock",
+      "moveToLockHint": "Instead of spending it now, it stays aside until day {day}.",
+      "pension": "Put it toward my pension",
+      "pensionHint": "We explain how it works first, then you decide.",
+      "confirm": "Pay anyway",
+      "confirmIn": "Pay anyway · {seconds} s",
+      "askRitm": "Ask Ritm",
+      "lockedDone": "Done. {amount} stays in the Lock until day {day}.",
+      "backToShop": "Back to the shop"
     }
   }
 }
