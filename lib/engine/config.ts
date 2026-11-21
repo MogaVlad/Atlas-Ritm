@@ -37,6 +37,8 @@ export const RULES = {
     /** Early unlock is released this many days after the request (24h). */
     earlyUnlockDelayDays: 1,
     emergencyMaxLei: 300,
+    /** Lock preview: under this many lei a day of spending money, show the gentle "that's tight" note. */
+    tightPerDayLei: 30,
   },
   /** Turning Ritm off takes effect this many days later (24h). */
   turnOffDelayDays: 1,
