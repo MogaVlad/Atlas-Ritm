@@ -65,6 +65,10 @@
       "open": "Vezi rezumatul",
       "later": "Mai târziu"
     },
+    "flash": {
+      "saved": "Gata! {amount} au fost adăugați în contul de economii.",
+      "backToCurrent": "Gata! {amount} s-au întors în contul curent."
+    },
     "monthPrompt": {
       "title": "Luna 2 începe azi",
       "body": "Ritm pornește din nou în fiecare lună, ca să alegi tu cum lucrează. Luna trecută ai avut:",
