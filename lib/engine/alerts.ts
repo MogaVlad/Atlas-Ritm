@@ -4,16 +4,18 @@ import type { AlertAction, AlertMemory, Day, PaceState, Severity } from "./types
 const RANK: Record<Severity, number> = { ok: 0, watch: 1, spike: 2 };
 
 /** Starting memory for a new cycle. */
-export const INITIAL_ALERT_MEMORY: AlertMemory = { lastNotifiedDay: null, lastSeverity: "ok", ignoredCount: 0 };
+export const INITIAL_ALERT_MEMORY: AlertMemory = { lastNotifiedDay: null, lastSeverity: "ok", ignoredCount: 0, lastPctSpent: 0 };
 
 /**
  * Should a Heads-up be shown today?
- * Never when the level is "ok"; yes when the level rises; otherwise at most every 48h.
+ * Never when the level is "ok"; yes when the level rises, or when spending jumped a lot since
+ * the last Heads-up (a big Saturday right after a warning still gets one); otherwise at most every 48h.
  */
 export function shouldNotify(state: PaceState, memory: AlertMemory, day: Day): boolean {
   if (state.severity === "ok") return false;
   if (RANK[state.severity] > RANK[memory.lastSeverity]) return true;
   if (memory.lastNotifiedDay === null) return true;
+  if (state.pctSpent - (memory.lastPctSpent ?? 0) >= RULES.alerts.renotifyJumpPct) return true;
   return day - memory.lastNotifiedDay >= RULES.alerts.minDaysBetween;
 }
 

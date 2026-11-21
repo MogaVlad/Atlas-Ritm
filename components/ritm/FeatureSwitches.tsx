@@ -1,10 +1,30 @@
 "use client";
 
+import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 import { useId } from "react";
 import { Switch } from "@/components/bank/Switch";
-import { useT } from "@/lib/i18n";
+import { formatLei } from "@/lib/format";
+import { useLocale, useT } from "@/lib/i18n";
+import { useBank } from "@/lib/store/useBank";
+import { cn } from "@/lib/utils";
 
 export type Feature = "headsUp" | "speedBump" | "lock";
+
+/** The Lock row for the Ritm tab and Profile: on while money is locked, or chosen and waiting for payday. */
+export function useLockLink(): { on: boolean; status: string } {
+  const t = useT();
+  const locale = useLocale((s) => s.locale);
+  const lock = useBank((s) => s.lock);
+  const planned = useBank((s) => (s.ritm.enabled ? s.ritm.lock : null));
+  if (lock && lock.status !== "unlocked" && lock.amount > 0) {
+    return { on: true, status: t("ritm.tab.lockValue", { amount: formatLei(lock.amount, locale), day: lock.unlockDay }) };
+  }
+  if (!lock && planned && planned.amount > 0) {
+    return { on: true, status: t("ritm.features.lockPending", { amount: formatLei(planned.amount, locale) }) };
+  }
+  return { on: false, status: t("ritm.features.lockOff") };
+}
 
 /** i18n key of each feature under ritm.levels (name + description). */
 const KEYS: Record<Feature, string> = { headsUp: "headsup", speedBump: "speedbump", lock: "lock" };
@@ -17,9 +37,12 @@ const KEYS: Record<Feature, string> = { headsUp: "headsup", speedBump: "speedbum
 export function FeatureSwitches({
   values,
   onChange,
+  lockLink,
 }: {
   values: { headsUp: boolean; speedBump: boolean; lock?: boolean };
   onChange: (feature: Feature, on: boolean) => void;
+  /** Outside onboarding: the Lock as a row that shows its state and opens the Lock screen. */
+  lockLink?: { on: boolean; status: string };
 }) {
   const t = useT();
   const baseId = useId();
@@ -49,6 +72,28 @@ export function FeatureSwitches({
           </li>
         );
       })}
+      {lockLink && (
+        <li>
+          <Link
+            href="/ritm/lock"
+            className="flex min-h-16 items-center gap-3 rounded-b-2xl py-3 pr-3 pl-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm"
+          >
+            <span className="flex-1">
+              <span className="block font-medium">{t("ritm.levels.lock.name")}</span>
+              <span className="block text-sm text-atlas-muted">{lockLink.status}</span>
+            </span>
+            <span
+              className={cn(
+                "rounded-full px-2.5 py-0.5 text-sm font-medium",
+                lockLink.on ? "bg-ritm text-white" : "bg-atlas-line text-atlas-ink",
+              )}
+            >
+              {t(lockLink.on ? "ritm.features.on" : "ritm.features.off")}
+            </span>
+            <ChevronRight className="size-4 text-atlas-muted" aria-hidden="true" />
+          </Link>
+        </li>
+      )}
     </ul>
   );
 }

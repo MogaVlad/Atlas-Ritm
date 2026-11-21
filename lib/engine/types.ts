@@ -37,6 +37,8 @@ export interface Transaction {
   channel: Channel;
   /** Marked as planned by the user: not counted against the pace. */
   planned?: boolean;
+  /** Display only: a payment the account couldn't cover, so it was never charged. The engine never sees these. */
+  declined?: boolean;
 }
 
 /** The Ritm features with an on/off switch. The Lock is the third one: on when lock.amount > 0. */
@@ -111,6 +113,8 @@ export interface LockState {
 export interface AlertMemory {
   lastNotifiedDay: Day | null;
   lastSeverity: Severity;
+  /** Share of spending money used at the last Heads-up (0–1). Missing in older saved demos. */
+  lastPctSpent?: number;
   /** Heads-ups shown and dismissed without an action. */
   ignoredCount: number;
 }

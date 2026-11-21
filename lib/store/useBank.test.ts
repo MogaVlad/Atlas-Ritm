@@ -32,6 +32,45 @@ describe("useBank", () => {
     expect(store().balances.current).toBe(OPENING_CURRENT + 4800 - 260 - 500);
   });
 
+  it("scripted payments the account can't cover are declined: the balance never goes below zero", () => {
+    store().lockMoney(4000, 20); // leaves 690 lei on day 1
+    for (let day = 2; day <= 30; day++) {
+      store().nextDay();
+      expect(store().balances.current, `day ${day}`).toBeGreaterThanOrEqual(0);
+    }
+    const rent = store().declined.find((t) => t.category === "rent");
+    expect(rent?.day).toBe(2);
+    expect(store().transactions.some((t) => t.id === rent?.id)).toBe(false);
+  });
+
+  it("a jump over many days settles them one by one, and going back then forward settles again", () => {
+    store().lockMoney(4000, 20);
+    store().setDemoDay(30);
+    expect(store().balances.current).toBeGreaterThanOrEqual(0);
+    const declinedOnce = store().declinedIds.length;
+    store().setDemoDay(1);
+    store().setDemoDay(30);
+    expect(store().declinedIds).toHaveLength(declinedOnce);
+  });
+
+  it("the Lock never takes more than the current account holds", () => {
+    store().resetDemo(); // day 0: 150 lei
+    store().lockMoney(500, 20);
+    expect(store().lock?.amount).toBe(OPENING_CURRENT);
+    expect(store().balances.current).toBe(0);
+  });
+
+  it("money taken out of the Lock early keeps its reason", () => {
+    store().enableRitm(DEFAULT_RITM_SETTINGS);
+    store().setDemoDay(5);
+    expect(store().emergencyRelease(200, "health").ok).toBe(true);
+    store().requestUnlock("want", "concert");
+    expect(store().unlockReasons).toEqual([
+      { day: 5, reason: "health", amount: 200, note: undefined },
+      { day: 5, reason: "want", amount: 300, note: "concert" },
+    ]);
+  });
+
   it("with Heads-up switched off, Ritm sends no notifications", () => {
     store().enableRitm({ ...DEFAULT_RITM_SETTINGS, headsUp: false });
     store().setDemoDay(6);

@@ -18,8 +18,11 @@ export function RitmCard() {
   const headsUp = useBank((s) => s.ritm.headsUp);
   const speedBump = useBank((s) => s.ritm.speedBump);
   const lock = useBank((s) => s.lock);
+  // Chosen in onboarding but the salary isn't in yet: the Lock is taken on payday.
+  const plannedLock = useBank((s) => (!s.lock && s.ritm.lock.amount > 0 ? s.ritm.lock.amount : 0));
+  const lockOn = (lock && lock.status !== "unlocked" && lock.amount > 0) || plannedLock > 0;
   // The features that are on, as small tags next to the title.
-  const active = [headsUp && "headsup", speedBump && "speedbump", lock && lock.status !== "unlocked" && lock.amount > 0 && "lock"].filter(
+  const active = [headsUp && "headsup", speedBump && "speedbump", lockOn && "lock"].filter(
     (f): f is string => typeof f === "string",
   );
   const latest = useBank((s) => s.notifications.at(-1));
@@ -63,6 +66,11 @@ export function RitmCard() {
           </span>
           <ChevronRight className="size-4 shrink-0 text-atlas-muted" aria-hidden="true" />
         </Link>
+      )}
+      {plannedLock > 0 && (
+        <p className="-mx-2 border-t border-atlas-line px-2 pt-4 text-sm">
+          {t("ritm.features.lockPending", { amount: formatLei(plannedLock, locale) })}
+        </p>
       )}
 
       {pace.dayOfCycle === pace.cycleLength && (

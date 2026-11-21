@@ -75,6 +75,17 @@ export interface Balances {
   savings: number;
 }
 
+/** Why money left the Lock early. "want" always waits 24 hours; the others can use the emergency release. */
+export type UnlockReason = "health" | "bill" | "unexpected" | "want";
+
+export interface UnlockRecord {
+  day: Day;
+  reason: UnlockReason;
+  /** Lei taken out (the whole Lock for an early unlock). */
+  amount: number;
+  note?: string;
+}
+
 interface PersistedState {
   locale: Locale;
   demoDay: Day;
@@ -97,11 +108,17 @@ interface PersistedState {
   /** Activity entries (salary, live payments) the user cleared from the notification centre. */
   clearedActivityIds: string[];
   alertMemory: AlertMemory;
+  /** Every early exit from the Lock this month, with its reason (shown back in the summary). */
+  unlockReasons: UnlockRecord[];
+  /** Scripted payments declined because the current account couldn't cover them (never below 0). */
+  declinedIds: string[];
 }
 
 interface DerivedState {
-  /** Every transaction of the month (scenario + added), with planned marks applied. */
+  /** Every transaction of the month (scenario + added), with planned marks applied. Declined ones are not here. */
   transactions: Transaction[];
+  /** Scripted payments the account couldn't cover, up to today: shown as declined, never charged. */
+  declined: Transaction[];
   /** Engine output for demoDay. Recomputed after every change; read it, never set it. */
   pace: PaceState;
   balances: Balances;
@@ -132,8 +149,10 @@ interface Actions {
   setEssentials: (categories: Category[]) => void;
   /** Move money to the Lock (creates it if needed). */
   lockMoney: (amount: number, unlockDay?: Day) => void;
-  requestUnlock: () => void;
-  emergencyRelease: (amount: number) => EmergencyResult;
+  /** Early unlock of the whole Lock, released 24 h later. The reason is recorded. */
+  requestUnlock: (reason?: UnlockReason, note?: string) => void;
+  /** Up to 300 lei now, once a month (health, bill or unexpected cost). The reason is recorded. */
+  emergencyRelease: (amount: number, reason?: UnlockReason, note?: string) => EmergencyResult;
   /** At unlock: keep `amount` in savings, the rest goes back to the current account. */
   keepSaved: (amount: number) => void;
   /**
@@ -180,9 +199,43 @@ export function migrateSaved(persisted: unknown, version: number): unknown {
   return { ...saved, ritm };
 }
 
-function allTransactions(s: Pick<PersistedState, "added" | "plannedIds">): Transaction[] {
+function allTransactions(s: Pick<PersistedState, "added" | "plannedIds" | "declinedIds">): Transaction[] {
   const planned = new Set(s.plannedIds);
-  return [...SCENARIO, ...s.added].map((t) => (planned.has(t.id) ? { ...t, planned: true } : t));
+  const declined = new Set(s.declinedIds);
+  return [...SCENARIO, ...s.added]
+    .filter((t) => !declined.has(t.id))
+    .map((t) => (planned.has(t.id) ? { ...t, planned: true } : t));
+}
+
+/** Current account at the end of `day`, as `derive` computes it. */
+function currentBalance(s: PersistedState, day: Day): number {
+  const flow = allTransactions(s)
+    .filter((t) => t.day <= day)
+    .reduce((sum, t) => sum - t.amount, 0);
+  return OPENING_CURRENT + flow - (s.savings - OPENING_SAVINGS);
+}
+
+/**
+ * Moving forward from `from` to `to`: each scripted payment on the days reached is charged only if
+ * the current account covers it, otherwise it's declined, like a real card. So the scripted month
+ * can never take the account below zero. Days re-lived after going back are settled again.
+ */
+function settleDays(s: PersistedState, from: Day, to: Day): PersistedState {
+  if (to <= from) return s;
+  const reached = SCENARIO.filter((t) => t.day > from && t.day <= to);
+  const reachedIds = new Set(reached.map((t) => t.id));
+  let next: PersistedState = { ...s, declinedIds: s.declinedIds.filter((id) => !reachedIds.has(id)) };
+  for (let day = from + 1; day <= to; day++) {
+    let balance = currentBalance(next, day - 1);
+    const today = reached.filter((t) => t.day === day);
+    // Money in first (salary, refunds), then the payments in order.
+    balance -= today.filter((t) => t.amount < 0).reduce((sum, t) => sum + t.amount, 0);
+    for (const t of today.filter((t) => t.amount > 0)) {
+      if (t.amount <= balance) balance -= t.amount;
+      else next = { ...next, declinedIds: [...next.declinedIds, t.id] };
+    }
+  }
+  return next;
 }
 
 /** The settings the engine sees: the Lock amount is what's actually locked now. */
@@ -192,6 +245,8 @@ function engineSettings(s: Pick<PersistedState, "ritm" | "lock">): RitmSettings 
 
 function derive(s: PersistedState): DerivedState {
   const transactions = allTransactions(s);
+  const declinedIds = new Set(s.declinedIds);
+  const declined = SCENARIO.filter((t) => declinedIds.has(t.id) && t.day <= s.demoDay);
   const pace = computePace(transactions, engineSettings(s), s.demoDay);
   const flow = transactions.filter((t) => t.day <= s.demoDay).reduce((sum, t) => sum - t.amount, 0);
   const movedToSavings = s.savings - OPENING_SAVINGS;
@@ -199,6 +254,7 @@ function derive(s: PersistedState): DerivedState {
   const pension = pensionSummary(s.pensionContributions);
   return {
     transactions,
+    declined,
     pace,
     balances,
     pension,
@@ -219,8 +275,11 @@ function evaluateDay(s: PersistedState): PersistedState {
   // so starting Ritm on day 0 can't take the current account below zero. Created before it's
   // resolved, so a jump from day 0 straight to the unlock day opens it.
   if (next.ritm.enabled && !next.lock && next.ritm.lock.amount > 0 && next.demoDay >= 1) {
-    next.lock = createLock(next.ritm.lock.amount, next.ritm.lock.unlockDay);
-    next.savings = next.savings + next.ritm.lock.amount;
+    const amount = Math.min(next.ritm.lock.amount, Math.max(0, currentBalance(next, next.demoDay)));
+    if (amount > 0) {
+      next.lock = createLock(amount, next.ritm.lock.unlockDay);
+      next.savings = next.savings + amount;
+    }
   }
   if (next.lock) next.lock = resolveLock(next.lock, next.demoDay);
 
@@ -250,7 +309,12 @@ function evaluateDay(s: PersistedState): PersistedState {
         actions: alertActions(pace, next.alertMemory),
       },
     ];
-    next.alertMemory = { ...next.alertMemory, lastNotifiedDay: next.demoDay, lastSeverity: pace.severity };
+    next.alertMemory = {
+      ...next.alertMemory,
+      lastNotifiedDay: next.demoDay,
+      lastSeverity: pace.severity,
+      lastPctSpent: pace.pctSpent,
+    };
   }
   return next;
 }
@@ -270,6 +334,8 @@ const INITIAL: PersistedState = {
   notifications: [],
   clearedActivityIds: [],
   alertMemory: INITIAL_ALERT_MEMORY,
+  unlockReasons: [],
+  declinedIds: [],
 };
 
 /** localStorage that never throws (private windows, blocked storage, server render). */
@@ -312,6 +378,8 @@ const pick = (s: BankState): PersistedState => ({
   notifications: s.notifications,
   clearedActivityIds: s.clearedActivityIds,
   alertMemory: s.alertMemory,
+  unlockReasons: s.unlockReasons,
+  declinedIds: s.declinedIds,
 });
 
 /* ─── store ───────────────────────────────────────────────────────────────── */
@@ -331,9 +399,10 @@ export const useBank = create<BankState>()(
 
         setLocale: (locale) => update((s) => ({ ...s, locale })),
 
-        setDemoDay: (day) => update((s) => evaluateDay({ ...s, demoDay: clampDay(day) })),
+        setDemoDay: (day) => update((s) => evaluateDay(settleDays({ ...s, demoDay: clampDay(day) }, s.demoDay, clampDay(day)))),
 
-        nextDay: () => update((s) => evaluateDay({ ...s, demoDay: clampDay(s.demoDay + 1) })),
+        nextDay: () =>
+          update((s) => evaluateDay(settleDays({ ...s, demoDay: clampDay(s.demoDay + 1) }, s.demoDay, clampDay(s.demoDay + 1)))),
 
         addTransaction: (input) => {
           const s = get();
@@ -390,8 +459,10 @@ export const useBank = create<BankState>()(
             }),
           ),
 
-        lockMoney: (amount, unlockDay) =>
+        lockMoney: (wanted, unlockDay) =>
           update((s) => {
+            // Never more than the current account holds.
+            const amount = Math.min(wanted, Math.max(0, currentBalance(s, s.demoDay)));
             if (amount <= 0) return s;
             const lock = s.lock
               ? { ...s.lock, amount: s.lock.amount + amount }
@@ -399,13 +470,26 @@ export const useBank = create<BankState>()(
             return { ...s, lock, savings: s.savings + amount };
           }),
 
-        requestUnlock: () => update((s) => (s.lock ? { ...s, lock: requestEarlyUnlock(s.lock, s.demoDay) } : s)),
+        requestUnlock: (reason, note) =>
+          update((s) => {
+            if (!s.lock) return s;
+            const record: UnlockRecord[] = reason ? [{ day: s.demoDay, reason, amount: s.lock.amount, note }] : [];
+            return { ...s, lock: requestEarlyUnlock(s.lock, s.demoDay), unlockReasons: [...s.unlockReasons, ...record] };
+          }),
 
-        emergencyRelease: (amount) => {
+        emergencyRelease: (amount, reason, note) => {
           const s = get();
           if (!s.lock) return { ok: false, reason: "notLocked" };
           const result = releaseFromLock(s.lock, amount);
-          if (result.ok) update((p) => ({ ...p, lock: result.lock, savings: p.savings - result.released }));
+          if (result.ok) {
+            const record: UnlockRecord[] = reason ? [{ day: s.demoDay, reason, amount: result.released, note }] : [];
+            update((p) => ({
+              ...p,
+              lock: result.lock,
+              savings: p.savings - result.released,
+              unlockReasons: [...p.unlockReasons, ...record],
+            }));
+          }
           return result;
         },
 

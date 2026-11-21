@@ -24,6 +24,8 @@ export const RULES = {
   alerts: {
     /** Re-notify at the same level at most this often (days; 48h = 2 demo days). */
     minDaysBetween: 2,
+    /** ...unless this much more of the spending money was used since the last Heads-up. */
+    renotifyJumpPct: 0.15,
     /** After this many ignored alerts, suggest the Speed bump. */
     ignoredBeforeSuggest: 2,
   },

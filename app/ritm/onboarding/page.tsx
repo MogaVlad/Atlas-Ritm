@@ -297,11 +297,10 @@ export default function RitmOnboarding() {
       </main>
 
       <footer className="sticky bottom-0 flex gap-3 border-t border-atlas-line bg-atlas-paper/95 px-5 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur">
-        {step > 1 && (
-          <button type="button" onClick={() => go(step - 1)} className={SECONDARY}>
-            {t("ritm.onboarding.back")}
-          </button>
-        )}
+        {/* On step 1, Back leaves onboarding the way you came in. */}
+        <button type="button" onClick={() => (step > 1 ? go(step - 1) : leaveRitm(router))} className={SECONDARY}>
+          {t("ritm.onboarding.back")}
+        </button>
         <button type="button" onClick={step < STEPS ? () => go(step + 1) : finish} className={cn(PRIMARY, "flex-1")}>
           {t(step < STEPS ? "ritm.onboarding.next" : "ritm.onboarding.finish")}
         </button>
