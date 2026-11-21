@@ -65,7 +65,7 @@ test("payday → onboarding → day 6 Heads-up → Speed bump on the jacket", as
   await sheet.getByRole("button", { name: m.ritm.headsUp.close }).first().click();
 
   // The ModaHub jacket (300 lei, online) now pauses on the Speed bump.
-  await page.getByRole("link", { name: exact(m.bank.nav.payments) }).click();
+  await page.goto("/payments"); // Payments left the bottom bar (simulated from the demo panel)
   await payForJacket(page);
   const speedBump = page.getByRole("dialog", { name: m.ritm.speedBump.title });
   await expect(speedBump).toBeVisible();
@@ -86,7 +86,7 @@ test("payday → onboarding → day 6 Heads-up → Speed bump on the jacket", as
 test("with Ritm off, the jacket is paid with no pause", async ({ page }) => {
   await page.goto("/?demo=1");
   await jumpToDay(page, 6, 0);
-  await page.getByRole("link", { name: exact(m.bank.nav.payments) }).click();
+  await page.goto("/payments"); // Payments left the bottom bar (simulated from the demo panel)
   await payForJacket(page);
   await expect(page.getByText(m.bank.confirm.paidTitle)).toBeVisible();
   await expect(page.getByRole("dialog", { name: m.ritm.speedBump.title })).toHaveCount(0);
@@ -162,7 +162,7 @@ test("after the money goes to Pillar III, Back to Atlas leads home and back does
   await page.getByRole("button", { name: m.ritm.onboarding.finish }).click();
 
   // The jacket pauses; the 300 lei go to Atlas Pensii instead.
-  await page.getByRole("link", { name: exact(m.bank.nav.payments) }).click();
+  await page.goto("/payments"); // Payments left the bottom bar (simulated from the demo panel)
   await payForJacket(page);
   const speedBump = page.getByRole("dialog", { name: m.ritm.speedBump.title });
   await speedBump.getByRole("button", { name: starts(m.ritm.speedBump.pension) }).click();

@@ -190,6 +190,29 @@ describe("useBank", () => {
     expect(store().payInStore(coffee).safeToSpendToday).toBe(store().pace.safeToSpendToday);
   });
 
+  it("transfers between accounts move money both ways, never more than is free", () => {
+    store().setDemoDay(6);
+    const start = store().balances;
+    const toSavings = store().transferBetweenAccounts({ from: "current", amount: 200 });
+    expect(toSavings.ok).toBe(true);
+    expect(store().balances.current).toBe(start.current - 200);
+    expect(store().balances.savings).toBe(start.savings + 200);
+
+    const back = store().transferBetweenAccounts({ from: "savings", amount: 50 });
+    expect(back.ok && back.after.current).toBe(start.current - 150);
+    expect(store().transfers.map((t) => t.from)).toEqual(["current", "savings"]);
+
+    expect(store().transferBetweenAccounts({ from: "current", amount: 0 })).toMatchObject({ ok: false, reason: "invalidAmount" });
+    expect(store().transferBetweenAccounts({ from: "current", amount: 1e9 })).toMatchObject({ ok: false, reason: "notEnoughMoney" });
+  });
+
+  it("money in the Lock can't be transferred out of savings", () => {
+    store().enableRitm(DEFAULT_RITM_SETTINGS); // Lock 500 until day 20
+    store().setDemoDay(6);
+    const r = store().transferBetweenAccounts({ from: "savings", amount: 100 });
+    expect(r).toMatchObject({ ok: false, reason: "notEnoughMoney", available: 0 });
+  });
+
   it("adding the jacket lowers safe to spend", () => {
     store().enableRitm(DEFAULT_RITM_SETTINGS);
     store().setDemoDay(7);
