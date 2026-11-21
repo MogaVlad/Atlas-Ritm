@@ -8,7 +8,7 @@ import { AskRitmSheet } from "@/components/bank/AskRitmSheet";
 import { AtlasWordmark } from "@/components/bank/AtlasMark";
 import { CARD_LAST4 } from "@/components/bank/bankData";
 import { FullScreen } from "@/components/bank/FullScreen";
-import { MODAHUB_JACKET } from "@/components/bank/purchases";
+import { MODAHUB_JACKET, usePendingPurchase } from "@/components/bank/purchases";
 import { SpeedBumpSlot } from "@/components/bank/SpeedBumpSlot";
 import { shouldShowSpeedBump, type Transaction } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
@@ -25,8 +25,9 @@ function Row({ label, value }: { label: string; value: string }) {
 }
 
 /**
- * Atlas's online-payment approval step (opened from the shop). Before Confirm, the engine
- * decides whether the Speed bump pauses this payment.
+ * Atlas's online-payment approval step (opened from the shop or the demo tools). Before Confirm,
+ * the engine decides whether the Speed bump pauses this payment. A payment bigger than the
+ * current balance is refused.
  */
 export default function ConfirmPaymentPage() {
   const t = useT();
@@ -35,7 +36,9 @@ export default function ConfirmPaymentPage() {
   const day = useBank((s) => s.demoDay);
   const ritm = useBank((s) => s.ritm);
   const pace = useBank((s) => s.pace);
+  const balance = useBank((s) => s.balances.current);
   const addTransaction = useBank((s) => s.addTransaction);
+  const purchase = usePendingPurchase((s) => s.purchase);
   const [status, setStatus] = useState<"review" | "paused" | "paid">("review");
   const [askOpen, setAskOpen] = useState(false);
 
@@ -49,15 +52,20 @@ export default function ConfirmPaymentPage() {
     [],
   );
 
-  const candidate: Transaction = { id: "pending", day, ...MODAHUB_JACKET };
+  const candidate: Transaction = { id: "pending", day, ...purchase };
   const needsSpeedBump = shouldShowSpeedBump(candidate, ritm, pace);
+  const affordable = purchase.amount <= balance;
+  // The jacket came from the ModaHub shop; a purchase from the demo tools goes back to Payments.
+  const backHref = purchase === MODAHUB_JACKET ? "/payments/checkout" : "/payments";
 
   function pay() {
-    addTransaction(MODAHUB_JACKET);
+    if (!affordable) return;
+    addTransaction(purchase);
     setStatus("paid");
   }
 
   function onConfirm() {
+    if (!affordable) return;
     if (needsSpeedBump) setStatus("paused");
     else pay();
   }
@@ -70,10 +78,12 @@ export default function ConfirmPaymentPage() {
           {t("bank.confirm.paidTitle")}
         </h1>
         <p className="mt-2 text-atlas-muted">
-          {t("bank.confirm.paidBody", { amount: formatLei(MODAHUB_JACKET.amount, locale), merchant: MODAHUB_JACKET.merchant })}
+          {t("bank.confirm.paidBody", { amount: formatLei(purchase.amount, locale), merchant: purchase.merchant })}
         </p>
+        {/* replace: a back gesture from Home must not reopen this approval and pay twice. */}
         <Link
           href="/"
+          replace
           className="mt-8 flex min-h-12 w-full items-center justify-center rounded-full bg-atlas-pine font-medium text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-atlas-pine"
         >
           {t("bank.confirm.backHome")}
@@ -98,11 +108,16 @@ export default function ConfirmPaymentPage() {
           <p className="mt-1 text-atlas-muted">{t("bank.confirm.intro")}</p>
   
           <p className="mt-6 font-display text-[2.6rem] leading-none font-semibold tracking-[-0.03em] tabular-nums">
-            {formatLei(MODAHUB_JACKET.amount, locale)}
+            {formatLei(purchase.amount, locale)}
           </p>
-  
+          {!affordable && (
+            <p role="alert" className="mt-3 text-sm text-ritm-spike">
+              {t("bank.confirm.insufficient", { balance: formatLei(balance, locale) })}
+            </p>
+          )}
+
           <dl className="mt-6 divide-y divide-atlas-line rounded-3xl border border-atlas-line bg-white px-5">
-            <Row label={t("bank.confirm.merchant")} value={MODAHUB_JACKET.merchant} />
+            <Row label={t("bank.confirm.merchant")} value={purchase.merchant} />
             <Row label={t("bank.detail.card")} value={`••• ${CARD_LAST4}`} />
             <Row label={t("bank.detail.account")} value={t("bank.home.balanceLabel")} />
           </dl>
@@ -111,13 +126,14 @@ export default function ConfirmPaymentPage() {
             <button
               type="button"
               onClick={onConfirm}
-              className="min-h-12 rounded-full bg-atlas-pine font-medium text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-atlas-pine"
+              disabled={!affordable}
+              className="min-h-12 rounded-full bg-atlas-pine font-medium disabled:opacity-40 text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-atlas-pine"
             >
               {t("bank.confirm.confirm")}
             </button>
             <button
               type="button"
-              onClick={() => router.push("/payments/checkout")}
+              onClick={() => router.replace(backHref)}
               className="min-h-12 rounded-full border border-atlas-line font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-atlas-pine"
             >
               {t("bank.confirm.cancel")}
@@ -130,14 +146,15 @@ export default function ConfirmPaymentPage() {
           sheet inside it would scroll up with the content, leaving its bottom buttons off screen. */}
       {status === "paused" && (
         <SpeedBumpSlot
-          purchase={MODAHUB_JACKET}
+          purchase={purchase}
           pace={pace}
           onConfirm={pay}
-          onNotNow={() => router.push("/payments/checkout")}
+          onNotNow={() => router.replace(backHref)}
+          onBackToAtlas={() => router.replace("/")}
           onAskRitm={() => setAskOpen(true)}
         />
       )}
-      {status === "paused" && askOpen && <AskRitmSheet purchase={MODAHUB_JACKET} onClose={() => setAskOpen(false)} />}
+      {status === "paused" && askOpen && <AskRitmSheet purchase={purchase}onClose={() => setAskOpen(false)} />}
     </>
   );
 }

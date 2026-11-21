@@ -102,7 +102,15 @@ function InStoreSheet({ onClose }: { onClose: () => void }) {
         </div>
 
         <div role="status" aria-live="polite" className="mt-3 rounded-2xl bg-atlas-sea px-4 py-3">
-          {last ? (
+          {last?.declined ? (
+            <p role="alert" className="text-sm text-ritm-spike">
+              {t("bank.payments.insufficient", {
+                amount: lei(last.tx.amount),
+                merchant: last.tx.merchant,
+                balance: lei(last.balanceBefore),
+              })}
+            </p>
+          ) : last ? (
             <>
               <p className="text-sm">{t("bank.payments.sheet.paid", { amount: lei(last.tx.amount), merchant: last.tx.merchant })}</p>
               <p className="mt-1 font-display text-xl font-semibold tabular-nums">

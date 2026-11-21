@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { LocaleToggle } from "@/components/bank/LocaleToggle";
-import { LevelChips, type RitmLevel } from "@/components/ritm/LevelChips";
+import { FeatureSwitches } from "@/components/ritm/FeatureSwitches";
 import { PaceBar, type PaceSeverity } from "@/components/ritm/PaceBar";
 import { SafeToSpend } from "@/components/ritm/SafeToSpend";
 import { useHtmlLang, useT } from "@/lib/i18n";
@@ -17,7 +17,7 @@ const STATES: { day: number; spent: number; severity: PaceSeverity; safe: number
 export default function RitmPlayground() {
   useHtmlLang();
   const t = useT();
-  const [level, setLevel] = useState<RitmLevel>("headsup");
+  const [features, setFeatures] = useState({ headsUp: true, speedBump: false, lock: false });
   const [i, setI] = useState(1);
   const s = STATES[i];
 
@@ -48,7 +48,7 @@ export default function RitmPlayground() {
 
         <section className="flex flex-col gap-3">
           <h2 className="text-sm text-atlas-muted">{t("ritm.levels.label")}</h2>
-          <LevelChips value={level} onChange={setLevel} />
+          <FeatureSwitches values={features} onChange={(feature, on) => setFeatures((f) => ({ ...f, [feature]: on }))} />
         </section>
       </main>
     </>
