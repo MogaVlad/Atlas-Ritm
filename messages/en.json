@@ -229,6 +229,9 @@
     }
   },
   "ritm": {
+    "common": {
+      "back": "Back to Atlas"
+    },
     "pace": {
       "aria": "You've used {spent}% of your spending money and {month}% of the month has passed. {status}",
       "spent": "used",
