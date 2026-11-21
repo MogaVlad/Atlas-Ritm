@@ -2,7 +2,7 @@ import { RULES } from "@/lib/engine/config";
 import type { Category, RitmSettings } from "@/lib/engine/types";
 
 /**
- * Andrei, the demo persona. Every amount is in lei.
+ * Luca, the demo persona. Every amount is in lei.
  * illustrative, replace with sourced figure — the Pitcher swaps these for sourced numbers.
  */
 
@@ -17,7 +17,7 @@ export const ESSENTIALS_TOTAL = RENT + UTILITIES + PHONE + TRANSPORT_PASS; // 21
 export const LOCK_AMOUNT = RULES.lock.defaultAmount; // 500
 export const LOCK_UNLOCK_DAY = RULES.lock.defaultUnlockDay; // 20
 
-/** Money Andrei can spend this month: salary − essentials − Lock = 2120 lei. */
+/** Money Luca can spend this month: salary − essentials − Lock = 2120 lei. */
 export const SPENDING_POOL = NET_SALARY - ESSENTIALS_TOTAL - LOCK_AMOUNT;
 
 export const GOAL = { name: "Islanda 2027", amount: 9000 }; // illustrative, replace with sourced figure
@@ -33,7 +33,7 @@ export const ESSENTIAL_AMOUNTS: Partial<Record<Category, number>> = {
 };
 
 export const PERSONA = {
-  name: "Andrei",
+  name: "Luca",
   age: 23,
   job: "Junior QA tester",
   city: "Cluj-Napoca",
