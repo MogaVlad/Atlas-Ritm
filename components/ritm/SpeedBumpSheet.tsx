@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { animate, motion, useMotionValue, useReducedMotion, useTransform, type MotionValue } from "motion/react";
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { RULES, type PaceState } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
@@ -11,7 +11,7 @@ import { PensionExplainer } from "./PensionExplainer";
 export interface SpeedBumpSheetProps {
   purchase: { merchant: string; amount: number };
   pace: PaceState;
-  /** Pay anyway (only reachable after the confirm delay). */
+  /** Pay anyway (only after holding the button for RULES.speedBump.holdSeconds). */
   onConfirm: () => void;
   /** Don't buy now: back to the shop. */
   onNotNow: () => void;
@@ -27,9 +27,8 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAt
   const locale = useLocale((s) => s.locale);
   const reduce = useReducedMotion();
   const titleId = useId();
+  const hintId = useId();
   const heading = useRef<HTMLHeadingElement>(null);
-  const delay = RULES.speedBump.confirmDelaySeconds;
-  const [left, setLeft] = useState<number>(delay);
   const [locked, setLocked] = useState(false);
   const [pensionOpen, setPensionOpen] = useState(false);
   const [pensioned, setPensioned] = useState<{ amount: number; taxSavedUpTo: number } | null>(null);
@@ -40,20 +39,15 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAt
   const unlockDay = useBank((s) => s.lock?.unlockDay ?? s.ritm.lock.unlockDay);
   const lockMoney = useBank((s) => s.lockMoney);
 
-  useEffect(() => {
-    heading.current?.focus();
-    const id = setInterval(() => setLeft((s) => Math.max(0, s - 1)), 1000);
-    return () => clearInterval(id);
-  }, []);
+  useEffect(() => heading.current?.focus(), []);
   // Next keeps hidden routes alive (<Activity>): start fresh every time the sheet is shown again.
   useLayoutEffect(
     () => () => {
-      setLeft(delay);
       setLocked(false);
       setPensionOpen(false);
       setPensioned(null);
     },
-    [delay],
+    [],
   );
 
   const amount = formatLei(purchase.amount, locale);
@@ -125,15 +119,10 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAt
             </button>
             <Option label={t("ritm.speedBump.moveToLock", { amount })} hint={t("ritm.speedBump.moveToLockHint", { day: unlockDay })} onClick={moveToLock} />
             <Option label={t("ritm.speedBump.pension")} hint={t("ritm.speedBump.pensionHint")} onClick={() => setPensionOpen(true)} />
-            <button
-              type="button"
-              onClick={onConfirm}
-              disabled={left > 0}
-              className="flex min-h-12 items-center justify-center gap-2.5 rounded-full border border-atlas-line font-medium tabular-nums focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm disabled:text-atlas-muted"
-            >
-              {!reduce && left > 0 && <CountdownRing seconds={delay} />}
-              {left > 0 ? t("ritm.speedBump.confirmIn", { seconds: left }) : t("ritm.speedBump.confirm")}
-            </button>
+            <HoldToPay label={t("ritm.speedBump.confirm")} hintId={hintId} reduce={!!reduce} onDone={onConfirm} />
+            <p id={hintId} className="-mt-1 text-center text-sm text-atlas-muted">
+              {t("ritm.speedBump.holdHint", { seconds: RULES.speedBump.holdSeconds })}
+            </p>
             {onAskRitm && (
               <button
                 type="button"
@@ -179,23 +168,82 @@ function Option({ label, hint, onClick }: { label: string; hint: string; onClick
   );
 }
 
-/** Fills once over the confirm delay; the seconds in the label say the same thing in words. */
-function CountdownRing({ seconds }: { seconds: number }) {
+const WORD = "Ritm";
+
+/**
+ * Pay anyway = hold for RULES.speedBump.holdSeconds (pointer, or Space/Enter held down). A purple fill crosses
+ * the box while "Ritm" is written in it letter by letter (purple on white, white on the fill); letting go early
+ * rewinds it. Reduced motion: the letters fade in without moving.
+ */
+function HoldToPay({ label, hintId, reduce, onDone }: { label: string; hintId: string; reduce: boolean; onDone: () => void }) {
+  const progress = useMotionValue(0);
+  const clipPath = useTransform(progress, (p) => `inset(0 ${100 - p * 100}% 0 0)`);
+  const [holding, setHolding] = useState(false);
+  const run = useRef<ReturnType<typeof animate> | null>(null);
+
+  const start = () => {
+    if (run.current) return;
+    setHolding(true);
+    run.current = animate(progress, 1, { duration: RULES.speedBump.holdSeconds * (1 - progress.get()), ease: "linear" });
+    run.current.then(() => {
+      if (progress.get() >= 1) setTimeout(onDone, 250); // a beat to see the whole word
+    });
+  };
+  const stop = () => {
+    if (!run.current || progress.get() >= 1) return;
+    run.current.stop();
+    run.current = null;
+    setHolding(false);
+    animate(progress, 0, { duration: reduce ? 0 : 0.3, ease: "easeOut" });
+  };
+  useEffect(() => () => run.current?.stop(), []);
+
   return (
-    <svg viewBox="0 0 24 24" className="size-5 -rotate-90" aria-hidden>
-      <circle cx="12" cy="12" r="9" fill="none" strokeWidth="3" className="stroke-ritm-track" />
-      <motion.circle
-        cx="12"
-        cy="12"
-        r="9"
-        fill="none"
-        strokeWidth="3"
-        strokeLinecap="round"
-        className="stroke-ritm"
-        initial={{ pathLength: 0 }}
-        animate={{ pathLength: 1 }}
-        transition={{ duration: seconds, ease: "linear" }}
-      />
-    </svg>
+    <button
+      type="button"
+      aria-describedby={hintId}
+      onPointerDown={(e) => {
+        e.currentTarget.setPointerCapture(e.pointerId);
+        start();
+      }}
+      onPointerUp={stop}
+      onPointerCancel={stop}
+      onKeyDown={(e) => {
+        if ((e.key === " " || e.key === "Enter") && !e.repeat) {
+          e.preventDefault();
+          start();
+        }
+      }}
+      onKeyUp={(e) => (e.key === " " || e.key === "Enter") && stop()}
+      onBlur={stop}
+      onContextMenu={(e) => e.preventDefault()}
+      className="relative flex min-h-12 touch-none items-center active:opacity-100 justify-center overflow-hidden rounded-full border border-atlas-line font-medium select-none [-webkit-touch-callout:none] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm"
+    >
+      <span className={holding ? "opacity-0" : undefined}>{label}</span>
+      {holding && <Word progress={progress} reduce={reduce} className="text-ritm" />}
+      <motion.span aria-hidden className="absolute inset-0 bg-ritm" style={{ clipPath }}>
+        {holding && <Word progress={progress} reduce={reduce} className="text-white" />}
+      </motion.span>
+    </button>
   );
+}
+
+/** "Ritm", each letter appearing during its quarter of the hold. */
+function Word({ progress, reduce, className }: { progress: MotionValue<number>; reduce: boolean; className: string }) {
+  return (
+    <span aria-hidden className={`absolute inset-0 flex items-center justify-center font-display text-xl font-semibold tracking-wide ${className}`}>
+      {[...WORD].map((letter, i) => (
+        <Letter key={i} letter={letter} index={i} progress={progress} reduce={reduce} />
+      ))}
+    </span>
+  );
+}
+
+function Letter({ letter, index, progress, reduce }: { letter: string; index: number; progress: MotionValue<number>; reduce: boolean }) {
+  const from = index / WORD.length;
+  const to = (index + 0.8) / WORD.length;
+  const opacity = useTransform(progress, [from, to], [0, 1]);
+  const y = useTransform(progress, [from, to], reduce ? [0, 0] : [12, 0]);
+  const scale = useTransform(progress, [from, to], reduce ? [1, 1] : [0.5, 1]);
+  return <motion.span style={{ opacity, y, scale, display: "inline-block" }}>{letter}</motion.span>;
 }
