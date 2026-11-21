@@ -54,6 +54,15 @@ export function RitmCard() {
         </Link>
       )}
 
+      {pace.dayOfCycle === pace.cycleLength && (
+        <Link
+          href="/ritm/summary"
+          className="flex min-h-12 items-center justify-center rounded-full border border-atlas-line px-5 font-medium text-ritm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm"
+        >
+          {t("ritm.card.summaryCta")}
+        </Link>
+      )}
+
       {latest && (
         <button
           type="button"

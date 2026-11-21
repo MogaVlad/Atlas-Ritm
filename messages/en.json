@@ -326,7 +326,8 @@
       "title": "Ritm",
       "lock": "{amount} put aside, unlocks on day {day}.",
       "headsUpCta": "See why Ritm gave you a heads-up",
-      "lockOpen": "The Lock is open: {amount} is free."
+      "lockOpen": "The Lock is open: {amount} is free.",
+      "summaryCta": "See how your month went"
     },
     "reason": {
       "pctSpent": "Day {day}: you've already used {pct}% of your spending money.",
@@ -386,7 +387,8 @@
       "lockNone": "Nothing put aside",
       "essentials": "Fixed payments per month",
       "settingsLink": "More Ritm settings in Profile",
-      "lockOpen": "Open: {amount} free"
+      "lockOpen": "Open: {amount} free",
+      "summaryLink": "Month summary"
     },
     "pension": {
       "title": "How Pillar III works",
@@ -490,6 +492,26 @@
           "note": "Atlas Pensii is Atlas's own fund. You can compare funds on the ASF website."
         }
       }
+    },
+    "summary": {
+      "titlePayday": "You made it to payday.",
+      "titleSoFar": "Your month, up to day {day}",
+      "leftLabel": "Left of your spending money",
+      "leftLine": "Out of the {pool} you had to spend this month.",
+      "overLabel": "You spent over plan",
+      "overLine": "It happens. Next month, Ritm will tell you sooner.",
+      "kept": "Put aside, in savings",
+      "pension": "In Atlas Pensii",
+      "spent": "Spent from your spending money",
+      "paceTitle": "How the month went",
+      "paceAria": "Chart: money used, compared with the days of the month passed. You were on pace {ok} of {days} days.",
+      "daysOnPace": "You were on pace {ok} of {days} days.",
+      "legendSpent": "Money used",
+      "legendMonth": "Days passed",
+      "raiseTitle": "Next raise: put half of it aside automatically?",
+      "raiseExample": "For example, with a {raise} raise: {saved} goes to savings and {kept} stays with you.",
+      "raiseOn": "On. You can turn it off anytime.",
+      "raiseOff": "Off. Nothing moves without your OK."
     }
   }
 }
