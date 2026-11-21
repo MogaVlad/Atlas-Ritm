@@ -5,3 +5,4 @@ export { computePace, isCounted } from "./pace";
 export { shouldNotify, alertActions, INITIAL_ALERT_MEMORY } from "./alerts";
 export { shouldShowSpeedBump } from "./speedbump";
 export { createLock, requestUnlock, resolveLock, emergencyRelease, interestEstimate } from "./lock";
+export { ritmOffDay, isRitmOffDue, essentialsTotal } from "./settings";
