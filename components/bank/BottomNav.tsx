@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useT } from "@/lib/i18n";
 
 const TABS: { href: string; key: string; icon: LucideIcon; match: (p: string) => boolean }[] = [
-  { href: "/", key: "home", icon: House, match: (p) => p === "/" || p.startsWith("/transactions") },
+  { href: "/", key: "home", icon: House, match: (p) => p === "/" || p.startsWith("/transactions") || p.startsWith("/accounts") },
   { href: "/payments", key: "payments", icon: ArrowLeftRight, match: (p) => p.startsWith("/payments") },
   { href: "/ritm", key: "ritm", icon: Activity, match: (p) => p.startsWith("/ritm") },
   { href: "/profile", key: "profile", icon: UserRound, match: (p) => p.startsWith("/profile") },

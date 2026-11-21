@@ -32,7 +32,8 @@
       "today": "Azi",
       "yesterday": "Ieri",
       "essential": "Esențial",
-      "empty": "Încă nu ai tranzacții luna asta."
+      "empty": "Încă nu ai tranzacții luna asta.",
+      "planned": "Planificat"
     },
     "categories": {
       "salary": "Salariu",
@@ -41,10 +42,16 @@
       "phone": "Telefon",
       "transport": "Transport",
       "groceries": "Cumpărături",
-      "eatingOut": "Mâncare în oraș",
+      "food_delivery": "Mâncare livrată",
+      "eating_out": "Cafenele și restaurante",
       "shopping": "Haine și shopping",
       "entertainment": "Timp liber",
-      "savings": "Economii"
+      "electronics": "Electronice",
+      "health": "Sănătate",
+      "own_transfer": "Transfer între conturile tale",
+      "savings": "Economii",
+      "pension": "Pensie Pilonul III",
+      "other": "Altele"
     },
     "payments": {
       "title": "Plăți",
@@ -53,6 +60,37 @@
     "profile": {
       "title": "Profil",
       "comingSoon": "Aici vei găsi setările tale, inclusiv Ritm. Vine în curând."
+    },
+    "channels": {
+      "card_in_store": "Card, în magazin",
+      "card_online": "Card, online",
+      "transfer": "Transfer bancar",
+      "salary": "Virament salariu"
+    },
+    "accounts": {
+      "available": "Sold disponibil",
+      "iban": "IBAN",
+      "copy": "Copiază",
+      "copied": "Copiat",
+      "history": "Istoric",
+      "savingsBalance": "Sold",
+      "savingsEmpty": "Contul de economii e gol deocamdată. Dacă pornești Lock din Ritm, banii puși deoparte ajung aici."
+    },
+    "detail": {
+      "category": "Categorie",
+      "method": "Plătit cu",
+      "card": "Card",
+      "account": "Din contul",
+      "notFound": "Nu am găsit tranzacția. Poate a fost ștearsă la resetarea demo-ului.",
+      "ritm": {
+        "countedTitle": "Intră în ritmul lunii",
+        "notCountedTitle": "Nu intră în ritmul lunii",
+        "counted": "Se scade din banii de cheltuit până la salariu.",
+        "moneyIn": "Sunt bani intrați în cont, nu o cheltuială.",
+        "planned": "Ai marcat-o ca planificată, deci nu schimbă ritmul.",
+        "essential": "E o cheltuială esențială; e scoasă deja din banii de cheltuit.",
+        "notCounted": "Banii rămân la tine, între conturile tale sau puși deoparte."
+      }
     }
   },
   "ritm": {
