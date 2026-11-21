@@ -1,46 +1,27 @@
 "use client";
 
-import { ChevronRight, PiggyBank } from "lucide-react";
 import Link from "next/link";
-import { BalancePanel } from "@/components/bank/BalancePanel";
-import { CARD_LAST4, useBalances, useVisibleTransactions } from "@/components/bank/bankData";
+import { useVisibleTransactions } from "@/components/bank/bankData";
+import { MonthHero } from "@/components/bank/MonthHero";
+import { QuickActions } from "@/components/bank/QuickActions";
 import { RitmSlot } from "@/components/bank/RitmSlot";
-import { SalaryMoment } from "@/components/bank/SalaryMoment";
 import { TransactionRow } from "@/components/bank/TransactionRow";
-import { GuideButton } from "@/components/bank/Welcome";
 import { useWelcome } from "@/components/bank/welcomeGuide";
-import { PERSONA } from "@/lib/data/persona";
-import { formatLei } from "@/lib/format";
-import { useLocale, useT } from "@/lib/i18n";
+import { useT } from "@/lib/i18n";
 
+/**
+ * Home: the month header (balance, where you are between paydays), what you can do,
+ * Ritm, and the latest money in and out.
+ */
 export default function HomePage() {
   const t = useT();
-  const locale = useLocale((s) => s.locale);
   const recent = useVisibleTransactions().slice(0, 5);
-  const balances = useBalances();
 
   return (
-    <div className="flex flex-col gap-5">
-      <div className="flex items-center justify-between gap-3">
-        <h1 className="font-display text-[1.7rem] leading-tight font-semibold tracking-[-0.02em]">
-          {t("bank.home.greeting", { name: PERSONA.name })}
-        </h1>
-        <GuideButton className="shrink-0" />
-      </div>
+    <div className="flex flex-col gap-6">
+      <MonthHero />
 
-      <SalaryMoment />
-
-      <BalancePanel balance={balances.current} cardLast4={CARD_LAST4} href="/accounts/current" />
-
-      <Link
-        href="/accounts/savings"
-        className="-mt-1 flex min-h-16 items-center gap-3 rounded-2xl border border-atlas-line bg-white px-5 py-3 transition-colors hover:border-atlas-pine/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-atlas-pine"
-      >
-        <PiggyBank className="size-5 text-atlas-pine" aria-hidden="true" />
-        <span className="flex-1 text-sm text-atlas-muted">{t("bank.home.savingsLabel")}</span>
-        <span className="font-medium tabular-nums">{formatLei(balances.savings, locale)}</span>
-        <ChevronRight className="size-4 text-atlas-muted" aria-hidden="true" />
-      </Link>
+      <QuickActions />
 
       <RitmSlot />
 

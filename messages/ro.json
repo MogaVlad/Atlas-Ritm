@@ -364,6 +364,24 @@
       "later": "Mă uit singur",
       "reopen": "Ghidul îl găsești oricând pe Acasă și în Profil.",
       "guide": "Ghid"
+    },
+    "hero": {
+      "balanceLabel": "În contul curent",
+      "savings": "În economii: {amount}",
+      "salaryIn": "{amount} au intrat azi de la {from}.",
+      "dayOf": "ziua {day} din {total}",
+      "paydayTomorrow": "Mâine vine salariul",
+      "paydayToday": "Azi vine din nou salariul",
+      "daysFew": "{n} zile până la salariu",
+      "daysMany": "{n} de zile până la salariu",
+      "beforePayday": "înainte de salariu"
+    },
+    "actions": {
+      "label": "Ce poți face",
+      "transfer": "Transferă",
+      "pay": "Plătește",
+      "history": "Istoric",
+      "guide": "Ghid"
     }
   },
   "ritm": {
