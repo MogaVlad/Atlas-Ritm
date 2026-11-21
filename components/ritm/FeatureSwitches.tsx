@@ -4,6 +4,7 @@ import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useId } from "react";
 import { Switch } from "@/components/bank/Switch";
+import { RULES } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
 import { useBank } from "@/lib/store/useBank";
@@ -60,7 +61,7 @@ export function FeatureSwitches({
                 {t(`ritm.levels.${KEYS[feature]}.name`)}
               </p>
               <p id={descId} className="text-sm text-atlas-muted">
-                {t(`ritm.levels.${KEYS[feature]}.description`)}
+                {t(`ritm.levels.${KEYS[feature]}.description`, { seconds: RULES.speedBump.holdSeconds })}
               </p>
             </div>
             <Switch

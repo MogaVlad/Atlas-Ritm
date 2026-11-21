@@ -2,7 +2,7 @@
 
 import { ArrowDownUp, Lock, PiggyBank, Wallet } from "lucide-react";
 import { useId, useState } from "react";
-import { formatLei } from "@/lib/format";
+import { cleanAmountInput, formatLei, parseAmount } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
 import { useBank, type AccountId, type TransferResult } from "@/lib/store/useBank";
 import { cn } from "@/lib/utils";
@@ -27,7 +27,7 @@ export default function TransfersPage() {
   const lei = (n: number) => formatLei(n, locale);
   const locked = lock && lock.status !== "unlocked" ? lock.amount : 0;
   const available = Math.max(0, from === "current" ? balances.current : balances.savings - locked);
-  const value = Number(amount.replace(",", "."));
+  const value = parseAmount(amount);
   const accounts = from === "current" ? (["current", "savings"] as const) : (["savings", "current"] as const);
 
   const submit = () => {
@@ -67,13 +67,12 @@ export default function TransfersPage() {
         </label>
         <input
           id={amountId}
-          type="number"
+          type="text"
           inputMode="decimal"
-          min={1}
-          step="any"
+          autoComplete="off"
           value={amount}
           onChange={(e) => {
-            setAmount(e.target.value);
+            setAmount(cleanAmountInput(e.target.value));
             setResult(null);
           }}
           className={cn("min-h-12 w-full rounded-xl border border-atlas-line bg-white px-3 text-lg tabular-nums", FOCUS)}

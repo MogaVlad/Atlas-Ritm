@@ -23,7 +23,7 @@ import {
   type Category,
   type RitmSettings,
 } from "@/lib/engine";
-import { formatLei } from "@/lib/format";
+import { cleanAmountInput, formatLei, parseAmount } from "@/lib/format";
 import { useHtmlLang, useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -107,7 +107,7 @@ export default function RitmOnboarding() {
   });
 
   const addPlanned = () => {
-    const amount = Number(draft?.amount);
+    const amount = parseAmount(draft?.amount ?? "");
     if (!draft?.name.trim() || !(amount > 0)) return setDraftError(true);
     setPlanned((p) => [...p, { name: draft.name.trim(), amount }]);
     setDraft(null);
@@ -287,12 +287,12 @@ export default function RitmOnboarding() {
                   >
                     <input
                       id="planned-amount"
-                      type="number"
+                      type="text"
                       inputMode="decimal"
-                      min={1}
+                      autoComplete="off"
                       value={draft.amount}
                       onChange={(e) =>
-                        setDraft({ ...draft, amount: e.target.value })
+                        setDraft({ ...draft, amount: cleanAmountInput(e.target.value) })
                       }
                       className={INPUT}
                     />

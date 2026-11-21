@@ -3,7 +3,7 @@
 import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useId, useRef, useState } from "react";
 import { pensionDeductibleLimit, pensionTaxBenefit, type PensionSource } from "@/lib/engine";
-import { formatLei } from "@/lib/format";
+import { cleanAmountInput, formatLei, parseAmount } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
 import { useBank } from "@/lib/store/useBank";
 import { cn } from "@/lib/utils";
@@ -56,7 +56,7 @@ export function PensionExplainer({ amount: initial, source, onClose, onDone }: P
   const [error, setError] = useState<string | null>(null);
   useEffect(() => heading.current?.focus(), [step]);
 
-  const value = Number(amount) || 0;
+  const value = parseAmount(amount);
   const lei = (n: number) => formatLei(n, locale);
   const { taxSavedUpTo } = pensionTaxBenefit(value, already);
 
@@ -151,13 +151,12 @@ export function PensionExplainer({ amount: initial, source, onClose, onDone }: P
             <label className="mt-5 flex flex-col gap-1.5 text-sm font-medium">
               {t("ritm.pension.amount")}
               <input
-                type="number"
-                inputMode="numeric"
-                min={1}
+                type="text"
+                inputMode="decimal"
+                autoComplete="off"
                 value={amount}
                 // No minus sign: a contribution is never negative.
-                onChange={(e) => setAmount(e.target.value.replace(/-/g, ""))}
-                onKeyDown={(e) => ["-", "+", "e", "E"].includes(e.key) && e.preventDefault()}
+                onChange={(e) => setAmount(cleanAmountInput(e.target.value))}
                 className="min-h-11 w-full rounded-xl border border-atlas-line bg-white px-3 text-base font-normal focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ritm"
               />
             </label>
