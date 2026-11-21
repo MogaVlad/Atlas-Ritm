@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, ArrowLeftRight, House, UserRound, type LucideIcon } from "lucide-react";
+import { Activity, ArrowLeftRight, House, Mountain, UserRound, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useT } from "@/lib/i18n";
@@ -10,6 +10,8 @@ const TABS: { href: string; key: string; icon: LucideIcon; match: (p: string) =>
   // Payments are simulated from the demo panel; the tab is for moving money between your own accounts.
   { href: "/transfers", key: "transfers", icon: ArrowLeftRight, match: (p) => p.startsWith("/transfers") },
   { href: "/ritm", key: "ritm", icon: Activity, match: (p) => p.startsWith("/ritm") },
+  // Financial education: placement test and lessons, climbing the Atlas mountain.
+  { href: "/learn", key: "learn", icon: Mountain, match: (p) => p.startsWith("/learn") },
   { href: "/profile", key: "profile", icon: UserRound, match: (p) => p.startsWith("/profile") },
 ];
 
@@ -22,7 +24,7 @@ export function BottomNav() {
       aria-label={t("bank.nav.label")}
       className="sticky bottom-0 z-20 border-t border-atlas-line bg-atlas-paper/95 px-2 pt-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur"
     >
-      <ul className="grid grid-cols-4">
+      <ul className="grid grid-cols-5">
         {TABS.map(({ href, key, icon: Icon, match }) => {
           const active = match(pathname);
           return (

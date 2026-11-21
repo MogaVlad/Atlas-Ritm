@@ -103,7 +103,8 @@
       "payments": "Plăți",
       "ritm": "Ritm",
       "profile": "Profil",
-      "transfers": "Transferuri"
+      "transfers": "Transferuri",
+      "learn": "Învață"
     },
     "home": {
       "greeting": "Bună, {name}!",
@@ -383,6 +384,455 @@
       "pay": "Plătește",
       "history": "Istoric",
       "guide": "Ghid"
+    },
+    "learn": {
+      "title": "Învață despre bani",
+      "lead": "Lecții scurte, pe cifrele din contul tău. Urci câte o tabără, de la primii pași până la vârf.",
+      "introTitle": "Unde începi urcușul?",
+      "introBody": "7 întrebări, cam 2 minute. Dacă răspunzi corect, următoarea e puțin mai grea; dacă greșești, e puțin mai ușoară. La final știm de la ce tabără să pornești. Nu e notă și nu o vede nimeni.",
+      "startTest": "Începe testul",
+      "skipTest": "Pornesc de la prima tabără",
+      "here": "Ești la {alt}: {name}",
+      "nowTitle": "Lecțiile de acum",
+      "summit": "Toate cele cinci tabere sunt în urma ta. Poți relua oricând orice lecție.",
+      "pathTitle": "Tot traseul",
+      "known": "Știi deja",
+      "done": "Terminat",
+      "now": "Acum",
+      "lockedAfter": "Se deschide după „{name}”",
+      "lessonDone": "Terminată",
+      "lessonNext": "Următoarea",
+      "lessonOpen": "Deschisă",
+      "retake": "Reia testul",
+      "levels": {
+        "1": {
+          "name": "Primii pași",
+          "about": "Venit, cheltuieli și ce rămâne la final de lună."
+        },
+        "2": {
+          "name": "Bugetul tău",
+          "about": "Nevoi, dorințe și un fond pentru neprevăzut."
+        },
+        "3": {
+          "name": "Economii",
+          "about": "Dobânda, impozitul pe dobândă și inflația."
+        },
+        "4": {
+          "name": "Credit fără capcane",
+          "about": "DAE, cardul de credit și cât costă de fapt un împrumut."
+        },
+        "5": {
+          "name": "Pe termen lung",
+          "about": "Risc, orizont, diversificare și pensia."
+        }
+      },
+      "test": {
+        "question": "Întrebarea {i} din {n}",
+        "level": "Nivel {level} din 5",
+        "exit": "Ieși din test",
+        "right": "Corect.",
+        "wrong": "Nu chiar.",
+        "next": "Mai departe",
+        "seeResult": "Vezi rezultatul",
+        "resultTitle": "Pornești de la {alt}",
+        "resultScore": "Ai răspuns corect la {right} din {total} întrebări.",
+        "firstLesson": "Începe prima lecție",
+        "seePath": "Vezi tot traseul"
+      },
+      "lesson": {
+        "step": "Pasul {i} din {n}",
+        "close": "Închide lecția",
+        "next": "Mai departe",
+        "yourMoney": "Pe banii tăi",
+        "check": "Verifică-te",
+        "tryAgain": "Încearcă din nou",
+        "finish": "Termină lecția",
+        "doneTitle": "Lecție terminată",
+        "levelUp": "Ai urcat la {alt}: {name}.",
+        "summit": "Ai ajuns pe vârf.",
+        "apply": "Aplică în Atlas",
+        "nextLesson": "Următoarea lecție",
+        "backToPath": "Înapoi la traseu",
+        "locked": "Lecția asta se deschide după ce termini „{name}”.",
+        "notFound": "Lecția asta nu există."
+      },
+      "q": {
+        "q1": {
+          "q": "Salariul net este…",
+          "a": {
+            "0": "suma care îți intră efectiv în cont",
+            "1": "salariul trecut în contract, înainte de taxe",
+            "2": "salariul plus bonusurile de peste an"
+          },
+          "why": "Netul e ce rămâne după ce se rețin impozitul și contribuțiile. Din el îți faci bugetul."
+        },
+        "q2": {
+          "q": "Ai câștigat 3.000 RON luna asta și ai cheltuit 3.400 RON. Ce s-a întâmplat?",
+          "a": {
+            "0": "Ai economisit 400 RON",
+            "1": "Ai cheltuit cu 400 RON mai mult decât ai câștigat",
+            "2": "Ai ieșit exact pe zero"
+          },
+          "why": "Diferența de 400 RON a venit din economii sau din datorii."
+        },
+        "q3": {
+          "q": "Care dintre acestea e o cheltuială fixă?",
+          "a": {
+            "0": "Mâncarea comandată acasă",
+            "1": "Hainele noi",
+            "2": "Chiria"
+          },
+          "why": "Chiria e aceeași în fiecare lună. Pe celelalte le poți ajusta."
+        },
+        "q4": {
+          "q": "Regula 50/30/20 împarte venitul în…",
+          "a": {
+            "0": "chirie, mâncare, distracție",
+            "1": "nevoi, dorințe, economii",
+            "2": "impozite, cheltuieli, bonusuri"
+          },
+          "why": "50% pentru nevoi, 30% pentru dorințe, 20% pentru economii. E un punct de pornire, nu o lege."
+        },
+        "q5": {
+          "q": "Un fond de urgență acoperă de obicei…",
+          "a": {
+            "0": "3–6 luni de cheltuieli de bază",
+            "1": "o săptămână de cheltuieli",
+            "2": "doi ani de salariu"
+          },
+          "why": "Cu 3–6 luni de cheltuieli esențiale treci peste o lună fără venit sau peste o reparație mare."
+        },
+        "q6": {
+          "q": "Unde ții fondul de urgență?",
+          "a": {
+            "0": "În acțiuni, ca să crească",
+            "1": "În Pilonul III",
+            "2": "Într-un cont de economii din care îl scoți repede"
+          },
+          "why": "La o urgență ai nevoie de bani imediat, iar suma nu trebuie să depindă de bursă."
+        },
+        "q7": {
+          "q": "Ai 1.000 RON la o dobândă de 5% pe an. După un an, înainte de impozit, ai…",
+          "a": {
+            "0": "1.005 RON",
+            "1": "1.500 RON",
+            "2": "1.050 RON"
+          },
+          "why": "5% din 1.000 RON înseamnă 50 RON dobândă într-un an."
+        },
+        "q8": {
+          "q": "Inflația e 6%, iar dobânda la economii e 4%. Puterea de cumpărare a banilor tăi…",
+          "a": {
+            "0": "scade",
+            "1": "crește",
+            "2": "rămâne la fel"
+          },
+          "why": "Prețurile cresc cu 6%, banii tăi doar cu 4%: cu aceeași sumă cumperi mai puțin."
+        },
+        "q9": {
+          "q": "În România, banii din conturile bancare sunt garantați de Fondul de Garantare a Depozitelor până la…",
+          "a": {
+            "0": "10.000 EUR de persoană",
+            "1": "100.000 EUR de persoană, la fiecare bancă",
+            "2": "orice sumă, fără limită"
+          },
+          "why": "FGDB garantează până la echivalentul a 100.000 EUR pentru fiecare deponent, la fiecare bancă."
+        },
+        "q10": {
+          "q": "Ce cifră arată costul total al unui credit, cu tot cu comisioane?",
+          "a": {
+            "0": "Rata lunară",
+            "1": "DAE (dobânda anuală efectivă)",
+            "2": "Dobânda de referință"
+          },
+          "why": "DAE adună dobânda și comisioanele, deci e cifra corectă pentru a compara credite."
+        },
+        "q11": {
+          "q": "Plătești doar suma minimă pe cardul de credit, lună de lună. Ce se întâmplă?",
+          "a": {
+            "0": "Plătești dobândă pe rest, iar datoria scade încet",
+            "1": "Nu plătești nicio dobândă",
+            "2": "Datoria se șterge după trei luni"
+          },
+          "why": "Suma minimă te ferește de penalități, dar restul rămâne datorie cu dobândă."
+        },
+        "q12": {
+          "q": "Două credite de 10.000 RON pe 5 ani: unul cu dobândă mică, altul cu dobândă mare. Rata lunară e mai mare la…",
+          "a": {
+            "0": "cel cu dobândă mică",
+            "1": "sunt egale",
+            "2": "cel cu dobândă mare"
+          },
+          "why": "La aceeași sumă și perioadă, o dobândă mai mare înseamnă rate mai mari și un cost total mai mare."
+        },
+        "q13": {
+          "q": "Diversificarea înseamnă…",
+          "a": {
+            "0": "să-ți împarți banii între mai multe investiții diferite",
+            "1": "să pui toți banii în investiția care a crescut cel mai mult",
+            "2": "să-ți schimbi des banca"
+          },
+          "why": "Dacă o investiție scade, celelalte pot compensa. Riscul se împarte."
+        },
+        "q14": {
+          "q": "Pentru un obiectiv peste 30 de ani, cum e pensia, în general…",
+          "a": {
+            "0": "trebuie să eviți orice risc",
+            "1": "orizontul nu contează",
+            "2": "îți permiți mai mult risc, pentru că ai timp să treci peste scăderi"
+          },
+          "why": "Pe termen lung, scăderile de pe parcurs au timp să se recupereze. Pe termen scurt, nu."
+        },
+        "q15": {
+          "q": "Contribuțiile la Pilonul III sunt…",
+          "a": {
+            "0": "obligatorii pentru toți salariații",
+            "1": "facultative și deductibile până la echivalentul a 400 EUR pe an",
+            "2": "retrase oricând, fără costuri"
+          },
+          "why": "Pilonul III îl alegi tu. Contribuțiile scad impozitul pe venit în limita a 400 EUR pe an, iar banii rămân până la pensie."
+        }
+      },
+      "lessons": {
+        "net": {
+          "title": "Brut și net",
+          "cards": {
+            "0": {
+              "title": "Două salarii",
+              "body": "Brutul e suma din contract. Din el se rețin contribuțiile și impozitul, iar ce rămâne, netul, îți intră în cont."
+            },
+            "1": {
+              "title": "Bugetul pornește de la net",
+              "body": "Planifici doar cu banii pe care chiar îi primești. Brutul și bonusurile viitoare nu intră în calcul."
+            }
+          },
+          "money": "Salariul tău net în Atlas e {net}. Cu suma asta lucrezi luna asta.",
+          "check": {
+            "q": "Bugetul lunar îl faci pornind de la…",
+            "a": {
+              "0": "salariul net",
+              "1": "salariul brut",
+              "2": "salariul pe care îl vei avea anul viitor"
+            },
+            "why": "Netul e ce intră în cont; restul sunt bani pe care nu-i ai în mână."
+          },
+          "apply": "Vezi contul curent"
+        },
+        "fixed": {
+          "title": "Cheltuieli fixe și variabile",
+          "cards": {
+            "0": {
+              "title": "Fixe și variabile",
+              "body": "Cheltuielile fixe sunt aceleași în fiecare lună: chiria, utilitățile, abonamentele. Cele variabile se schimbă: mâncarea în oraș, hainele, ieșirile."
+            },
+            "1": {
+              "title": "Unde ai control",
+              "body": "Pe cele fixe le schimbi rar. Pe cele variabile le poți ajusta de la o săptămână la alta, și acolo se vede diferența."
+            }
+          },
+          "money": "Cheltuielile tale fixe sunt {essentials} pe lună. Îți rămân {rest} pentru tot restul.",
+          "check": {
+            "q": "Care e o cheltuială variabilă?",
+            "a": {
+              "0": "Chiria",
+              "1": "Mâncarea comandată",
+              "2": "Abonamentul de transport"
+            },
+            "why": "Comenzile de mâncare diferă de la o lună la alta; chiria și abonamentul sunt fixe."
+          },
+          "apply": "Vezi esențialele tale în Profil"
+        },
+        "rule": {
+          "title": "Regula 50/30/20",
+          "cards": {
+            "0": {
+              "title": "O împărțire simplă",
+              "body": "Un punct de pornire: 50% din venit pentru nevoi, 30% pentru dorințe și 20% pentru economii."
+            },
+            "1": {
+              "title": "Nu e o lege",
+              "body": "Dacă chiria e mare, nevoile trec de 50%. Atunci micșorezi dorințele, nu renunți la economii."
+            }
+          },
+          "money": "Pe {net}: nevoi {n50}, dorințe {n30}, economii {n20}. Cheltuielile tale fixe sunt deja {essentials}, adică {pct}% din salariu.",
+          "check": {
+            "q": "Cu 4.000 RON net, cât ar merge la economii după regula 50/30/20?",
+            "a": {
+              "0": "400 RON",
+              "1": "2.000 RON",
+              "2": "800 RON"
+            },
+            "why": "20% din 4.000 RON înseamnă 800 RON."
+          },
+          "apply": "Urmărește ritmul lunii în Ritm"
+        },
+        "emergency": {
+          "title": "Fondul de urgență",
+          "cards": {
+            "0": {
+              "title": "Bani pentru neprevăzut",
+              "body": "O reparație, un drum la doctor, o lună fără venit. Fondul de urgență e acolo ca să nu te împrumuți atunci."
+            },
+            "1": {
+              "title": "Cât și unde",
+              "body": "Ținta obișnuită e 3–6 luni de cheltuieli de bază, într-un cont de economii din care îi scoți repede."
+            }
+          },
+          "money": "Pentru tine, 3 luni de cheltuieli de bază înseamnă {e3}. Acum ai în economii {savings}.",
+          "check": {
+            "q": "Unde ții fondul de urgență?",
+            "a": {
+              "0": "Într-un cont de economii, ușor de accesat",
+              "1": "În Pilonul III",
+              "2": "În acțiuni"
+            },
+            "why": "La o urgență ai nevoie de bani imediat, iar suma nu trebuie să depindă de bursă."
+          },
+          "apply": "Mută bani în economii"
+        },
+        "interest": {
+          "title": "Dobânda",
+          "cards": {
+            "0": {
+              "title": "Cum lucrează dobânda",
+              "body": "Banca îți plătește dobândă pentru banii ținuți la ea. La 4% pe an, 1.000 RON aduc 40 RON într-un an."
+            },
+            "1": {
+              "title": "Impozitul pe dobândă",
+              "body": "Din dobândă se reține un impozit de 10%. Din cei 40 RON îți rămân 36 RON."
+            }
+          },
+          "moneyHave": "{amount} în economii, ținuți un an la {rate}% pe an, ar aduce cam {interest} după impozit.",
+          "moneyIf": "Dacă ai pune {amount} în economii pentru un an, la {rate}% pe an, ai primi cam {interest} după impozit.",
+          "check": {
+            "q": "1.000 RON la 5% pe an. Câtă dobândă primești într-un an, înainte de impozit?",
+            "a": {
+              "0": "5 RON",
+              "1": "50 RON",
+              "2": "500 RON"
+            },
+            "why": "5% din 1.000 RON înseamnă 50 RON."
+          },
+          "apply": "Vezi contul de economii"
+        },
+        "inflation": {
+          "title": "Inflația",
+          "cards": {
+            "0": {
+              "title": "Prețurile cresc",
+              "body": "Când prețurile cresc, aceeași sumă cumpără mai puțin. Cu o inflație de 5% pe an, coșul care azi costă 100 RON costă 105 RON peste un an."
+            },
+            "1": {
+              "title": "Dobândă și inflație",
+              "body": "Dacă dobânda e mai mică decât inflația, banii tăi pierd din putere chiar dacă suma din cont crește."
+            }
+          },
+          "check": {
+            "q": "Inflația e 6%, dobânda e 4%. Puterea de cumpărare a economiilor tale…",
+            "a": {
+              "0": "scade",
+              "1": "crește",
+              "2": "rămâne la fel"
+            },
+            "why": "Prețurile cresc cu 6%, banii doar cu 4%."
+          }
+        },
+        "apr": {
+          "title": "DAE, costul real al unui credit",
+          "cards": {
+            "0": {
+              "title": "Ce e DAE",
+              "body": "Dobânda anuală efectivă adună dobânda și comisioanele într-un singur procent. E cifra pe care o compari între credite."
+            },
+            "1": {
+              "title": "Compară corect",
+              "body": "Două credite cu aceeași dobândă pot avea DAE diferite din cauza comisioanelor. Uită-te și la suma totală de plată."
+            }
+          },
+          "check": {
+            "q": "Ce cifră folosești ca să compari două credite?",
+            "a": {
+              "0": "Prima rată",
+              "1": "Dobânda de referință",
+              "2": "DAE"
+            },
+            "why": "DAE include și comisioanele, deci arată costul real."
+          }
+        },
+        "card": {
+          "title": "Cardul de credit",
+          "cards": {
+            "0": {
+              "title": "Suma minimă",
+              "body": "La cardul de credit poți plăti doar o sumă minimă. Restul rămâne datorie și produce dobândă, de obicei mare."
+            },
+            "1": {
+              "title": "Perioada de grație",
+              "body": "Dacă plătești tot până la scadență, de cele mai multe ori nu plătești dobândă la cumpărături."
+            }
+          },
+          "check": {
+            "q": "Plătești doar minimul pe cardul de credit, lună de lună. Ce se întâmplă?",
+            "a": {
+              "0": "Plătești dobândă, iar datoria scade încet",
+              "1": "Nu plătești dobândă",
+              "2": "Datoria dispare singură"
+            },
+            "why": "Minimul te ferește de penalități, dar nu și de dobândă."
+          }
+        },
+        "horizon": {
+          "title": "Risc și orizont",
+          "cards": {
+            "0": {
+              "title": "Timpul contează",
+              "body": "Cu cât ai mai mult timp până ai nevoie de bani, cu atât poți trece mai ușor peste scăderile de pe parcurs."
+            },
+            "1": {
+              "title": "Nu pune tot într-un loc",
+              "body": "Diversificarea înseamnă să împarți banii între mai multe investiții, ca o scădere să nu te lovească peste tot."
+            }
+          },
+          "check": {
+            "q": "Pentru un obiectiv peste 30 de ani, în general…",
+            "a": {
+              "0": "trebuie să eviți orice risc",
+              "1": "poți accepta mai mult risc",
+              "2": "orizontul nu contează"
+            },
+            "why": "Pe termen lung, scăderile au timp să se recupereze."
+          }
+        },
+        "pillar3": {
+          "title": "Pilonul III",
+          "cards": {
+            "0": {
+              "title": "Pilonii de pensie",
+              "body": "Pilonul I e pensia de stat. Pilonul II merge, pentru majoritatea salariaților tineri, la un fond privat. Pilonul III e facultativ: îl alegi tu."
+            },
+            "1": {
+              "title": "Deducerea",
+              "body": "Contribuțiile la Pilonul III scad impozitul pe venit, în limita a 400 EUR pe an. Banii rămân investiți până la pensie."
+            }
+          },
+          "money": "Dacă ai pune {amount} pe an în Pilonul III, impozitul tău ar scădea cu până la {tax}. Fondurile se pot compara pe site-ul ASF; Atlas Pensii e fondul Atlas.",
+          "check": {
+            "q": "Pilonul III este…",
+            "a": {
+              "0": "facultativ, cu deducere de până la 400 EUR pe an",
+              "1": "obligatoriu pentru toți",
+              "2": "retras oricând, fără costuri"
+            },
+            "why": "Îl alegi tu, iar contribuțiile sunt deductibile în limita a 400 EUR pe an."
+          }
+        }
+      },
+      "home": {
+        "invite": "Cât de bine te descurci cu banii?",
+        "inviteBody": "Un test de 2 minute îți arată de unde pornești. Apoi, lecții scurte pe cifrele tale.",
+        "next": "Următoarea lecție: {title}",
+        "summit": "Ai ajuns pe vârf. Poți relua oricând lecțiile."
+      }
     }
   },
   "ritm": {

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useVisibleTransactions } from "@/components/bank/bankData";
+import { LearnCard } from "@/components/bank/learn/LearnCard";
 import { MonthHero } from "@/components/bank/MonthHero";
 import { QuickActions } from "@/components/bank/QuickActions";
 import { RitmSlot } from "@/components/bank/RitmSlot";
@@ -11,7 +12,7 @@ import { useT } from "@/lib/i18n";
 
 /**
  * Home: the month header (balance, where you are between paydays), what you can do,
- * Ritm, and the latest money in and out.
+ * Ritm, the latest money in and out, and where you are in Learn.
  */
 export default function HomePage() {
   const t = useT();
@@ -59,6 +60,8 @@ export default function HomePage() {
           </div>
         )}
       </section>
+
+      <LearnCard />
     </div>
   );
 }

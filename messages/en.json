@@ -103,7 +103,8 @@
       "payments": "Payments",
       "ritm": "Ritm",
       "profile": "Profile",
-      "transfers": "Transfers"
+      "transfers": "Transfers",
+      "learn": "Learn"
     },
     "home": {
       "greeting": "Hi, {name}!",
@@ -383,6 +384,455 @@
       "pay": "Pay",
       "history": "History",
       "guide": "Guide"
+    },
+    "learn": {
+      "title": "Learn about money",
+      "lead": "Short lessons on the numbers in your own account. You climb one camp at a time, from first steps to the summit.",
+      "introTitle": "Where does your climb start?",
+      "introBody": "7 questions, about 2 minutes. Answer right and the next one is a little harder; get it wrong and it is a little easier. At the end we know which camp to start you at. It is not a grade and nobody else sees it.",
+      "startTest": "Start the test",
+      "skipTest": "Start at the first camp",
+      "here": "You are at {alt}: {name}",
+      "nowTitle": "Your lessons now",
+      "summit": "All five camps are behind you. You can redo any lesson any time.",
+      "pathTitle": "The whole trail",
+      "known": "Already known",
+      "done": "Done",
+      "now": "Now",
+      "lockedAfter": "Opens after “{name}”",
+      "lessonDone": "Done",
+      "lessonNext": "Next",
+      "lessonOpen": "Open",
+      "retake": "Retake the test",
+      "levels": {
+        "1": {
+          "name": "First steps",
+          "about": "Income, spending and what is left at the end of the month."
+        },
+        "2": {
+          "name": "Your budget",
+          "about": "Needs, wants and a fund for the unexpected."
+        },
+        "3": {
+          "name": "Saving",
+          "about": "Interest, tax on interest and inflation."
+        },
+        "4": {
+          "name": "Credit without traps",
+          "about": "APR, credit cards and what a loan really costs."
+        },
+        "5": {
+          "name": "The long run",
+          "about": "Risk, horizon, diversification and your pension."
+        }
+      },
+      "test": {
+        "question": "Question {i} of {n}",
+        "level": "Level {level} of 5",
+        "exit": "Leave the test",
+        "right": "Right.",
+        "wrong": "Not quite.",
+        "next": "Next",
+        "seeResult": "See your result",
+        "resultTitle": "You start at {alt}",
+        "resultScore": "You got {right} of {total} questions right.",
+        "firstLesson": "Start the first lesson",
+        "seePath": "See the whole trail"
+      },
+      "lesson": {
+        "step": "Step {i} of {n}",
+        "close": "Close the lesson",
+        "next": "Next",
+        "yourMoney": "On your money",
+        "check": "Check yourself",
+        "tryAgain": "Try again",
+        "finish": "Finish the lesson",
+        "doneTitle": "Lesson done",
+        "levelUp": "You climbed to {alt}: {name}.",
+        "summit": "You reached the summit.",
+        "apply": "Use it in Atlas",
+        "nextLesson": "Next lesson",
+        "backToPath": "Back to the trail",
+        "locked": "This lesson opens once you finish “{name}”.",
+        "notFound": "This lesson does not exist."
+      },
+      "q": {
+        "q1": {
+          "q": "Your net salary is…",
+          "a": {
+            "0": "the amount that actually lands in your account",
+            "1": "the salary in your contract, before taxes",
+            "2": "your salary plus the year's bonuses"
+          },
+          "why": "Net is what is left after income tax and contributions. It is what you budget with."
+        },
+        "q2": {
+          "q": "You earned 3,000 RON this month and spent 3,400 RON. What happened?",
+          "a": {
+            "0": "You saved 400 RON",
+            "1": "You spent 400 RON more than you earned",
+            "2": "You broke exactly even"
+          },
+          "why": "The extra 400 RON came from savings or from debt."
+        },
+        "q3": {
+          "q": "Which of these is a fixed cost?",
+          "a": {
+            "0": "Food delivery",
+            "1": "New clothes",
+            "2": "Rent"
+          },
+          "why": "Rent is the same every month. You can adjust the others."
+        },
+        "q4": {
+          "q": "The 50/30/20 rule splits your income into…",
+          "a": {
+            "0": "rent, food, fun",
+            "1": "needs, wants, savings",
+            "2": "taxes, costs, bonuses"
+          },
+          "why": "50% for needs, 30% for wants, 20% for savings. A starting point, not a law."
+        },
+        "q5": {
+          "q": "An emergency fund usually covers…",
+          "a": {
+            "0": "3–6 months of basic costs",
+            "1": "one week of spending",
+            "2": "two years of salary"
+          },
+          "why": "3–6 months of essentials get you through a month without income or a big repair."
+        },
+        "q6": {
+          "q": "Where do you keep your emergency fund?",
+          "a": {
+            "0": "In shares, so it grows",
+            "1": "In Pillar III",
+            "2": "In a savings account you can take it out of quickly"
+          },
+          "why": "In an emergency you need the money now, and it should not depend on the stock market."
+        },
+        "q7": {
+          "q": "You have 1,000 RON at 5% interest a year. After one year, before tax, you have…",
+          "a": {
+            "0": "1,005 RON",
+            "1": "1,500 RON",
+            "2": "1,050 RON"
+          },
+          "why": "5% of 1,000 RON is 50 RON of interest in a year."
+        },
+        "q8": {
+          "q": "Inflation is 6% and your savings earn 4%. The buying power of your money…",
+          "a": {
+            "0": "goes down",
+            "1": "goes up",
+            "2": "stays the same"
+          },
+          "why": "Prices rise by 6%, your money only by 4%: the same amount buys less."
+        },
+        "q9": {
+          "q": "In Romania, money in bank accounts is guaranteed by the Deposit Guarantee Fund up to…",
+          "a": {
+            "0": "10,000 EUR per person",
+            "1": "100,000 EUR per person, at each bank",
+            "2": "any amount, no limit"
+          },
+          "why": "The fund (FGDB) guarantees up to the equivalent of 100,000 EUR per depositor at each bank."
+        },
+        "q10": {
+          "q": "Which number shows the total cost of a loan, fees included?",
+          "a": {
+            "0": "The monthly payment",
+            "1": "APR (annual percentage rate)",
+            "2": "The reference rate"
+          },
+          "why": "APR adds interest and fees together, so it is the right number to compare loans."
+        },
+        "q11": {
+          "q": "You pay only the minimum on your credit card, month after month. What happens?",
+          "a": {
+            "0": "You pay interest on the rest, and the debt shrinks slowly",
+            "1": "You pay no interest at all",
+            "2": "The debt is wiped after three months"
+          },
+          "why": "The minimum avoids penalties, but the rest stays as debt that earns interest."
+        },
+        "q12": {
+          "q": "Two 10,000 RON loans over 5 years: one with low interest, one with high interest. The monthly payment is higher for…",
+          "a": {
+            "0": "the low-interest one",
+            "1": "they are the same",
+            "2": "the high-interest one"
+          },
+          "why": "Same amount and term: higher interest means higher payments and a higher total cost."
+        },
+        "q13": {
+          "q": "Diversifying means…",
+          "a": {
+            "0": "spreading your money across several different investments",
+            "1": "putting everything in the investment that grew most",
+            "2": "changing banks often"
+          },
+          "why": "If one investment falls, the others can make up for it. The risk is shared."
+        },
+        "q14": {
+          "q": "For a goal 30 years away, like retirement, generally…",
+          "a": {
+            "0": "you must avoid any risk",
+            "1": "the horizon does not matter",
+            "2": "you can take more risk, because you have time to ride out falls"
+          },
+          "why": "Over the long run, falls along the way have time to recover. Over the short run, they do not."
+        },
+        "q15": {
+          "q": "Pillar III contributions are…",
+          "a": {
+            "0": "mandatory for every employee",
+            "1": "optional and deductible up to the equivalent of 400 EUR a year",
+            "2": "withdrawable any time, at no cost"
+          },
+          "why": "You choose Pillar III. Contributions lower your income tax up to 400 EUR a year, and the money stays until retirement."
+        }
+      },
+      "lessons": {
+        "net": {
+          "title": "Gross and net",
+          "cards": {
+            "0": {
+              "title": "Two salaries",
+              "body": "Gross is the amount in your contract. Contributions and income tax come out of it, and what is left, net, lands in your account."
+            },
+            "1": {
+              "title": "Budgets start from net",
+              "body": "Plan only with money you actually receive. Gross pay and future bonuses do not count."
+            }
+          },
+          "money": "Your net salary in Atlas is {net}. That is what you work with this month.",
+          "check": {
+            "q": "You build your monthly budget starting from…",
+            "a": {
+              "0": "your net salary",
+              "1": "your gross salary",
+              "2": "the salary you will have next year"
+            },
+            "why": "Net is what reaches your account; the rest is money you never hold."
+          },
+          "apply": "See your current account"
+        },
+        "fixed": {
+          "title": "Fixed and variable costs",
+          "cards": {
+            "0": {
+              "title": "Fixed and variable",
+              "body": "Fixed costs are the same every month: rent, utilities, subscriptions. Variable ones change: eating out, clothes, going out."
+            },
+            "1": {
+              "title": "Where you have control",
+              "body": "You rarely change the fixed ones. The variable ones you can adjust week by week, and that is where the difference shows."
+            }
+          },
+          "money": "Your fixed costs are {essentials} a month. That leaves {rest} for everything else.",
+          "check": {
+            "q": "Which one is a variable cost?",
+            "a": {
+              "0": "Rent",
+              "1": "Food delivery",
+              "2": "Your transport pass"
+            },
+            "why": "Food orders change from month to month; rent and the pass are fixed."
+          },
+          "apply": "See your essentials in Profile"
+        },
+        "rule": {
+          "title": "The 50/30/20 rule",
+          "cards": {
+            "0": {
+              "title": "A simple split",
+              "body": "A starting point: 50% of income for needs, 30% for wants and 20% for savings."
+            },
+            "1": {
+              "title": "Not a law",
+              "body": "If rent is high, needs go above 50%. Then you trim the wants, you do not drop the savings."
+            }
+          },
+          "money": "On {net}: needs {n50}, wants {n30}, savings {n20}. Your fixed costs are already {essentials}, that is {pct}% of your salary.",
+          "check": {
+            "q": "With 4,000 RON net, how much goes to savings under the 50/30/20 rule?",
+            "a": {
+              "0": "400 RON",
+              "1": "2,000 RON",
+              "2": "800 RON"
+            },
+            "why": "20% of 4,000 RON is 800 RON."
+          },
+          "apply": "Follow the month's pace in Ritm"
+        },
+        "emergency": {
+          "title": "The emergency fund",
+          "cards": {
+            "0": {
+              "title": "Money for the unexpected",
+              "body": "A repair, a trip to the doctor, a month without income. The emergency fund is there so you do not borrow then."
+            },
+            "1": {
+              "title": "How much and where",
+              "body": "The usual target is 3–6 months of basic costs, in a savings account you can take it out of quickly."
+            }
+          },
+          "money": "For you, 3 months of basic costs is {e3}. Right now you have {savings} in savings.",
+          "check": {
+            "q": "Where do you keep your emergency fund?",
+            "a": {
+              "0": "In a savings account, easy to reach",
+              "1": "In Pillar III",
+              "2": "In shares"
+            },
+            "why": "In an emergency you need the money now, and it should not depend on the stock market."
+          },
+          "apply": "Move money to savings"
+        },
+        "interest": {
+          "title": "Interest",
+          "cards": {
+            "0": {
+              "title": "How interest works",
+              "body": "The bank pays you interest for money you keep with it. At 4% a year, 1,000 RON earns 40 RON in a year."
+            },
+            "1": {
+              "title": "Tax on interest",
+              "body": "In Romania, 10% tax is taken from interest. Of the 40 RON, you keep 36 RON."
+            }
+          },
+          "moneyHave": "{amount} in savings, kept for a year at {rate}% a year, would earn about {interest} after tax.",
+          "moneyIf": "If you put {amount} in savings for a year at {rate}% a year, you would get about {interest} after tax.",
+          "check": {
+            "q": "1,000 RON at 5% a year. How much interest do you get in a year, before tax?",
+            "a": {
+              "0": "5 RON",
+              "1": "50 RON",
+              "2": "500 RON"
+            },
+            "why": "5% of 1,000 RON is 50 RON."
+          },
+          "apply": "See your savings account"
+        },
+        "inflation": {
+          "title": "Inflation",
+          "cards": {
+            "0": {
+              "title": "Prices go up",
+              "body": "When prices rise, the same money buys less. With 5% inflation a year, a basket that costs 100 RON today costs 105 RON a year from now."
+            },
+            "1": {
+              "title": "Interest and inflation",
+              "body": "If interest is lower than inflation, your money loses buying power even while the amount in your account grows."
+            }
+          },
+          "check": {
+            "q": "Inflation is 6%, interest is 4%. The buying power of your savings…",
+            "a": {
+              "0": "goes down",
+              "1": "goes up",
+              "2": "stays the same"
+            },
+            "why": "Prices rise by 6%, your money only by 4%."
+          }
+        },
+        "apr": {
+          "title": "APR, the real cost of a loan",
+          "cards": {
+            "0": {
+              "title": "What APR is",
+              "body": "The annual percentage rate puts interest and fees together in one percentage. It is the number you compare between loans."
+            },
+            "1": {
+              "title": "Compare fairly",
+              "body": "Two loans with the same interest rate can have different APRs because of fees. Look at the total amount to repay too."
+            }
+          },
+          "check": {
+            "q": "Which number do you use to compare two loans?",
+            "a": {
+              "0": "The first payment",
+              "1": "The reference rate",
+              "2": "The APR"
+            },
+            "why": "APR includes the fees too, so it shows the real cost."
+          }
+        },
+        "card": {
+          "title": "The credit card",
+          "cards": {
+            "0": {
+              "title": "The minimum payment",
+              "body": "On a credit card you can pay just a minimum. The rest stays as debt and earns interest, usually a lot."
+            },
+            "1": {
+              "title": "The grace period",
+              "body": "If you pay everything by the due date, you usually pay no interest on purchases."
+            }
+          },
+          "check": {
+            "q": "You pay only the minimum on your credit card, month after month. What happens?",
+            "a": {
+              "0": "You pay interest, and the debt shrinks slowly",
+              "1": "You pay no interest",
+              "2": "The debt disappears by itself"
+            },
+            "why": "The minimum keeps penalties away, but not interest."
+          }
+        },
+        "horizon": {
+          "title": "Risk and horizon",
+          "cards": {
+            "0": {
+              "title": "Time matters",
+              "body": "The more time you have before you need the money, the easier it is to ride out the falls along the way."
+            },
+            "1": {
+              "title": "Do not put it all in one place",
+              "body": "Diversifying means spreading money across several investments, so one fall does not hit everything."
+            }
+          },
+          "check": {
+            "q": "For a goal 30 years away, generally…",
+            "a": {
+              "0": "you must avoid any risk",
+              "1": "you can accept more risk",
+              "2": "the horizon does not matter"
+            },
+            "why": "Over the long run, falls have time to recover."
+          }
+        },
+        "pillar3": {
+          "title": "Pillar III",
+          "cards": {
+            "0": {
+              "title": "The pension pillars",
+              "body": "Pillar I is the state pension. Pillar II goes, for most young employees, to a private fund. Pillar III is optional: you choose it."
+            },
+            "1": {
+              "title": "The deduction",
+              "body": "Pillar III contributions lower your income tax, up to 400 EUR a year. The money stays invested until retirement."
+            }
+          },
+          "money": "If you put {amount} a year into Pillar III, your income tax would go down by up to {tax}. Funds can be compared on the ASF website; Atlas Pensii is Atlas's own fund.",
+          "check": {
+            "q": "Pillar III is…",
+            "a": {
+              "0": "optional, with a deduction of up to 400 EUR a year",
+              "1": "mandatory for everyone",
+              "2": "withdrawable any time, at no cost"
+            },
+            "why": "You choose it, and contributions are deductible up to 400 EUR a year."
+          }
+        }
+      },
+      "home": {
+        "invite": "How confident are you with money?",
+        "inviteBody": "A 2-minute test shows where you start. Then, short lessons on your own numbers.",
+        "next": "Next lesson: {title}",
+        "summit": "You reached the summit. You can redo the lessons any time."
+      }
     }
   },
   "ritm": {
