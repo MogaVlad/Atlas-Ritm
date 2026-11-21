@@ -48,7 +48,10 @@ test("payday → onboarding → day 6 Heads-up → Speed bump on the jacket", as
   // Day 6: the spike. 1.166 of 2.120 lei gone; Ritm offers a Heads-up.
   await jumpToDay(page, 6);
   await expect(page.getByText("1.104,00 lei")).toBeVisible();
-  await page.getByRole("button", { name: ro.ritm.card.headsUpCta }).click();
+  // The Heads-up waits as a pop-up above the navigation; "See why" opens the sheet.
+  const popup = page.getByRole("region", { name: ro.ritm.popup.title });
+  await expect(popup).toBeVisible();
+  await popup.getByRole("button", { name: new RegExp(ro.ritm.popup.cta) }).click();
 
   const sheet = page.getByRole("dialog");
   await expect(sheet.getByText(ro.ritm.headsUp.title.spike)).toBeVisible();

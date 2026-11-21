@@ -329,6 +329,11 @@
       "lockOpen": "The Lock is open: {amount} is free.",
       "summaryCta": "See how your month went"
     },
+    "popup": {
+      "title": "Ritm gave you a heads-up",
+      "cta": "See why",
+      "later": "Later"
+    },
     "reason": {
       "pctSpent": "Day {day}: you've already used {pct}% of your spending money.",
       "runOut": "At this pace, the money runs out on day {day}, {daysBefore} days before payday.",

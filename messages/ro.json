@@ -329,6 +329,11 @@
       "lockOpen": "Lacătul s-a deschis: {amount} sunt liberi.",
       "summaryCta": "Vezi cum a fost luna"
     },
+    "popup": {
+      "title": "Ritm te-a atenționat",
+      "cta": "Vezi de ce",
+      "later": "Mai târziu"
+    },
     "reason": {
       "pctSpent": "Ziua {day}: ai folosit deja {pct}% din banii de cheltuit.",
       "runOut": "În ritmul ăsta, banii se termină în ziua {day}, cu {daysBefore} zile înainte de salariu.",
