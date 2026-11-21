@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
 import { useBank, type HeadsUpNotification } from "@/lib/store/useBank";
@@ -17,6 +17,8 @@ export function RitmCard() {
   const lock = useBank((s) => s.lock);
   const latest = useBank((s) => s.notifications.at(-1));
   const [sheet, setSheet] = useState<HeadsUpNotification | null>(null);
+  // Next keeps hidden routes alive (<Activity>): don't come back to a sheet left open.
+  useLayoutEffect(() => () => setSheet(null), []);
 
   return (
     <section aria-labelledby="ritm-card-title" className="flex flex-col gap-5 rounded-3xl bg-white p-5 ring-1 ring-atlas-line">
