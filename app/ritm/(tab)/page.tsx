@@ -2,22 +2,14 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect } from "react";
 import { LevelChips } from "@/components/ritm/LevelChips";
 import { PaceBar } from "@/components/ritm/PaceBar";
 import { SafeToSpend } from "@/components/ritm/SafeToSpend";
+import { useHydrated } from "@/components/ritm/useHydrated";
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
 import { useBank } from "@/lib/store/useBank";
-
-/** True once the saved demo state is loaded; before that, "Ritm off" is just the default. */
-function useHydrated() {
-  return useSyncExternalStore(
-    (onChange) => useBank.persist.onFinishHydration(onChange),
-    () => useBank.persist.hasHydrated(),
-    () => false,
-  );
-}
 
 /** The Ritm tab. Ritm off → onboarding; on → the card, the level and what's set up. */
 export default function RitmTab() {
@@ -75,9 +67,18 @@ export default function RitmTab() {
           <div className="flex min-h-14 items-center justify-between gap-4 py-3">
             <dt className="text-sm text-atlas-muted">{t("ritm.tab.lock")}</dt>
             <dd className="text-right font-medium">
-              {locked
-                ? t("ritm.tab.lockValue", { amount: formatLei(lock.amount, locale), day: lock.unlockDay })
-                : t("ritm.tab.lockNone")}
+              {lock && lock.amount > 0 ? (
+                <Link
+                  href={locked ? "/ritm/lock" : "/ritm/unlock"}
+                  className="inline-flex min-h-11 items-center rounded-lg text-ritm underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-ritm"
+                >
+                  {locked
+                    ? t("ritm.tab.lockValue", { amount: formatLei(lock.amount, locale), day: lock.unlockDay })
+                    : t("ritm.tab.lockOpen", { amount: formatLei(lock.amount, locale) })}
+                </Link>
+              ) : (
+                t("ritm.tab.lockNone")
+              )}
             </dd>
           </div>
           <div className="flex min-h-14 items-center justify-between gap-4 py-3">

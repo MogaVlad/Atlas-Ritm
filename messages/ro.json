@@ -325,7 +325,8 @@
     "card": {
       "title": "Ritm",
       "lock": "{amount} puși deoparte, se deblochează în ziua {day}.",
-      "headsUpCta": "Vezi de ce te-a atenționat Ritm"
+      "headsUpCta": "Vezi de ce te-a atenționat Ritm",
+      "lockOpen": "Lacătul s-a deschis: {amount} sunt liberi."
     },
     "reason": {
       "pctSpent": "Ziua {day}: ai folosit deja {pct}% din banii de cheltuit.",
@@ -384,7 +385,89 @@
       "lockValue": "{amount}, până în ziua {day}",
       "lockNone": "Nimic pus deoparte",
       "essentials": "Plăți fixe pe lună",
-      "settingsLink": "Alte setări Ritm, în Profil"
+      "settingsLink": "Alte setări Ritm, în Profil",
+      "lockOpen": "S-a deschis: {amount} liberi"
+    },
+    "lock": {
+      "title": "Lacătul tău",
+      "amountLabel": "Pus deoparte",
+      "unlockOn": "Se deschide singur în ziua {day}. Mai sunt {days} zile.",
+      "unlockTomorrow": "Se deschide singur mâine, în ziua {day}.",
+      "interest": "Până atunci, dobânda adaugă cam {amount}.",
+      "interestNote": "Estimare: {rate}% pe an la economii, după impozitul de 10%. În demo, dobânda e simulată.",
+      "waysOut": "Dacă ai nevoie de bani mai devreme",
+      "earlyTitle": "Deblochează mai devreme",
+      "earlyHint": "Primești toți banii după 24 de ore.",
+      "earlyExplain": "Ceri acum, iar {amount} ies din Lacăt mâine, în ziua {day}. Sunt bani care nu mai stau deoparte pentru {goal}.",
+      "earlyConfirm": "Cer deblocarea",
+      "requested": "Ai cerut deblocarea. {amount} ies din Lacăt mâine, în ziua {day}.",
+      "emergencyTitle": "Urgență: până la {max} acum",
+      "emergencyHint": "Banii vin pe loc. O dată pe lună.",
+      "emergencyExplain": "Banii intră imediat în contul curent, iar restul rămâne în Lacăt. Poți face asta o singură dată pe lună.",
+      "emergencyAmount": "Cât îți trebuie (lei)",
+      "emergencyReason": "Pentru ce? Un cuvânt ajunge.",
+      "emergencyConfirm": "Scot {amount} acum",
+      "emergencyDone": "Gata. {amount} au intrat în contul curent.",
+      "emergencyUsed": "Ai folosit deja urgența luna asta. Deblocarea cu 24 de ore rămâne la îndemână.",
+      "cancel": "Renunț",
+      "error": {
+        "overLimit": "Poți scoate cel mult {max}.",
+        "reason": "Scrie pe scurt pentru ce ai nevoie de bani.",
+        "alreadyUsed": "Ai folosit deja urgența luna asta.",
+        "notLocked": "Nu mai e nimic în Lacăt."
+      },
+      "unlocked": "Lacătul s-a deschis. {amount} sunt liberi.",
+      "chooseCta": "Alege ce faci cu ei",
+      "empty": "Nu ai nimic în Lacăt acum."
+    },
+    "unlock": {
+      "title": "Ai ajuns la ziua {day} fără ei.",
+      "intro": "{amount} sunt liberi. Tu alegi cât rămâne deoparte.",
+      "keepLabel": "Cât păstrezi în economii",
+      "keepValue": "Păstrezi {keep}, iar {back} merg în contul curent.",
+      "confirmKeep": "Păstrez {amount}",
+      "confirmNone": "Mut tot în contul curent",
+      "done": "Gata. {keep} rămân în economii, {back} sunt în contul curent.",
+      "notYet": "Lacătul se deschide în ziua {day}. Până atunci, banii stau deoparte.",
+      "notYetCta": "Vezi Lacătul",
+      "empty": "Nu ai nimic de deblocat.",
+      "compareTitle": "Unde pot sta banii păstrați",
+      "compareIntro": "Le comparăm după cât de repede ajungi la bani, risc și cât timp stau. Nu promitem randamente.",
+      "access": "Acces",
+      "risk": "Risc",
+      "horizon": "Durată",
+      "accessValue": {
+        "anytime": "Oricând",
+        "atMaturity": "La scadență",
+        "atRetirement": "La pensie"
+      },
+      "riskValue": {
+        "veryLow": "Foarte mic",
+        "low": "Mic",
+        "medium": "Mediu"
+      },
+      "horizonValue": {
+        "short": "Luni",
+        "medium": "1–5 ani",
+        "long": "Până la pensie"
+      },
+      "options": {
+        "flexibleSavings": {
+          "name": "Economii flexibile Atlas",
+          "tradeoff": "Scoți banii oricând, dar dobânda e mică.",
+          "note": "Produs Atlas. Aici stau banii acum."
+        },
+        "governmentBonds": {
+          "name": "Titluri de stat (Tezaur, Fidelis)",
+          "tradeoff": "Dobânda e fixă, dar banii revin abia la scadență, după 1–5 ani.",
+          "note": "Le emite statul român, nu Atlas."
+        },
+        "pillar3": {
+          "name": "Pilonul III (Atlas Pensii)",
+          "tradeoff": "Plătești mai puțin impozit acum, dar banii stau blocați până la pensie.",
+          "note": "Atlas Pensii e fondul Atlas. Poți compara fondurile pe site-ul ASF."
+        }
+      }
     }
   }
 }
