@@ -13,6 +13,26 @@
         "ok": "ok",
         "watch": "atenție",
         "spike": "prea repede"
+      },
+      "menu": "Demo-uri",
+      "exit": "Ascunde instrumentele de demo",
+      "list": {
+        "journey": {
+          "title": "Traseul complet",
+          "body": "Ziua salariului, Ritm oprit. Faci onboarding-ul live."
+        },
+        "spike": {
+          "title": "Prea repede",
+          "body": "Ritm pornit cu Pauza. Atenționarea te așteaptă, geaca se oprește la plată."
+        },
+        "unlock": {
+          "title": "Lacătul se deschide",
+          "body": "Ritm pornit, cei 500 lei se deblochează singuri."
+        },
+        "payday": {
+          "title": "Din nou salariu",
+          "body": "Ziua 30, cei 500 lei păstrați. Gata pentru rezumat."
+        }
       }
     }
   },
