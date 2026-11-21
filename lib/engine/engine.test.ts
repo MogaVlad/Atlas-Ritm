@@ -100,14 +100,14 @@ describe("alerts", () => {
 });
 
 describe("shouldShowSpeedBump", () => {
-  const sb: RitmSettings = { ...settings, level: "speedbump" };
+  const sb: RitmSettings = { ...settings, speedBump: true };
   const state = pace(6);
 
-  it("pauses the 300-lei online jacket at level speedbump", () => {
+  it("pauses the 300-lei online jacket with the Speed bump on", () => {
     expect(shouldShowSpeedBump(jacket, sb, state)).toBe(true);
   });
 
-  it("does not pause at level headsup or with Ritm off", () => {
+  it("does not pause with the Speed bump off or Ritm off", () => {
     expect(shouldShowSpeedBump(jacket, settings, state)).toBe(false);
     expect(shouldShowSpeedBump(jacket, { ...sb, enabled: false }, state)).toBe(false);
   });

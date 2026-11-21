@@ -3,7 +3,7 @@
 import { Activity, CalendarClock } from "lucide-react";
 import Link from "next/link";
 import { useId, useState } from "react";
-import { LevelChips } from "@/components/ritm/LevelChips";
+import { FeatureSwitches } from "@/components/ritm/FeatureSwitches";
 import { ESSENTIAL_AMOUNTS } from "@/lib/data/persona";
 import { ritmOffDay, type Category } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
@@ -60,7 +60,7 @@ function RitmOn() {
   const pool = useBank((s) => s.pace.pool);
   const requestRitmOff = useBank((s) => s.requestRitmOff);
   const cancelRitmOff = useBank((s) => s.cancelRitmOff);
-  const setLevel = useBank((s) => s.setLevel);
+  const setFeature = useBank((s) => s.setFeature);
   const setThreshold = useBank((s) => s.setSpeedBumpThreshold);
   const setEssentials = useBank((s) => s.setEssentials);
 
@@ -145,7 +145,10 @@ function RitmOn() {
         <h3 id="ritm-level-title" className="mb-3 font-display text-lg font-semibold">
           {t("bank.profile.levelTitle")}
         </h3>
-        <LevelChips value={ritm.level} onChange={setLevel} />
+        <FeatureSwitches
+          values={{ headsUp: ritm.headsUp, speedBump: ritm.speedBump }}
+          onChange={(feature, on) => feature !== "lock" && setFeature(feature, on)}
+        />
       </section>
 
       {/* Speed bump threshold */}

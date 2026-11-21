@@ -15,12 +15,14 @@ export interface SpeedBumpSheetProps {
   onConfirm: () => void;
   /** Don't buy now: back to the shop. */
   onNotNow: () => void;
+  /** After the money went to the Lock or the pension instead: back into the bank. */
+  onBackToAtlas: () => void;
   /** Opens Ask Ritm (I4). Hidden until passed. */
   onAskRitm?: () => void;
 }
 
 /** The pause before a big online payment: the purchase in month and goal terms, then the user's choice. */
-export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onAskRitm }: SpeedBumpSheetProps) {
+export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAtlas, onAskRitm }: SpeedBumpSheetProps) {
   const t = useT();
   const locale = useLocale((s) => s.locale);
   const reduce = useReducedMotion();
@@ -107,7 +109,11 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onAskRitm 
                 ? t("ritm.pension.done", { amount: formatLei(pensioned.amount, locale), tax: formatLei(pensioned.taxSavedUpTo, locale) })
                 : t("ritm.speedBump.lockedDone", { amount, day: unlockDay })}
             </p>
-            <button type="button" onClick={onNotNow} className={PRIMARY}>
+            {/* Back into Atlas first: the shop would only lead back to this same payment. */}
+            <button type="button" onClick={onBackToAtlas} className={PRIMARY}>
+              {t("ritm.speedBump.backToAtlas")}
+            </button>
+            <button type="button" onClick={onNotNow} className={SECONDARY}>
               {t("ritm.speedBump.backToShop")}
             </button>
           </div>
@@ -157,6 +163,8 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onAskRitm 
 
 const PRIMARY =
   "min-h-12 rounded-full bg-ritm px-5 font-medium text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm";
+const SECONDARY =
+  "min-h-12 rounded-full border border-atlas-line px-5 font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm";
 
 function Option({ label, hint, onClick }: { label: string; hint: string; onClick: () => void }) {
   return (

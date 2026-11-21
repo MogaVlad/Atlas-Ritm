@@ -15,8 +15,13 @@ export function RitmCard() {
   const t = useT();
   const locale = useLocale((s) => s.locale);
   const pace = useBank((s) => s.pace);
-  const level = useBank((s) => s.ritm.level);
+  const headsUp = useBank((s) => s.ritm.headsUp);
+  const speedBump = useBank((s) => s.ritm.speedBump);
   const lock = useBank((s) => s.lock);
+  // The features that are on, as small tags next to the title.
+  const active = [headsUp && "headsup", speedBump && "speedbump", lock && lock.status !== "unlocked" && lock.amount > 0 && "lock"].filter(
+    (f): f is string => typeof f === "string",
+  );
   const latest = useBank((s) => s.notifications.at(-1));
   const [sheet, setSheet] = useState<HeadsUpNotification | null>(null);
   // Next keeps hidden routes alive (<Activity>): don't come back to a sheet left open.
@@ -24,11 +29,17 @@ export function RitmCard() {
 
   return (
     <section aria-labelledby="ritm-card-title" className="flex flex-col gap-5 rounded-3xl bg-white p-5 ring-1 ring-atlas-line">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 id="ritm-card-title" className="font-display text-lg font-semibold">
           {t("ritm.card.title")}
         </h2>
-        <span className="rounded-full bg-ritm-tint px-3 py-1 text-sm font-medium text-ritm">{t(`ritm.levels.${level}.name`)}</span>
+        <ul className="flex flex-wrap gap-1.5">
+          {active.map((f) => (
+            <li key={f} className="rounded-full bg-ritm-tint px-3 py-1 text-sm font-medium text-ritm">
+              {t(`ritm.levels.${f}.name`)}
+            </li>
+          ))}
+        </ul>
       </div>
 
       <SafeToSpend amount={pace.safeToSpendToday} line={t(`ritm.safe.line.${pace.severity}`)} />

@@ -12,11 +12,12 @@ const fill = (text: string, values: Record<string, string | number>) =>
 const exact = (text: string) => new RegExp(`^${text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`);
 const starts = (text: string) => new RegExp(`^${text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`);
 
-async function jumpToDay(page: Page, day: number) {
+/** Steps the demo clock one day at a time with ›, from `from` (the demo opens on day 0) to `day`. */
+async function jumpToDay(page: Page, day: number, from = 1) {
   const clock = page.getByRole("group", { name: m.common.demo.title });
   const next = clock.getByRole("button", { name: m.common.demo.nextDay });
   const label = (d: number) => clock.getByText(fill(m.common.demo.day, { day: d }), { exact: true });
-  for (let d = 2; d <= day; d++) {
+  for (let d = from + 1; d <= day; d++) {
     await next.click();
     await expect(label(d)).toBeVisible();
   }
@@ -29,15 +30,22 @@ async function payForJacket(page: Page) {
 }
 
 test("payday → onboarding → day 6 Heads-up → Speed bump on the jacket", async ({ page }) => {
-  // Day 1: the salary is in. 150 opening + 4.800 salary − 260 spent on day 1.
+  // Day 0, the day before payday: only the 150 lei left from last month.
   await page.goto("/?demo=1");
+  await expect(page.getByText("150,00 lei").first()).toBeVisible();
+
+  // Day 1: the salary is in. 150 opening + 4.800 salary − 260 spent on day 1.
+  await jumpToDay(page, 1, 0);
   await expect(page.getByText("4.690,00 lei")).toBeVisible();
 
-  // Onboarding: keep the defaults (Heads-up, Lock 500 lei until day 20, goal Islanda 2027).
+  // Onboarding: Heads-up is on by default; switch the Lock on (500 lei until day 20). Goal Islanda 2027.
   await page.goto("/ritm?demo=1");
   await expect(page).toHaveURL(/\/ritm\/onboarding/);
   await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
   await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
+  await expect(page.getByRole("switch", { name: m.ritm.levels.headsup.name })).toBeChecked();
+  await expect(page.getByRole("switch", { name: m.ritm.levels.speedbump.name })).not.toBeChecked();
+  await page.getByRole("switch", { name: m.ritm.levels.lock.name }).click();
   await page.getByRole("button", { name: m.ritm.onboarding.finish }).click();
 
   // Home: the Ritm card shows the Lock, and 500 lei moved from the current account to savings.
@@ -77,7 +85,7 @@ test("payday → onboarding → day 6 Heads-up → Speed bump on the jacket", as
 
 test("with Ritm off, the jacket is paid with no pause", async ({ page }) => {
   await page.goto("/?demo=1");
-  await jumpToDay(page, 6);
+  await jumpToDay(page, 6, 0);
   await page.getByRole("link", { name: exact(m.bank.nav.payments) }).click();
   await payForJacket(page);
   await expect(page.getByText(m.bank.confirm.paidTitle)).toBeVisible();
@@ -89,7 +97,7 @@ test("demo tools: jump to a day, simulate any purchase, never below zero", async
   await page.goto("/?demo=1");
   // On a phone, tapping the day opens the demo tools; the jumps live in the panel.
   const clock = page.getByRole("group", { name: m.common.demo.title });
-  await clock.getByRole("button", { name: fill(m.common.demo.day, { day: 1 }) }).click();
+  await clock.getByRole("button", { name: fill(m.common.demo.day, { day: 0 }) }).click();
   const panel = page.getByRole("region", { name: buy.button });
   await panel.getByRole("button", { name: fill(m.common.demo.jumpTo, { day: 12 }) }).click();
   await expect(clock.getByText(fill(m.common.demo.day, { day: 12 }), { exact: true })).toBeVisible();
@@ -140,4 +148,29 @@ test("goals: several, each with a time; above 20% of the salary Ritm explains, t
   await expect(page.getByText(g.within)).toBeVisible();
   await page.getByRole("button", { name: g.save }).click();
   await expect(page.getByText(fill(g.totalValue, { amount: "750,00 lei", pct: 16 }))).toBeVisible();
+});
+
+test("after the money goes to Pillar III, Back to Atlas leads home and back doesn't reopen the payment", async ({ page }) => {
+  await page.goto("/?demo=1");
+  await jumpToDay(page, 1, 0);
+
+  // Start Ritm with the Speed bump switched on.
+  await page.getByRole("link", { name: exact(m.bank.nav.ritm) }).click();
+  await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
+  await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
+  await page.getByRole("switch", { name: m.ritm.levels.speedbump.name }).click();
+  await page.getByRole("button", { name: m.ritm.onboarding.finish }).click();
+
+  // The jacket pauses; the 300 lei go to Atlas Pensii instead.
+  await page.getByRole("link", { name: exact(m.bank.nav.payments) }).click();
+  await payForJacket(page);
+  const speedBump = page.getByRole("dialog", { name: m.ritm.speedBump.title });
+  await speedBump.getByRole("button", { name: starts(m.ritm.speedBump.pension) }).click();
+  await page.getByRole("checkbox", { name: m.ritm.pension.consent }).check();
+  await page.getByRole("button", { name: starts(fill(m.ritm.pension.contribute, { amount: "" })) }).click();
+
+  await speedBump.getByRole("button", { name: m.ritm.speedBump.backToAtlas }).click();
+  await expect(page).toHaveURL(/localhost:3000\/(\?.*)?$/);
+  await page.goBack();
+  await expect(page).not.toHaveURL(/\/payments\/confirm/);
 });

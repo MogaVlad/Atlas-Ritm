@@ -50,10 +50,10 @@
         "invalid": "Scrie o sumă mai mare de 0.",
         "inStoreNote": "Plățile în magazin nu se pun pe pauză. Ritm îți arată imediat ce ți-a rămas.",
         "ritmOff": "Ritm e oprit, așa că plata trece direct.",
-        "headsUpOnly": "Ritm e pe Atenționare: te avertizează, dar nu oprește plățile. Pauza apare doar pe nivelul Pauză sau Lacăt.",
-        "enableSpeedBump": "Treci pe Pauză",
+        "enableSpeedBump": "Pornește Pauza",
         "underThreshold": "Sub {threshold}, deci fără Pauză.",
-        "willPause": "Pauza va opri plata înainte să confirmi."
+        "willPause": "Pauza va opri plata înainte să confirmi.",
+        "speedBumpOff": "Pauza e oprită, așa că Ritm nu oprește plata asta. Pornește-o ca să pună pe pauză plățile mari online."
       }
     }
   },
@@ -129,7 +129,7 @@
       "offConfirmLock": "Banii din Lacăt ({amount}) rămân acolo până în ziua {day}.",
       "offConfirmYes": "Oprește Ritm",
       "offConfirmCancel": "Anulează",
-      "levelTitle": "Cât de strict",
+      "levelTitle": "Ce face Ritm",
       "thresholdTitle": "Pauza pornește de la",
       "thresholdHint": "La nivelurile Pauză și Lacăt, plățile online de la {amount} în sus primesc o pauză scurtă. Plățile în magazin nu sunt oprite niciodată.",
       "essentialsTitle": "Cheltuieli esențiale",
@@ -276,7 +276,7 @@
       }
     },
     "levels": {
-      "label": "Cât de strict să fie Ritm",
+      "label": "Ce face Ritm pentru tine",
       "headsup": {
         "name": "Atenționare",
         "description": "Îți spune când cheltui mai repede decât trece luna. Nu oprește nimic."
@@ -397,7 +397,8 @@
       "confirmIn": "Plătesc oricum · {seconds} s",
       "askRitm": "Întreabă Ritm",
       "lockedDone": "Gata. {amount} stau în Lacăt până în ziua {day}.",
-      "backToShop": "Înapoi la magazin"
+      "backToShop": "Înapoi la magazin",
+      "backToAtlas": "Înapoi la Atlas"
     },
     "tab": {
       "title": "Ritm",

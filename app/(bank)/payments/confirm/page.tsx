@@ -80,8 +80,10 @@ export default function ConfirmPaymentPage() {
         <p className="mt-2 text-atlas-muted">
           {t("bank.confirm.paidBody", { amount: formatLei(purchase.amount, locale), merchant: purchase.merchant })}
         </p>
+        {/* replace: a back gesture from Home must not reopen this approval and pay twice. */}
         <Link
           href="/"
+          replace
           className="mt-8 flex min-h-12 w-full items-center justify-center rounded-full bg-atlas-pine font-medium text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-atlas-pine"
         >
           {t("bank.confirm.backHome")}
@@ -131,7 +133,7 @@ export default function ConfirmPaymentPage() {
             </button>
             <button
               type="button"
-              onClick={() => router.push(backHref)}
+              onClick={() => router.replace(backHref)}
               className="min-h-12 rounded-full border border-atlas-line font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-atlas-pine"
             >
               {t("bank.confirm.cancel")}
@@ -147,7 +149,8 @@ export default function ConfirmPaymentPage() {
           purchase={purchase}
           pace={pace}
           onConfirm={pay}
-          onNotNow={() => router.push(backHref)}
+          onNotNow={() => router.replace(backHref)}
+          onBackToAtlas={() => router.replace("/")}
           onAskRitm={() => setAskOpen(true)}
         />
       )}

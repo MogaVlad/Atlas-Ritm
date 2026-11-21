@@ -39,7 +39,8 @@ export interface Transaction {
   planned?: boolean;
 }
 
-export type RitmLevel = "headsup" | "speedbump" | "lock";
+/** The Ritm features with an on/off switch. The Lock is the third one: on when lock.amount > 0. */
+export type RitmFeature = "headsUp" | "speedBump";
 
 /** Something the user saves for, and the time they give themselves to reach it. */
 export interface Goal {
@@ -52,7 +53,10 @@ export interface Goal {
 
 export interface RitmSettings {
   enabled: boolean;
-  level: RitmLevel;
+  /** Notifications when the pace gets too fast. On by default. */
+  headsUp: boolean;
+  /** A short pause before big online payments. Off by default. */
+  speedBump: boolean;
   /** Categories that never count (rent, utilities…). */
   essentialCategories: Category[];
   /** Lei per month, taken out of the spending money. */

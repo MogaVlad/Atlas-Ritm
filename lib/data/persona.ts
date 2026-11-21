@@ -43,10 +43,11 @@ export const PERSONA = {
   cardLast4: "4821",
 } as const;
 
-/** Ritm settings before onboarding: off, Heads-up preselected, Lock 500 lei until day 20. */
+/** Ritm settings before onboarding: off; Heads-up on, Speed bump off; the Lock amount (500 lei until day 20) is what onboarding offers when the Lock is switched on. */
 export const DEFAULT_RITM_SETTINGS: RitmSettings = {
   enabled: false,
-  level: "headsup",
+  headsUp: true,
+  speedBump: false,
   essentialCategories: ESSENTIAL_CATEGORIES,
   essentialsTotal: ESSENTIALS_TOTAL,
   goals: [GOAL],
