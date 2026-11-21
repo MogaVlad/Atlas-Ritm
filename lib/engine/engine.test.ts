@@ -139,6 +139,10 @@ describe("shouldShowSpeedBump", () => {
     expect(shouldShowSpeedBump({ ...jacket, category: "utilities" }, sb, state)).toBe(false);
     expect(shouldShowSpeedBump({ ...jacket, amount: 99 }, sb, state)).toBe(false);
   });
+
+  it("never pauses health purchases (sensitive data, even when not marked essential)", () => {
+    expect(shouldShowSpeedBump({ ...jacket, category: "health" }, sb, state)).toBe(false);
+  });
 });
 
 describe("lock", () => {

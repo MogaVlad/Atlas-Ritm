@@ -178,6 +178,7 @@ export default function RitmOnboarding() {
                 </li>
               ))}
             </ul>
+            <p className="text-sm leading-relaxed text-atlas-muted">{t("ritm.onboarding.s1.data")}</p>
           </>
         )}
 
@@ -397,6 +398,23 @@ export default function RitmOnboarding() {
                     goal: settings.goals[0]?.name || "—",
                   })}
                 </p>
+                <section aria-labelledby="lock-terms" className="rounded-2xl border border-atlas-line bg-white px-4 py-3">
+                  <h3 id="lock-terms" className="text-sm font-semibold">
+                    {t("ritm.onboarding.s3.lockTerms.title")}
+                  </h3>
+                  <ul className="mt-2 flex list-disc flex-col gap-1 pl-4 text-sm leading-snug">
+                    {(["t1", "t2", "t3", "t4", "t5", "t6"] as const).map((k) => (
+                      <li key={k}>
+                        {t(`ritm.onboarding.s3.lockTerms.${k}`, {
+                          day: unlockDay,
+                          hours: (k === "t5" ? RULES.turnOffDelayDays : RULES.lock.earlyUnlockDelayDays) * 24,
+                          emergency: formatLei(RULES.lock.emergencyMaxLei, locale),
+                        })}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-2 text-xs text-atlas-muted">{t("ritm.onboarding.s3.lockTerms.accept")}</p>
+                </section>
                 {preview.tight && (
                   <p className="rounded-xl bg-ritm-watch-tint px-4 py-3 text-sm text-ritm-watch">
                     {t("ritm.onboarding.s3.tight", {
