@@ -434,11 +434,11 @@
       "pension": "Put it toward my pension",
       "pensionHint": "We explain how it works first, then you decide.",
       "confirm": "Pay anyway",
-      "confirmIn": "Pay anyway · {seconds} s",
       "askRitm": "Ask Ritm",
       "lockedDone": "Done. {amount} stays in the Lock until day {day}.",
       "backToShop": "Back to the shop",
-      "backToAtlas": "Back to Atlas"
+      "backToAtlas": "Back to Atlas",
+      "holdHint": "Hold for {seconds} seconds to pay."
     },
     "tab": {
       "title": "Ritm",
