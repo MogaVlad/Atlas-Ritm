@@ -3,6 +3,8 @@
  * Matched by keywords, in Romanian and English. Same rules as the chatbot: short, never decides for the user.
  */
 
+import { RULES } from "@/lib/engine/config";
+
 export type ChatLocale = "ro" | "en";
 
 type Topic = "pension" | "pause" | "unlock" | "today" | "goal" | "ritm" | "other";
@@ -13,12 +15,12 @@ const ANSWERS: Record<Topic, Record<ChatLocale, string>> = {
     en: "Ritm watches how fast you spend your spending money since payday. At the level you choose, it gives you a Heads-up, adds a short pause to online payments (Speed bump) or locks part of your salary in savings (Lock). You can turn it off any time in settings.",
   },
   pause: {
-    ro: "Pauza apare la plățile online de peste 100 RON când cheltui mai repede decât de obicei. Îți arată ce înseamnă plata pentru obiectivul tău și cât poți cheltui azi; dacă vrei să plătești, ții apăsat butonul 3 secunde. Decizia rămâne a ta.",
-    en: "The pause shows up on online payments over 100 RON when you spend faster than usual. It shows what the payment means for your goal and how much is safe to spend today; to pay, you hold the button for 3 seconds. The choice is yours.",
+    ro: `Pauza apare la plățile online de peste 100 RON când cheltui mai repede decât de obicei. Îți arată ce înseamnă plata pentru obiectivul tău și cât poți cheltui azi; dacă vrei să plătești, ții apăsat butonul ${RULES.speedBump.holdSeconds} secunde. Decizia rămâne a ta.`,
+    en: `The pause shows up on online payments over 100 RON when you spend faster than usual. It shows what the payment means for your goal and how much is safe to spend today; to pay, you hold the button for ${RULES.speedBump.holdSeconds} seconds. The choice is yours.`,
   },
   pension: {
-    ro: "Pilonul III e o pensie privată facultativă: banii rămân investiți până la pensie, iar contribuțiile sunt deductibile până la echivalentul a 400 EUR pe an. Atlas Pensii este fondul propriu al Atlas; poți compara toate fondurile pe site-ul ASF.",
-    en: "Pillar III is a voluntary private pension: the money stays invested until retirement, and contributions are deductible up to the RON equivalent of 400 EUR a year. Atlas Pensii is Atlas's own fund; you can compare all funds on the ASF website.",
+    ro: "Pilonul III e o pensie privată facultativă: banii rămân în fond până la 60 de ani, după cel puțin 90 de plăți lunare. Contribuțiile sunt deductibile până la echivalentul a 400 EUR pe an. Atlas Pensii este fondul propriu al Atlas; poți compara toate fondurile pe site-ul ASF.",
+    en: "Pillar III is a voluntary private pension: the money stays in the fund until age 60, after at least 90 monthly payments. Contributions are deductible up to the RON equivalent of 400 EUR a year. Atlas Pensii is Atlas's own fund; you can compare all funds on the ASF website.",
   },
   unlock: {
     ro: "Lock se deblochează singur în ziua aleasă. Poți cere deblocarea mai devreme și banii vin după 24 de ore, iar o dată pe lună poți scoate imediat până la 300 RON pentru o urgență.",

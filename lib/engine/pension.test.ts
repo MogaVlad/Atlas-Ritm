@@ -6,12 +6,12 @@ const base = { amount: 300, consent: true, available: 1000, alreadyThisYear: 0 }
 
 describe("pension rules", () => {
   it("the deduction cap is 400 EUR in lei", () => {
-    expect(pensionDeductibleLimit()).toBe(2000);
+    expect(pensionDeductibleLimit()).toBe(2140);
   });
 
   it("tax saved is 10% of the deductible part, capped for the year", () => {
     expect(pensionTaxBenefit(300)).toEqual({ deductible: 300, taxSavedUpTo: 30 });
-    expect(pensionTaxBenefit(500, 1800)).toEqual({ deductible: 200, taxSavedUpTo: 20 });
+    expect(pensionTaxBenefit(500, 1940)).toEqual({ deductible: 200, taxSavedUpTo: 20 });
     expect(pensionTaxBenefit(100, 2500)).toEqual({ deductible: 0, taxSavedUpTo: 0 });
   });
 
@@ -35,7 +35,7 @@ describe("pension rules", () => {
       { id: "a", day: 6, amount: 300, source: "currentAccount" },
       { id: "b", day: 20, amount: 500, source: "savings" },
     ]);
-    expect(s).toEqual({ total: 800, deductibleLimit: 2000, deductibleUsed: 800, deductibleLeft: 1200, taxSavedUpTo: 80 });
+    expect(s).toEqual({ total: 800, deductibleLimit: 2140, deductibleUsed: 800, deductibleLeft: 1340, taxSavedUpTo: 80 });
   });
 });
 

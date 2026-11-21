@@ -1,6 +1,7 @@
 import type { Category, PaceState, RitmSettings, Transaction } from "./types";
 
-const NEVER_PAUSED: ReadonlySet<Category> = new Set(["salary", "own_transfer", "savings", "pension"]);
+/** Health purchases (pharmacy, doctor) are sensitive data: Ritm never pauses or comments on them. */
+const NEVER_PAUSED: ReadonlySet<Category> = new Set(["salary", "own_transfer", "savings", "pension", "health"]);
 
 /**
  * Should this payment pause on the Speed bump before Confirm?
@@ -20,4 +21,14 @@ export function shouldShowSpeedBump(tx: Transaction, settings: RitmSettings, sta
     !NEVER_PAUSED.has(tx.category) &&
     !settings.essentialCategories.includes(tx.category)
   );
+}
+
+/**
+ * Days of saving for the main goal that a payment equals (the Speed bump's "why not now").
+ * `monthlySaving` = what goes aside a month for it: the Lock amount, or what the goal needs a month.
+ * Null when nothing goes aside.
+ */
+export function goalImpactDays(amount: number, monthlySaving: number, cycleLength: number): number | null {
+  const perDay = monthlySaving / cycleLength;
+  return perDay > 0 ? Math.ceil(amount / perDay) : null;
 }

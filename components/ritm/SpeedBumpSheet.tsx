@@ -2,7 +2,7 @@
 
 import { animate, motion, useMotionValue, useReducedMotion, useTransform, type MotionValue } from "motion/react";
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
-import { interestEstimate, pensionDeductibleLimit, pensionTaxBenefit, RULES, type PaceState } from "@/lib/engine";
+import { goalImpactDays, goalMonthly, interestEstimate, pensionTaxBenefit, RULES, type PaceState } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
 import { useBank } from "@/lib/store/useBank";
@@ -14,7 +14,7 @@ export interface SpeedBumpSheetProps {
   pace: PaceState;
   /** Pay anyway (only after holding the button for RULES.speedBump.holdSeconds). */
   onConfirm: () => void;
-  /** Don't buy now: back to the shop. */
+  /** Leave the money where it is: back to the shop. */
   onNotNow: () => void;
   /** After the money went to the Lock or the pension instead: back into the bank. */
   onBackToAtlas: () => void;
@@ -22,7 +22,12 @@ export interface SpeedBumpSheetProps {
   onAskRitm?: () => void;
 }
 
-/** The pause before a big online payment: the purchase in month and goal terms, then the user's choice. */
+/**
+ * The pause before a big online payment, in one sheet:
+ * 1. the payment and what it means for the main goal; "Not now", or hold (RULES.speedBump.holdSeconds) to pay anyway;
+ * 2. after "Not now", in the same sheet: the money kept can go to the Lock, to Pillar III
+ *    (explained first), or stay in the account.
+ */
 export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAtlas, onAskRitm }: SpeedBumpSheetProps) {
   const t = useT();
   const locale = useLocale((s) => s.locale);
@@ -30,6 +35,9 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAt
   const titleId = useId();
   const hintId = useId();
   const heading = useRef<HTMLHeadingElement>(null);
+  const keptHeading = useRef<HTMLParagraphElement>(null);
+  /** "pay": the payment step; "kept": after "Not now", what to do with the money. */
+  const [step, setStep] = useState<"pay" | "kept">("pay");
   const [locked, setLocked] = useState(false);
   const [pensionOpen, setPensionOpen] = useState(false);
   const [pensioned, setPensioned] = useState<{ amount: number; taxSavedUpTo: number } | null>(null);
@@ -38,15 +46,19 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAt
 
   // The main goal (the first one).
   const goal = useBank((s) => s.ritm.goals[0]);
-  const monthlySaving = useBank((s) => s.ritm.lock.amount);
+  const lockAmount = useBank((s) => s.ritm.lock.amount);
   const unlockDay = useBank((s) => s.lock?.unlockDay ?? s.ritm.lock.unlockDay);
   const lockMoney = useBank((s) => s.lockMoney);
   const pensionSoFar = useBank((s) => s.pension.total);
 
   useEffect(() => heading.current?.focus(), []);
+  useEffect(() => {
+    if (step === "kept") keptHeading.current?.focus();
+  }, [step]);
   // Next keeps hidden routes alive (<Activity>): start fresh every time the sheet is shown again.
   useLayoutEffect(
     () => () => {
+      setStep("pay");
       setLocked(false);
       setPensionOpen(false);
       setPensioned(null);
@@ -56,8 +68,9 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAt
   );
 
   const amount = formatLei(purchase.amount, locale);
-  // shortcut: goal impact computed here (days of saving at the monthly Lock amount); move to lib/engine as goalImpactDays when Cosma has time.
-  const goalDays = monthlySaving > 0 ? Math.ceil(purchase.amount / (monthlySaving / RULES.cycleLength)) : null;
+  // What goes aside a month for the goal: the Lock, or (without one) what the goal needs a month.
+  const monthlySaving = lockAmount > 0 ? lockAmount : goal ? goalMonthly(goal) : 0;
+  const goalDays = goal ? goalImpactDays(purchase.amount, monthlySaving, pace.cycleLength) : null;
   // One number per option (section 11 E): what each choice gives, in RON.
   const lockDays = Math.max(1, unlockDay - pace.dayOfCycle);
   const lockInterest = interestEstimate(purchase.amount, lockDays, RULES.savings.annualRate);
@@ -81,9 +94,7 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAt
         className="max-h-[92%] overflow-y-auto rounded-t-[28px] bg-white px-6 pt-3 pb-8"
       >
         <div aria-hidden className="mx-auto mb-4 h-1 w-10 rounded-full bg-atlas-line" />
-        <p className="inline-block rounded-full bg-ritm-tint px-3 py-1 text-sm font-medium text-ritm">
-          {t("ritm.speedBump.tag", { day: pace.dayOfCycle })}
-        </p>
+        <p className="inline-block rounded-full bg-ritm-tint px-3 py-1 text-sm font-medium text-ritm">{t("ritm.speedBump.tag")}</p>
         <h2 id={titleId} ref={heading} tabIndex={-1} className="mt-3 font-display text-2xl leading-tight font-semibold outline-none">
           {t("ritm.speedBump.title")}
         </h2>
@@ -93,19 +104,33 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAt
           <span className="font-display text-3xl font-semibold tabular-nums">{amount}</span>
         </div>
 
-        <ul className="mt-4 flex flex-col gap-2.5 leading-snug">
-          <li>
-            {t("ritm.speedBump.progress", {
-              day: pace.dayOfCycle,
-              total: pace.cycleLength,
-              pct: Math.round(pace.pctSpent * 100),
-            })}
-          </li>
-          {goalDays !== null && goal && <li>{t("ritm.speedBump.goal", { days: goalDays, goal: goal.name })}</li>}
-          <li>{t("ritm.speedBump.safe", { amount: formatLei(pace.safeToSpendToday, locale) })}</li>
-        </ul>
-
-        {locked || pensioned ? (
+        {step === "pay" ? (
+          <>
+            {goalDays !== null && goal && (
+              <p className="mt-4 rounded-2xl bg-ritm-tint px-4 py-3 leading-snug text-ritm">
+                {t("ritm.speedBump.goal", { days: goalDays, goal: goal.name })}
+              </p>
+            )}
+            <div className="mt-6 flex flex-col gap-3">
+              <button type="button" onClick={() => setStep("kept")} className={PRIMARY}>
+                {t("ritm.speedBump.notNow")}
+              </button>
+              <HoldToPay label={t("ritm.speedBump.confirm")} hintId={hintId} reduce={!!reduce} onDone={onConfirm} />
+              <p id={hintId} className="-mt-1 text-center text-sm text-atlas-muted">
+                {t("ritm.speedBump.holdHint", { seconds: RULES.speedBump.holdSeconds })}
+              </p>
+              {onAskRitm && (
+                <button
+                  type="button"
+                  onClick={onAskRitm}
+                  className="min-h-11 self-center rounded-full px-3 font-medium text-ritm underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-ritm"
+                >
+                  {t("ritm.speedBump.askRitm")}
+                </button>
+              )}
+            </div>
+          </>
+        ) : locked || pensioned ? (
           <div className="mt-6 flex flex-col gap-3">
             <p role="status" className="rounded-2xl bg-ritm-tint px-4 py-3 font-medium text-ritm">
               {pensioned
@@ -121,15 +146,9 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAt
             </button>
           </div>
         ) : (
-          <div className="mt-6 flex flex-col gap-3">
-            <p className="text-sm text-atlas-muted">{t("ritm.speedBump.choice")}</p>
-            <button type="button" onClick={onNotNow} className={PRIMARY}>
-              {t("ritm.speedBump.notNow")}
-            </button>
-            <p className="-mt-1 text-center text-sm text-atlas-muted">
-              {pace.safeToSpendToday > 0
-                ? t("ritm.speedBump.notNowHint", { safe: formatLei(pace.safeToSpendToday, locale) })
-                : t("ritm.speedBump.notNowHintUsed")}
+          <div className="mt-5 flex flex-col gap-3">
+            <p ref={keptHeading} tabIndex={-1} className="font-display text-lg leading-snug font-semibold outline-none">
+              {t("ritm.speedBump.keptTitle", { amount })}
             </p>
             <Option
               label={t("ritm.speedBump.moveToLock", { amount })}
@@ -141,28 +160,9 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAt
               hint={t("ritm.speedBump.pensionNumber", { tax: formatLei(taxBack, locale) })}
               onClick={() => setPensionOpen(true)}
             />
-            {/* The details stay one tap deeper: the numbers above are enough to choose. */}
-            <details className="rounded-2xl px-4 py-2 text-sm ring-1 ring-atlas-line">
-              <summary className="min-h-9 cursor-pointer py-1.5 font-medium text-ritm">{t("ritm.speedBump.detailsTitle")}</summary>
-              <ul className="mt-2 mb-1 flex list-disc flex-col gap-1.5 pl-5 text-atlas-muted">
-                <li>{t("ritm.speedBump.detailsSafe")}</li>
-                <li>{t("ritm.speedBump.detailsLock", { rate: RULES.savings.annualRate * 100, day: unlockDay })}</li>
-                <li>{t("ritm.speedBump.detailsPension", { limit: formatLei(pensionDeductibleLimit(), locale) })}</li>
-              </ul>
-            </details>
-            <HoldToPay label={t("ritm.speedBump.confirm")} hintId={hintId} reduce={!!reduce} onDone={onConfirm} />
-            <p id={hintId} className="-mt-1 text-center text-sm text-atlas-muted">
-              {t("ritm.speedBump.holdHint", { seconds: RULES.speedBump.holdSeconds })}
-            </p>
-            {onAskRitm && (
-              <button
-                type="button"
-                onClick={onAskRitm}
-                className="min-h-11 self-center rounded-full px-3 font-medium text-ritm underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-ritm"
-              >
-                {t("ritm.speedBump.askRitm")}
-              </button>
-            )}
+            <button type="button" onClick={onNotNow} className={SECONDARY}>
+              {t("ritm.speedBump.leaveIt")}
+            </button>
           </div>
         )}
       </motion.section>
