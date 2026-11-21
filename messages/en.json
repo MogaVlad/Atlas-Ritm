@@ -5,10 +5,54 @@
     "switchTo": "Switch language to Romanian"
   },
   "bank": {
+    "brand": {
+      "homeLink": "Atlas, home"
+    },
+    "nav": {
+      "label": "Main navigation",
+      "home": "Home",
+      "payments": "Payments",
+      "ritm": "Ritm",
+      "profile": "Profile"
+    },
     "home": {
       "greeting": "Hi, {name}!",
       "balanceLabel": "Current account",
-      "comingSoon": "The app is under construction."
+      "card": "Card ••• {last4}",
+      "savingsLabel": "Savings account",
+      "recentTitle": "Recent transactions",
+      "seeAll": "See all"
+    },
+    "ritmSlot": {
+      "title": "Ritm",
+      "body": "See how fast your salary is going and what you can spend calmly today. Coming here soon."
+    },
+    "transactions": {
+      "title": "Transactions",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "essential": "Essential",
+      "empty": "No transactions this month yet."
+    },
+    "categories": {
+      "salary": "Salary",
+      "rent": "Rent",
+      "utilities": "Utilities",
+      "phone": "Phone",
+      "transport": "Transport",
+      "groceries": "Groceries",
+      "eatingOut": "Eating out",
+      "shopping": "Clothes and shopping",
+      "entertainment": "Free time",
+      "savings": "Savings"
+    },
+    "payments": {
+      "title": "Payments",
+      "comingSoon": "Pay online and in store from here. Coming soon."
+    },
+    "profile": {
+      "title": "Profile",
+      "comingSoon": "Your settings, Ritm included, will live here. Coming soon."
     }
   },
   "ritm": {}
