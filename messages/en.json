@@ -32,7 +32,8 @@
       "today": "Today",
       "yesterday": "Yesterday",
       "essential": "Essential",
-      "empty": "No transactions this month yet."
+      "empty": "No transactions this month yet.",
+      "planned": "Planned"
     },
     "categories": {
       "salary": "Salary",
@@ -41,10 +42,16 @@
       "phone": "Phone",
       "transport": "Transport",
       "groceries": "Groceries",
-      "eatingOut": "Eating out",
+      "food_delivery": "Food delivery",
+      "eating_out": "Cafés and restaurants",
       "shopping": "Clothes and shopping",
       "entertainment": "Free time",
-      "savings": "Savings"
+      "electronics": "Electronics",
+      "health": "Health",
+      "own_transfer": "Transfer between your accounts",
+      "savings": "Savings",
+      "pension": "Pillar III pension",
+      "other": "Other"
     },
     "payments": {
       "title": "Payments",
@@ -53,6 +60,37 @@
     "profile": {
       "title": "Profile",
       "comingSoon": "Your settings, Ritm included, will live here. Coming soon."
+    },
+    "channels": {
+      "card_in_store": "Card, in store",
+      "card_online": "Card, online",
+      "transfer": "Bank transfer",
+      "salary": "Salary payment"
+    },
+    "accounts": {
+      "available": "Available balance",
+      "iban": "IBAN",
+      "copy": "Copy",
+      "copied": "Copied",
+      "history": "History",
+      "savingsBalance": "Balance",
+      "savingsEmpty": "Your savings account is empty for now. If you turn on Lock in Ritm, the money you set aside lands here."
+    },
+    "detail": {
+      "category": "Category",
+      "method": "Paid with",
+      "card": "Card",
+      "account": "From account",
+      "notFound": "We couldn’t find this transaction. It may have been cleared when the demo was reset.",
+      "ritm": {
+        "countedTitle": "Counts towards this month’s pace",
+        "notCountedTitle": "Doesn’t count towards this month’s pace",
+        "counted": "It comes out of your spending money until payday.",
+        "moneyIn": "This is money coming in, not spending.",
+        "planned": "You marked it as planned, so it doesn’t change your pace.",
+        "essential": "It’s an essential cost, already taken out of your spending money.",
+        "notCounted": "The money stays yours, between your own accounts or set aside."
+      }
     }
   },
   "ritm": {
