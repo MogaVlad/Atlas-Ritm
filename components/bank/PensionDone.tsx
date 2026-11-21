@@ -6,8 +6,8 @@ import { useEffect, useId, useRef, useState } from "react";
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
 
-/** How long the success screen stays before going Home. Long enough to read two lines. */
-const SECONDS = 5;
+/** How long the success screen stays before going Home. Short; "Stay here" is there to read it calmly. */
+const SECONDS = 3;
 const R = 52;
 const CIRCUMFERENCE = 2 * Math.PI * R;
 
