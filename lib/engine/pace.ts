@@ -21,7 +21,7 @@ export function isCounted(t: Transaction, settings: RitmSettings): boolean {
 const sum = (list: Transaction[]) => list.reduce((s, t) => s + t.amount, 0);
 
 /** The pace of spending since payday, for one day of the cycle (the "Ritm rules" in CLAUDE.md). */
-export function computePace(transactions: Transaction[], settings: RitmSettings, day: Day): PaceState {
+export function computePace(transactions: readonly Transaction[], settings: RitmSettings, day: Day): PaceState {
   const cycleLength = RULES.cycleLength;
   const upToToday = transactions.filter((t) => t.day <= day);
   const counted = upToToday.filter((t) => isCounted(t, settings));

@@ -42,4 +42,17 @@ export const RULES = {
   turnOffDelayDays: 1,
   /** Tax on savings interest. */
   interestTax: 0.1,
+  /** Day-30 commitment card: "Next raise: save half of it automatically?" */
+  raise: {
+    saveShare: 0.5,
+  },
+  pension: {
+    /** Pillar III contributions are deductible up to the lei equivalent of this, per year
+     * (shared with private health insurance; the demo assumes none). */
+    deductibleEurPerYear: 400,
+    /** Round demo rate. The real one is BNR's on the payment day (see the pitch sources table). */
+    eurToLei: 5,
+    /** Income tax saved on the deductible part. */
+    incomeTax: 0.1,
+  },
 } as const;

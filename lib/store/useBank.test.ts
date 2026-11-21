@@ -97,6 +97,64 @@ describe("useBank", () => {
     expect(store().balances.savings).toBe(150);
   });
 
+  it("pension from the Speed bump: needs consent, then 300 lei leave the current account", () => {
+    store().enableRitm(DEFAULT_RITM_SETTINGS);
+    store().setDemoDay(6);
+    const before = store().balances.current;
+    const spent = store().pace.spent;
+
+    expect(store().contributeToPension({ amount: 300, source: "currentAccount", consent: false })).toEqual({
+      ok: false,
+      reason: "noConsent",
+    });
+    expect(store().balances.current).toBe(before);
+
+    const r = store().contributeToPension({ amount: 300, source: "currentAccount", consent: true });
+    expect(r.ok && r.taxSavedUpTo).toBe(30);
+    expect(store().balances.current).toBe(before - 300);
+    expect(store().pension.total).toBe(300);
+    expect(store().pace.spent).toBe(spent); // a pension transfer is never counted as spending
+    expect(store().transactions.at(-1)?.merchant).toBe("Atlas Pensii");
+  });
+
+  it("pension from savings: only money kept at unlock, not money still in the Lock", () => {
+    store().enableRitm(DEFAULT_RITM_SETTINGS);
+    expect(store().contributeToPension({ amount: 100, source: "savings", consent: true })).toEqual({
+      ok: false,
+      reason: "notEnoughMoney",
+    });
+
+    store().setDemoDay(20);
+    store().keepSaved(500);
+    const current = store().balances.current;
+    expect(store().contributeToPension({ amount: 200, source: "savings", consent: true }).ok).toBe(true);
+    expect(store().balances.savings).toBe(300);
+    expect(store().lock?.amount).toBe(300);
+    expect(store().balances.current).toBe(current); // savings → pension, the current account is untouched
+  });
+
+  it("day-30 summary: spending money left, kept saved and pension, from the store", () => {
+    store().enableRitm(DEFAULT_RITM_SETTINGS);
+    store().setDemoDay(20);
+    store().keepSaved(500);
+    store().contributeToPension({ amount: 100, source: "savings", consent: true });
+    store().setDemoDay(30);
+    const s = store().summary;
+    expect(s.reachedPayday).toBe(true);
+    expect(s.keptSaved).toBe(400);
+    expect(s.pensionTotal).toBe(100);
+    expect(s.currentBalance).toBe(store().balances.current);
+    expect(s.points).toHaveLength(30);
+  });
+
+  it("the raise commitment is off until the user turns it on", () => {
+    expect(store().raiseCommitment).toBe(false);
+    store().setRaiseCommitment(true);
+    expect(store().raiseCommitment).toBe(true);
+    store().resetDemo();
+    expect(store().raiseCommitment).toBe(false);
+  });
+
   it("the Lock opens by itself on day 20", () => {
     store().enableRitm(DEFAULT_RITM_SETTINGS);
     store().setDemoDay(19);
@@ -170,5 +228,6 @@ describe("useBank", () => {
     expect(store().added).toEqual([]);
     expect(store().notifications).toEqual([]);
     expect(store().lock).toBeNull();
+    expect(store().pensionContributions).toEqual([]);
   });
 });

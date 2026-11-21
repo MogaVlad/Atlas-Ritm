@@ -112,6 +112,73 @@ export interface AlertAction {
   amount?: number;
 }
 
+/** One point of the month's pace line (day-30 summary). */
+export interface PacePoint {
+  day: Day;
+  /** 0–1 */
+  pctSpent: number;
+  /** 0–1 */
+  pctMonthPassed: number;
+  severity: Severity;
+}
+
+/** The month so far, for the day-30 summary. Any day works; on day 30 it is the whole month. */
+export interface MonthSummary {
+  day: Day;
+  reachedPayday: boolean;
+  pool: number;
+  spent: number;
+  /** Spending money left (never below 0). */
+  leftOfSpendingMoney: number;
+  /** Lei spent beyond the spending money (0 if none). */
+  overspent: number;
+  /** Day 1 → day: share of spending money used vs share of month passed. */
+  points: PacePoint[];
+  /** Days the pace was fine ("ok"). */
+  daysOnPace: number;
+  /** The fastest day, once enough money was spent to judge; null if never. */
+  peak: { day: Day; paceRatio: number } | null;
+}
+
+/** Where a Pillar III contribution comes from: the purchase not made, or money kept at unlock. */
+export type PensionSource = "currentAccount" | "savings";
+
+export interface PensionContribution {
+  id: string;
+  day: Day;
+  amount: number;
+  source: PensionSource;
+}
+
+/** Totals for the pension explainer. Facts only: no return estimates, ever. */
+export interface PensionSummary {
+  total: number;
+  /** Lei equivalent of the yearly deduction cap. */
+  deductibleLimit: number;
+  deductibleUsed: number;
+  deductibleLeft: number;
+  /** Income tax saved so far on the deductible part ("up to", it depends on the payslip). */
+  taxSavedUpTo: number;
+}
+
+export interface PensionCheckInput {
+  amount: number;
+  /** The user ticked "I understand this money is for retirement" AND pressed the explicit button. */
+  consent: boolean;
+  /** Lei the source can give right now. */
+  available: number;
+  /** Already contributed this year. */
+  alreadyThisYear: number;
+}
+
+export type PensionCheck =
+  | { ok: true; amount: number; deductible: number; taxSavedUpTo: number }
+  | { ok: false; reason: "noConsent" | "invalidAmount" | "notEnoughMoney" };
+
+export type PensionResult =
+  | { ok: true; contribution: PensionContribution; deductible: number; taxSavedUpTo: number }
+  | { ok: false; reason: "noConsent" | "invalidAmount" | "notEnoughMoney" };
+
 export type EmergencyResult =
   | { ok: true; lock: LockState; released: number }
   | { ok: false; reason: "alreadyUsed" | "overLimit" | "notLocked" };
