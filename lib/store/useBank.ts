@@ -130,6 +130,8 @@ interface PersistedState {
   month: DemoMonth;
   /** Month 1's early exits from the Lock, for month 2's summary ("Last month you unlocked..."). */
   lastMonthUnlocks: UnlockRecord[];
+  /** Both accounts before this month's payday. Month 2 starts with what month 1 ended with. */
+  opening: Balances;
 }
 
 interface DerivedState {
@@ -185,7 +187,10 @@ interface Actions {
    * lei, first time this month: released now. Otherwise released 24 h later; the rest stays locked.
    */
   unlockWithReason: (amount: number, reason: UnlockReason, note?: string) => "emergency" | "wait" | "notLocked";
-  /** Demo: switch to month 1 or 2. Starts that month on day 0; settings and goals stay. */
+  /**
+   * Demo: switch month. Month 1 starts fresh on day 0. Month 2 starts on day 1 with month 1's
+   * balances carried over and Ritm to set up again (last month's choices and goals as defaults).
+   */
   setMonth: (month: DemoMonth) => void;
   /** Early unlock of the whole Lock, released 24 h later. The reason is recorded. */
   requestUnlock: (reason?: UnlockReason, note?: string) => void;
@@ -247,7 +252,10 @@ export type BankState = PersistedState & DerivedState & Actions;
 /* ─── helpers ─────────────────────────────────────────────────────────────── */
 
 /** Day 0 is the day before payday (the demo starts there); day 1 is payday. */
-const clampDay = (day: number) => Math.min(RULES.cycleLength, Math.max(0, Math.round(day)));
+/** First day the demo clock can show: month 1 starts the evening before payday (day 0), month 2 on payday. */
+export const firstDay = (month: DemoMonth): Day => (month === 2 ? 1 : 0);
+
+const clampDay = (day: number, month: DemoMonth) => Math.min(RULES.cycleLength, Math.max(firstDay(month), Math.round(day)));
 
 type SavedRitm = Partial<RitmSettings> & { goal?: { name: string; amount: number }; level?: "headsup" | "speedbump" | "lock" };
 
@@ -282,7 +290,7 @@ function currentBalance(s: PersistedState, day: Day): number {
   const flow = allTransactions(s)
     .filter((t) => t.day <= day)
     .reduce((sum, t) => sum - t.amount, 0);
-  return OPENING_CURRENT + flow - (s.savings - OPENING_SAVINGS);
+  return s.opening.current + flow - (s.savings - s.opening.savings);
 }
 
 /**
@@ -320,8 +328,8 @@ function derive(s: PersistedState): DerivedState {
   const history = historyFor(s.month);
   const pace = computePace(transactions, engineSettings(s), s.demoDay, history);
   const flow = transactions.filter((t) => t.day <= s.demoDay).reduce((sum, t) => sum - t.amount, 0);
-  const movedToSavings = s.savings - OPENING_SAVINGS;
-  const balances = { current: OPENING_CURRENT + flow - movedToSavings, savings: s.savings };
+  const movedToSavings = s.savings - s.opening.savings;
+  const balances = { current: s.opening.current + flow - movedToSavings, savings: s.savings };
   const pension = pensionSummary(s.pensionContributions);
   return {
     transactions,
@@ -432,6 +440,7 @@ const INITIAL: PersistedState = {
   declinedIds: [],
   month: 1,
   lastMonthUnlocks: [],
+  opening: { current: OPENING_CURRENT, savings: OPENING_SAVINGS },
 };
 
 /** localStorage that never throws (private windows, blocked storage, server render). */
@@ -481,6 +490,7 @@ const pick = (s: BankState): PersistedState => ({
   declinedIds: s.declinedIds,
   month: s.month,
   lastMonthUnlocks: s.lastMonthUnlocks,
+  opening: s.opening,
 });
 
 /* ─── store ───────────────────────────────────────────────────────────────── */
@@ -500,10 +510,13 @@ export const useBank = create<BankState>()(
 
         setLocale: (locale) => update((s) => ({ ...s, locale })),
 
-        setDemoDay: (day) => update((s) => evaluateDay(settleDays({ ...s, demoDay: clampDay(day) }, s.demoDay, clampDay(day)))),
+        setDemoDay: (day) =>
+          update((s) => evaluateDay(settleDays({ ...s, demoDay: clampDay(day, s.month) }, s.demoDay, clampDay(day, s.month)))),
 
         nextDay: () =>
-          update((s) => evaluateDay(settleDays({ ...s, demoDay: clampDay(s.demoDay + 1) }, s.demoDay, clampDay(s.demoDay + 1)))),
+          update((s) =>
+            evaluateDay(settleDays({ ...s, demoDay: clampDay(s.demoDay + 1, s.month) }, s.demoDay, clampDay(s.demoDay + 1, s.month))),
+          ),
 
         payInStore: (purchase) => {
           const balanceBefore = get().balances.current;
@@ -631,14 +644,23 @@ export const useBank = create<BankState>()(
             // Month 2 remembers month 1's Lock exits; with none, the scripted "Something I want" one.
             const lastMonthUnlocks: UnlockRecord[] =
               month === 2 ? (s.unlockReasons.length > 0 ? s.unlockReasons : SCRIPTED_MONTH1_UNLOCKS) : [];
-            return {
+            if (month === 1) return { ...INITIAL, locale: s.locale, ritm: s.ritm, raiseCommitment: s.raiseCommitment };
+            // Month 2 opens on payday with both accounts as month 1 left them, so money kept in
+            // savings adds up. Ritm asks again what the user wants (last month's choices are the
+            // defaults); a new Lock adds to the savings already there.
+            const opening = { current: Math.max(0, currentBalance(s, s.demoDay)), savings: s.savings };
+            const start: PersistedState = {
               ...INITIAL,
               locale: s.locale,
-              ritm: s.ritm,
+              ritm: { ...s.ritm, enabled: false },
               raiseCommitment: s.raiseCommitment,
+              pensionContributions: s.pensionContributions,
               month,
               lastMonthUnlocks,
+              opening,
+              savings: opening.savings,
             };
+            return evaluateDay(settleDays({ ...start, demoDay: firstDay(month) }, 0, firstDay(month)));
           }),
 
         requestUnlock: (reason, note) =>

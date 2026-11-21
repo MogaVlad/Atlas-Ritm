@@ -16,7 +16,8 @@ const MAX_MESSAGES = 10;
 /** The server answers from its fallbacks after 8 s; this only catches a dead connection. */
 const CLIENT_TIMEOUT_MS = 15_000;
 
-const SUGGESTIONS = ["pillar", "pause"] as const;
+/** From the Speed bump the questions are about the pause; from Home, about the month. */
+const SUGGESTIONS = { paused: ["pillar", "pause"], home: ["today", "goal"] } as const;
 
 type Message = ChatMessage & { id: string; source?: ChatReply["source"]; failed?: boolean };
 
@@ -32,7 +33,7 @@ function toHistory(list: Message[]): ChatMessage[] {
 }
 
 /**
- * "Ask Ritm", opened from the Speed bump. Explains Ritm, the numbers on screen and the options;
+ * "Ask Ritm", opened from the Speed bump or the Ritm card on Home. Explains Ritm, the numbers on screen and the options;
  * never decides for the user (the server's system prompt enforces it, the footer says it).
  */
 export function AskRitmSheet({
@@ -161,7 +162,7 @@ export function AskRitmSheet({
         </header>
 
         <div className="flex-1 overflow-y-auto overscroll-y-contain px-6 py-4 [scrollbar-width:none]">
-          <p className="max-w-[85%] rounded-2xl rounded-tl-md bg-ritm-tint px-4 py-3 leading-snug">{t("bank.askRitm.intro")}</p>
+          <p className="max-w-[85%] rounded-2xl rounded-tl-md bg-ritm-tint px-4 py-3 leading-snug">{t(purchase ? "bank.askRitm.intro" : "bank.askRitm.introHome")}</p>
 
           <div role="log" aria-live="polite" aria-label={t("bank.askRitm.title")} className="mt-3 flex flex-col gap-3">
             {messages.map((m) =>
@@ -216,7 +217,7 @@ export function AskRitmSheet({
         <div className="border-t border-atlas-line px-6 pt-3 pb-5">
           {messages.length === 0 && (
             <div className="-mx-1 mb-3 flex flex-wrap gap-2">
-              {SUGGESTIONS.map((key) => (
+              {SUGGESTIONS[purchase ? "paused" : "home"].map((key) => (
                 <button
                   key={key}
                   type="button"

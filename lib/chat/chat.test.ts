@@ -20,6 +20,11 @@ describe("fallbacks", () => {
     expect(matchTopic("Cum deblochez banii?")).toBe("unlock");
     expect(matchTopic("How do I unlock?")).toBe("unlock");
     expect(matchTopic("Cine câștigă meciul?")).toBe("other");
+    // The suggested questions on Home
+    expect(matchTopic("Cât pot cheltui azi?")).toBe("today");
+    expect(matchTopic("How much can I spend today?")).toBe("today");
+    expect(matchTopic("Cum ajung la obiectiv?")).toBe("goal");
+    expect(matchTopic("How do I reach my goal?")).toBe("goal");
   });
 
   it("answers in the user's language", () => {
