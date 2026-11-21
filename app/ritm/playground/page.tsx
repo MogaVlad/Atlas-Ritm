@@ -47,7 +47,7 @@ export default function RitmPlayground() {
         <PaceBar pctSpent={s.spent} pctMonthPassed={s.day / 30} severity={s.severity} dayOfCycle={s.day} cycleLength={30} />
 
         <section className="flex flex-col gap-3">
-          <h2 className="text-sm text-muted-foreground">{t("ritm.levels.label")}</h2>
+          <h2 className="text-sm text-atlas-muted">{t("ritm.levels.label")}</h2>
           <LevelChips value={level} onChange={setLevel} />
         </section>
       </main>
