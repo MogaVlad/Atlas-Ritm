@@ -1,6 +1,6 @@
 "use client";
 
-import { Minus, Plus, X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   useEffect,
@@ -10,17 +10,18 @@ import {
   type ReactNode,
 } from "react";
 import { LocaleToggle } from "@/components/bank/LocaleToggle";
-import { LevelChips } from "@/components/ritm/LevelChips";
-import { RitmBack } from "@/components/ritm/RitmBack";
+import { fromDraft, GoalsEditor, toDraft, type GoalDraft } from "@/components/ritm/GoalsEditor";
+import { FeatureSwitches } from "@/components/ritm/FeatureSwitches";
+import { leaveRitm, RitmBack } from "@/components/ritm/RitmBack";
 import { useBank } from "@/lib/store/useBank";
 import { ESSENTIAL_CATEGORIES, NET_SALARY } from "@/lib/data/persona";
 import { SCENARIO, transactionsUntil } from "@/lib/data/scenario";
 import {
   computePace,
+  isValidGoal,
   lockPreview,
   RULES,
   type Category,
-  type RitmLevel,
   type RitmSettings,
 } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
@@ -39,11 +40,6 @@ const LOCK_QUICK = [300, 500, 800];
 
 // shortcut: the store has no place for future planned purchases yet; they show here but aren't saved. Ask Cosma for addPlannedPurchase.
 type PlannedPurchase = { name: string; amount: number };
-
-/** The goal amount's − / + buttons move it by this many lei. */
-const GOAL_STEP = 100;
-const STEP_BUTTON =
-  "flex size-11 shrink-0 items-center justify-center rounded-full border border-atlas-line bg-white text-ritm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm";
 
 const INPUT =
   "min-h-11 w-full rounded-xl border border-atlas-line bg-white px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ritm";
@@ -72,11 +68,11 @@ export default function RitmOnboarding() {
     null,
   );
   const [draftError, setDraftError] = useState(false);
-  const [level, setLevel] = useState<RitmLevel>(defaults.level);
-  const [lockAmount, setLockAmount] = useState(defaults.lock.amount);
+  // What Ritm does: Heads-up starts on, the Speed bump and the Lock start off.
+  const [features, setFeatures] = useState({ headsUp: defaults.headsUp, speedBump: defaults.speedBump, lock: false });
+  const [lockAmount, setLockAmount] = useState(defaults.lock.amount || RULES.lock.defaultAmount);
   const [unlockDay, setUnlockDay] = useState(defaults.lock.unlockDay);
-  const [goalName, setGoalName] = useState(defaults.goal.name);
-  const [goalAmount, setGoalAmount] = useState(String(defaults.goal.amount));
+  const [goals, setGoals] = useState<GoalDraft[]>(() => defaults.goals.map(toDraft));
   const [goalError, setGoalError] = useState(false);
 
   // Move focus to the new step's heading so screen readers announce it (not on first load).
@@ -95,19 +91,20 @@ export default function RitmOnboarding() {
   const essentials = DETECTED.filter((tx) => essentialOn[tx.category]);
   const settings: RitmSettings = {
     ...defaults,
-    level,
+    headsUp: features.headsUp,
+    speedBump: features.speedBump,
     essentialCategories: essentials.map((tx) => tx.category),
     essentialsTotal: essentials.reduce((s, tx) => s + tx.amount, 0),
-    goal: { name: goalName.trim(), amount: Number(goalAmount) },
-    lock: { amount: lockAmount, unlockDay },
+    goals: goals.map(fromDraft),
+    lock: { amount: features.lock ? lockAmount : 0, unlockDay },
   };
   // The engine owns the "spending money" rule; we only show its result.
   const pool = computePace(transactionsUntil(1), settings, 1).pool;
   const preview = lockPreview({
     spendingMoney: pool,
-    lockAmount,
+    lockAmount: settings.lock.amount,
     unlockDay,
-    goalAmount: settings.goal.amount || 0,
+    goalAmount: settings.goals[0]?.amount || 0,
   });
 
   const addPlanned = () => {
@@ -119,10 +116,10 @@ export default function RitmOnboarding() {
   };
 
   const finish = () => {
-    if (!settings.goal.name || !(settings.goal.amount > 0))
-      return setGoalError(true);
+    if (settings.goals.length === 0 || !settings.goals.every(isValidGoal)) return setGoalError(true);
     enableRitm(settings);
-    router.push("/");
+    // Back where onboarding was opened from (Home, Payments, Profile...), not always Home.
+    leaveRitm(router);
   };
 
   return (
@@ -342,52 +339,41 @@ export default function RitmOnboarding() {
 
         {step === 3 && (
           <>
-            <LevelChips value={level} onChange={setLevel} />
+            <section className="flex flex-col gap-3">
+              <h2 className="font-display text-lg font-semibold">{t("ritm.levels.label")}</h2>
+              <FeatureSwitches values={features} onChange={(feature, on) => setFeatures((f) => ({ ...f, [feature]: on }))} />
+            </section>
 
-            <section className="flex flex-col gap-4">
-              <h2 className="font-display text-lg font-semibold">
-                {t("ritm.onboarding.s3.lockTitle")}
-              </h2>
-              <Field
-                id="lock-amount"
-                label={t("ritm.onboarding.s3.lockAmount")}
-                value={formatLei(lockAmount, locale)}
-              >
-                <input
-                  id="lock-amount"
-                  type="range"
-                  min={0}
-                  max={LOCK_MAX}
-                  step={50}
-                  value={lockAmount}
-                  onChange={(e) => setLockAmount(Number(e.target.value))}
-                  aria-valuetext={formatLei(lockAmount, locale)}
-                  className="h-11 w-full accent-ritm"
-                />
-              </Field>
-              <div
-                role="group"
-                aria-label={t("ritm.onboarding.s3.quick")}
-                className="flex gap-2"
-              >
-                {LOCK_QUICK.map((v) => (
-                  <button
-                    key={v}
-                    type="button"
-                    aria-pressed={lockAmount === v}
-                    onClick={() => setLockAmount(v)}
-                    className="min-h-11 flex-1 rounded-full border border-atlas-line bg-white text-sm font-medium tabular-nums focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm aria-pressed:border-ritm aria-pressed:bg-ritm aria-pressed:text-white"
-                  >
-                    {formatLei(v, locale)}
-                  </button>
-                ))}
-              </div>
-              {lockAmount > 0 && (
-                <Field
-                  id="unlock-day"
-                  label={t("ritm.onboarding.s3.lockDay")}
-                  value={t("ritm.onboarding.s3.dayValue", { day: unlockDay })}
-                >
+            {features.lock && (
+              <section className="flex flex-col gap-4">
+                <h2 className="font-display text-lg font-semibold">{t("ritm.onboarding.s3.lockTitle")}</h2>
+                <Field id="lock-amount" label={t("ritm.onboarding.s3.lockAmount")} value={formatLei(lockAmount, locale)}>
+                  <input
+                    id="lock-amount"
+                    type="range"
+                    min={50}
+                    max={LOCK_MAX}
+                    step={50}
+                    value={lockAmount}
+                    onChange={(e) => setLockAmount(Number(e.target.value))}
+                    aria-valuetext={formatLei(lockAmount, locale)}
+                    className="h-11 w-full accent-ritm"
+                  />
+                </Field>
+                <div role="group" aria-label={t("ritm.onboarding.s3.quick")} className="flex gap-2">
+                  {LOCK_QUICK.map((v) => (
+                    <button
+                      key={v}
+                      type="button"
+                      aria-pressed={lockAmount === v}
+                      onClick={() => setLockAmount(v)}
+                      className="min-h-11 flex-1 rounded-full border border-atlas-line bg-white text-sm font-medium tabular-nums focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm aria-pressed:border-ritm aria-pressed:bg-ritm aria-pressed:text-white"
+                    >
+                      {formatLei(v, locale)}
+                    </button>
+                  ))}
+                </div>
+                <Field id="unlock-day" label={t("ritm.onboarding.s3.lockDay")} value={t("ritm.onboarding.s3.dayValue", { day: unlockDay })}>
                   <input
                     id="unlock-day"
                     type="range"
@@ -401,89 +387,37 @@ export default function RitmOnboarding() {
                     className="h-11 w-full accent-ritm"
                   />
                 </Field>
-              )}
-              <p className="rounded-xl bg-ritm-tint px-4 py-3 text-sm leading-relaxed">
-                {lockAmount > 0
-                  ? t("ritm.onboarding.s3.lockExplain", {
-                      amount: formatLei(lockAmount, locale),
-                      day: unlockDay,
-                    })
-                  : t("ritm.onboarding.s3.lockNone")}
-              </p>
-              <p className="text-sm leading-relaxed" aria-live="polite">
-                {lockAmount > 0
-                  ? t("ritm.onboarding.s3.preview", {
-                      perDay: formatLei(preview.perDay, locale),
-                      day: unlockDay,
-                      back: formatLei(preview.backOnUnlock, locale),
-                      pct: Math.round(preview.goalPct * 100),
-                      goal: settings.goal.name || "—",
-                    })
-                  : t("ritm.onboarding.s3.previewNone", {
-                      perDay: formatLei(preview.perDay, locale),
-                    })}
-              </p>
-              {preview.tight && (
-                <p className="rounded-xl bg-ritm-watch-tint px-4 py-3 text-sm text-ritm-watch">
-                  {t("ritm.onboarding.s3.tight", {
-                    min: formatLei(RULES.lock.tightPerDayLei, locale),
+                <p className="rounded-xl bg-ritm-tint px-4 py-3 text-sm leading-relaxed">
+                  {t("ritm.onboarding.s3.lockExplain", { amount: formatLei(lockAmount, locale), day: unlockDay })}
+                </p>
+                <p className="text-sm leading-relaxed" aria-live="polite">
+                  {t("ritm.onboarding.s3.preview", {
+                    perDay: formatLei(preview.perDay, locale),
+                    day: unlockDay,
+                    back: formatLei(preview.backOnUnlock, locale),
+                    pct: Math.round(preview.goalPct * 100),
+                    goal: settings.goals[0]?.name || "—",
                   })}
                 </p>
-              )}
-            </section>
+                {preview.tight && (
+                  <p className="rounded-xl bg-ritm-watch-tint px-4 py-3 text-sm text-ritm-watch">
+                    {t("ritm.onboarding.s3.tight", {
+                      min: formatLei(RULES.lock.tightPerDayLei, locale),
+                    })}
+                  </p>
+                )}
+              </section>
+            )}
 
-            <section className="flex flex-col gap-4">
-              <h2 className="font-display text-lg font-semibold">
-                {t("ritm.onboarding.s3.goalTitle")}
-              </h2>
-              <Field id="goal-name" label={t("ritm.onboarding.s3.goalName")}>
-                <input
-                  id="goal-name"
-                  value={goalName}
-                  onChange={(e) => setGoalName(e.target.value)}
-                  className={INPUT}
-                />
-              </Field>
-              <Field
-                id="goal-amount"
-                label={t("ritm.onboarding.s3.goalAmount")}
-              >
-                {/* − / + move the goal by 100 lei; typing any amount still works. */}
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setGoalAmount(String(Math.max(GOAL_STEP, (Math.ceil(Number(goalAmount) / GOAL_STEP) || 1) * GOAL_STEP - GOAL_STEP)))}
-                    aria-label={t("ritm.onboarding.s3.goalMinus", { step: GOAL_STEP })}
-                    className={STEP_BUTTON}
-                  >
-                    <Minus className="size-5" aria-hidden="true" />
-                  </button>
-                  <input
-                    id="goal-amount"
-                    type="number"
-                    inputMode="decimal"
-                    min={1}
-                    step={GOAL_STEP}
-                    value={goalAmount}
-                    onChange={(e) => setGoalAmount(e.target.value)}
-                    className={cn(INPUT, "min-w-0 flex-1 text-center tabular-nums")}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setGoalAmount(String((Math.floor(Number(goalAmount) / GOAL_STEP) || 0) * GOAL_STEP + GOAL_STEP))}
-                    aria-label={t("ritm.onboarding.s3.goalPlus", { step: GOAL_STEP })}
-                    className={STEP_BUTTON}
-                  >
-                    <Plus className="size-5" aria-hidden="true" />
-                  </button>
-                </div>
-              </Field>
-              {goalError && (
-                <p role="alert" className="text-sm text-ritm-spike">
-                  {t("ritm.onboarding.s3.goalInvalid")}
-                </p>
-              )}
-            </section>
+            <GoalsEditor
+              goals={goals}
+              onChange={(next) => {
+                setGoals(next);
+                setGoalError(false);
+              }}
+              netSalary={NET_SALARY}
+              invalid={goalError}
+            />
 
             <section
               aria-labelledby="plan-title"
@@ -506,7 +440,7 @@ export default function RitmOnboarding() {
                 />
                 <PlanRow
                   label={t("ritm.onboarding.s3.planLock")}
-                  value={`− ${formatLei(lockAmount, locale)}`}
+                  value={`− ${formatLei(settings.lock.amount, locale)}`}
                 />
               </dl>
               <div
@@ -531,20 +465,11 @@ export default function RitmOnboarding() {
       </main>
 
       <footer className="sticky bottom-0 flex gap-3 border-t border-atlas-line bg-atlas-paper/95 px-5 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur">
-        {step > 1 && (
-          <button
-            type="button"
-            onClick={() => go(step - 1)}
-            className={SECONDARY}
-          >
-            {t("ritm.onboarding.back")}
-          </button>
-        )}
-        <button
-          type="button"
-          onClick={step < STEPS ? () => go(step + 1) : finish}
-          className={cn(PRIMARY, "flex-1")}
-        >
+        {/* On step 1, Back leaves onboarding the way you came in. */}
+        <button type="button" onClick={() => (step > 1 ? go(step - 1) : leaveRitm(router))} className={SECONDARY}>
+          {t("ritm.onboarding.back")}
+        </button>
+        <button type="button" onClick={step < STEPS ? () => go(step + 1) : finish} className={cn(PRIMARY, "flex-1")}>
           {t(step < STEPS ? "ritm.onboarding.next" : "ritm.onboarding.finish")}
         </button>
       </footer>

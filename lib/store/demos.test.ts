@@ -31,7 +31,7 @@ describe("demo list", () => {
   it("spike: day 6, Speed bump on, a Heads-up waiting", () => {
     startDemo("spike", store);
     expect(store().demoDay).toBe(6);
-    expect(store().ritm.level).toBe("speedbump");
+    expect(store().ritm.speedBump).toBe(true);
     expect(store().notifications.at(-1)?.severity).toBe("spike");
   });
 

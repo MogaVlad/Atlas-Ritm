@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { createJSONStorage, persist, type StateStorage } from "zustand/middleware";
-import { DEFAULT_RITM_SETTINGS, ESSENTIAL_AMOUNTS } from "@/lib/data/persona";
+import { DEFAULT_RITM_SETTINGS, ESSENTIAL_AMOUNTS, GOAL } from "@/lib/data/persona";
 import { SCENARIO } from "@/lib/data/scenario";
 import {
   alertActions,
@@ -12,6 +12,7 @@ import {
   emergencyRelease as releaseFromLock,
   essentialsTotal,
   INITIAL_ALERT_MEMORY,
+  isValidGoal,
   monthSummary,
   pensionSummary,
   isRitmOffDue,
@@ -25,6 +26,7 @@ import {
   type Category,
   type Day,
   type EmergencyResult,
+  type Goal,
   type LockState,
   type MonthSummary,
   type PaceState,
@@ -33,10 +35,12 @@ import {
   type PensionSource,
   type PensionSummary,
   type Reason,
-  type RitmLevel,
+  type RitmFeature,
   type RitmSettings,
   type Severity,
   type Transaction,
+  type UnlockReason,
+  type UnlockRecord,
 } from "@/lib/engine";
 import type { Locale } from "@/lib/i18n";
 
@@ -73,6 +77,8 @@ export interface Balances {
   savings: number;
 }
 
+export type { UnlockReason, UnlockRecord } from "@/lib/engine";
+
 interface PersistedState {
   locale: Locale;
   demoDay: Day;
@@ -97,11 +103,17 @@ interface PersistedState {
   /** Activity entries (salary, live payments) the user cleared from the notification centre. */
   clearedActivityIds: string[];
   alertMemory: AlertMemory;
+  /** Every early exit from the Lock this month, with its reason (shown back in the summary). */
+  unlockReasons: UnlockRecord[];
+  /** Scripted payments declined because the current account couldn't cover them (never below 0). */
+  declinedIds: string[];
 }
 
 interface DerivedState {
-  /** Every transaction of the month (scenario + added), with planned marks applied. */
+  /** Every transaction of the month (scenario + added), with planned marks applied. Declined ones are not here. */
   transactions: Transaction[];
+  /** Scripted payments the account couldn't cover, up to today: shown as declined, never charged. */
+  declined: Transaction[];
   /** Engine output for demoDay. Recomputed after every change; read it, never set it. */
   pace: PaceState;
   balances: Balances;
@@ -124,7 +136,10 @@ interface Actions {
   payInStore: (purchase: Omit<Transaction, "id" | "day">) => InStoreResult;
   markPlanned: (txId: string) => void;
   enableRitm: (settings: RitmSettings, planned?: PlannedPurchase[]) => void;
-  setLevel: (level: RitmLevel) => void;
+  /** Switch Heads-up or the Speed bump on or off. */
+  setFeature: (feature: RitmFeature, on: boolean) => void;
+  /** Replace the savings goals (at least one, each valid). Returns false and changes nothing otherwise. */
+  setGoals: (goals: Goal[]) => boolean;
   /** Turn Ritm off: it stays on until the next demo day (24 h rule). The Lock is not touched. */
   requestRitmOff: () => void;
   /** Keep Ritm on after all (cancels a pending turn-off). */
@@ -135,8 +150,10 @@ interface Actions {
   setEssentials: (categories: Category[]) => void;
   /** Move money to the Lock (creates it if needed). */
   lockMoney: (amount: number, unlockDay?: Day) => void;
-  requestUnlock: () => void;
-  emergencyRelease: (amount: number) => EmergencyResult;
+  /** Early unlock of the whole Lock, released 24 h later. The reason is recorded. */
+  requestUnlock: (reason?: UnlockReason, note?: string) => void;
+  /** Up to 300 lei now, once a month (health, bill or unexpected cost). The reason is recorded. */
+  emergencyRelease: (amount: number, reason?: UnlockReason, note?: string) => EmergencyResult;
   /** At unlock: keep `amount` in savings, the rest goes back to the current account. */
   keepSaved: (amount: number) => void;
   /**
@@ -163,17 +180,74 @@ export interface InStoreResult {
   balanceBefore: number;
   balanceAfter: number;
   safeToSpendToday: number | null;
+  /** The current account couldn't cover it: nothing was charged (a card never goes below zero). */
+  declined: boolean;
 }
 
 export type BankState = PersistedState & DerivedState & Actions;
 
 /* ─── helpers ─────────────────────────────────────────────────────────────── */
 
-const clampDay = (day: number) => Math.min(RULES.cycleLength, Math.max(1, Math.round(day)));
+/** Day 0 is the day before payday (the demo starts there); day 1 is payday. */
+const clampDay = (day: number) => Math.min(RULES.cycleLength, Math.max(0, Math.round(day)));
 
-function allTransactions(s: Pick<PersistedState, "added" | "plannedIds">): Transaction[] {
+type SavedRitm = Partial<RitmSettings> & { goal?: { name: string; amount: number }; level?: "headsup" | "speedbump" | "lock" };
+
+/**
+ * Demos saved by older versions keep working:
+ * - version 1 had one `goal` with no time: it becomes the first of `goals`, with the default time;
+ * - versions 1–2 had one `level`: it becomes the Heads-up and Speed bump switches.
+ */
+export function migrateSaved(persisted: unknown, version: number): unknown {
+  if (version >= 3 || !persisted || typeof persisted !== "object") return persisted;
+  const saved = persisted as { ritm?: SavedRitm };
+  if (!saved.ritm) return persisted;
+  const { goal, level, ...ritm } = saved.ritm;
+  if (goal && !ritm.goals) ritm.goals = [{ ...goal, months: GOAL.months }];
+  if (level) {
+    ritm.headsUp = true;
+    ritm.speedBump = level !== "headsup";
+  }
+  return { ...saved, ritm };
+}
+
+function allTransactions(s: Pick<PersistedState, "added" | "plannedIds" | "declinedIds">): Transaction[] {
   const planned = new Set(s.plannedIds);
-  return [...SCENARIO, ...s.added].map((t) => (planned.has(t.id) ? { ...t, planned: true } : t));
+  const declined = new Set(s.declinedIds);
+  return [...SCENARIO, ...s.added]
+    .filter((t) => !declined.has(t.id))
+    .map((t) => (planned.has(t.id) ? { ...t, planned: true } : t));
+}
+
+/** Current account at the end of `day`, as `derive` computes it. */
+function currentBalance(s: PersistedState, day: Day): number {
+  const flow = allTransactions(s)
+    .filter((t) => t.day <= day)
+    .reduce((sum, t) => sum - t.amount, 0);
+  return OPENING_CURRENT + flow - (s.savings - OPENING_SAVINGS);
+}
+
+/**
+ * Moving forward from `from` to `to`: each scripted payment on the days reached is charged only if
+ * the current account covers it, otherwise it's declined, like a real card. So the scripted month
+ * can never take the account below zero. Days re-lived after going back are settled again.
+ */
+function settleDays(s: PersistedState, from: Day, to: Day): PersistedState {
+  if (to <= from) return s;
+  const reached = SCENARIO.filter((t) => t.day > from && t.day <= to);
+  const reachedIds = new Set(reached.map((t) => t.id));
+  let next: PersistedState = { ...s, declinedIds: s.declinedIds.filter((id) => !reachedIds.has(id)) };
+  for (let day = from + 1; day <= to; day++) {
+    let balance = currentBalance(next, day - 1);
+    const today = reached.filter((t) => t.day === day);
+    // Money in first (salary, refunds), then the payments in order.
+    balance -= today.filter((t) => t.amount < 0).reduce((sum, t) => sum + t.amount, 0);
+    for (const t of today.filter((t) => t.amount > 0)) {
+      if (t.amount <= balance) balance -= t.amount;
+      else next = { ...next, declinedIds: [...next.declinedIds, t.id] };
+    }
+  }
+  return next;
 }
 
 /** The settings the engine sees: the Lock amount is what's actually locked now. */
@@ -183,6 +257,8 @@ function engineSettings(s: Pick<PersistedState, "ritm" | "lock">): RitmSettings 
 
 function derive(s: PersistedState): DerivedState {
   const transactions = allTransactions(s);
+  const declinedIds = new Set(s.declinedIds);
+  const declined = SCENARIO.filter((t) => declinedIds.has(t.id) && t.day <= s.demoDay);
   const pace = computePace(transactions, engineSettings(s), s.demoDay);
   const flow = transactions.filter((t) => t.day <= s.demoDay).reduce((sum, t) => sum - t.amount, 0);
   const movedToSavings = s.savings - OPENING_SAVINGS;
@@ -190,6 +266,7 @@ function derive(s: PersistedState): DerivedState {
   const pension = pensionSummary(s.pensionContributions);
   return {
     transactions,
+    declined,
     pace,
     balances,
     pension,
@@ -205,11 +282,22 @@ function derive(s: PersistedState): DerivedState {
 /** Day changed or money moved: resolve the Lock, maybe queue a Heads-up. */
 function evaluateDay(s: PersistedState): PersistedState {
   const next = { ...s };
+
+  // The Lock moves its amount to savings on payday (day 1): never before the salary is in,
+  // so starting Ritm on day 0 can't take the current account below zero. Created before it's
+  // resolved, so a jump from day 0 straight to the unlock day opens it.
+  if (next.ritm.enabled && !next.lock && next.ritm.lock.amount > 0 && next.demoDay >= 1) {
+    const amount = Math.min(next.ritm.lock.amount, Math.max(0, currentBalance(next, next.demoDay)));
+    if (amount > 0) {
+      next.lock = createLock(amount, next.ritm.lock.unlockDay);
+      next.savings = next.savings + amount;
+    }
+  }
   if (next.lock) next.lock = resolveLock(next.lock, next.demoDay);
 
-  // Payday again: the Speed bump level switches off.
-  if (next.demoDay === RULES.cycleLength && next.ritm.level === "speedbump") {
-    next.ritm = { ...next.ritm, level: "headsup" };
+  // Payday again: the Speed bump switches off.
+  if (next.demoDay === RULES.cycleLength && next.ritm.speedBump) {
+    next.ritm = { ...next.ritm, speedBump: false };
   }
 
   // A requested turn-off comes into effect: Ritm goes quiet and its pending Heads-ups go away.
@@ -219,7 +307,7 @@ function evaluateDay(s: PersistedState): PersistedState {
     next.notifications = [];
   }
 
-  if (!next.ritm.enabled) return next;
+  if (!next.ritm.enabled || !next.ritm.headsUp) return next;
   const pace = computePace(allTransactions(next), engineSettings(next), next.demoDay);
   if (shouldNotify(pace, next.alertMemory, next.demoDay)) {
     next.notifications = [
@@ -233,14 +321,19 @@ function evaluateDay(s: PersistedState): PersistedState {
         actions: alertActions(pace, next.alertMemory),
       },
     ];
-    next.alertMemory = { ...next.alertMemory, lastNotifiedDay: next.demoDay, lastSeverity: pace.severity };
+    next.alertMemory = {
+      ...next.alertMemory,
+      lastNotifiedDay: next.demoDay,
+      lastSeverity: pace.severity,
+      lastPctSpent: pace.pctSpent,
+    };
   }
   return next;
 }
 
 const INITIAL: PersistedState = {
-  locale: "ro",
-  demoDay: 1,
+  locale: "en",
+  demoDay: 0,
   added: [],
   plannedIds: [],
   plannedPurchases: [],
@@ -254,6 +347,8 @@ const INITIAL: PersistedState = {
   notifications: [],
   clearedActivityIds: [],
   alertMemory: INITIAL_ALERT_MEMORY,
+  unlockReasons: [],
+  declinedIds: [],
 };
 
 /** localStorage that never throws (private windows, blocked storage, server render). */
@@ -297,6 +392,8 @@ const pick = (s: BankState): PersistedState => ({
   notifications: s.notifications,
   clearedActivityIds: s.clearedActivityIds,
   alertMemory: s.alertMemory,
+  unlockReasons: s.unlockReasons,
+  declinedIds: s.declinedIds,
 });
 
 /* ─── store ───────────────────────────────────────────────────────────────── */
@@ -316,12 +413,23 @@ export const useBank = create<BankState>()(
 
         setLocale: (locale) => update((s) => ({ ...s, locale })),
 
-        setDemoDay: (day) => update((s) => evaluateDay({ ...s, demoDay: clampDay(day) })),
+        setDemoDay: (day) => update((s) => evaluateDay(settleDays({ ...s, demoDay: clampDay(day) }, s.demoDay, clampDay(day)))),
 
-        nextDay: () => update((s) => evaluateDay({ ...s, demoDay: clampDay(s.demoDay + 1) })),
+        nextDay: () =>
+          update((s) => evaluateDay(settleDays({ ...s, demoDay: clampDay(s.demoDay + 1) }, s.demoDay, clampDay(s.demoDay + 1)))),
 
         payInStore: (purchase) => {
           const balanceBefore = get().balances.current;
+          if (purchase.amount > balanceBefore) {
+            const s = get();
+            return {
+              tx: { id: "declined", day: s.demoDay, ...purchase, channel: "card_in_store" },
+              balanceBefore,
+              balanceAfter: balanceBefore,
+              safeToSpendToday: s.ritm.enabled ? s.pace.safeToSpendToday : null,
+              declined: true,
+            };
+          }
           const tx = get().addTransaction({ ...purchase, channel: "card_in_store" });
           const after = get();
           return {
@@ -329,6 +437,7 @@ export const useBank = create<BankState>()(
             balanceBefore,
             balanceAfter: after.balances.current,
             safeToSpendToday: after.ritm.enabled ? after.pace.safeToSpendToday : null,
+            declined: false,
           };
         },
 
@@ -344,23 +453,23 @@ export const useBank = create<BankState>()(
 
         enableRitm: (settings, planned = []) =>
           update((s) => {
-            let next: PersistedState = {
+            // The Lock itself is taken in evaluateDay: now if the salary is in, otherwise on payday.
+            const next: PersistedState = {
               ...s,
               ritm: { ...settings, enabled: true },
               ritmOffDay: null,
               plannedPurchases: planned,
             };
-            if (settings.lock.amount > 0 && !s.lock) {
-              next = {
-                ...next,
-                lock: createLock(settings.lock.amount, settings.lock.unlockDay),
-                savings: next.savings + settings.lock.amount,
-              };
-            }
             return evaluateDay(next);
           }),
 
-        setLevel: (level) => update((s) => evaluateDay({ ...s, ritm: { ...s.ritm, level } })),
+        setFeature: (feature, on) => update((s) => evaluateDay({ ...s, ritm: { ...s.ritm, [feature]: on } })),
+
+        setGoals: (goals) => {
+          if (goals.length === 0 || goals.length > RULES.goals.maxGoals || !goals.every(isValidGoal)) return false;
+          update((s) => ({ ...s, ritm: { ...s.ritm, goals } }));
+          return true;
+        },
 
         requestRitmOff: () =>
           update((s) => {
@@ -387,8 +496,10 @@ export const useBank = create<BankState>()(
             }),
           ),
 
-        lockMoney: (amount, unlockDay) =>
+        lockMoney: (wanted, unlockDay) =>
           update((s) => {
+            // Never more than the current account holds.
+            const amount = Math.min(wanted, Math.max(0, currentBalance(s, s.demoDay)));
             if (amount <= 0) return s;
             const lock = s.lock
               ? { ...s.lock, amount: s.lock.amount + amount }
@@ -396,13 +507,26 @@ export const useBank = create<BankState>()(
             return { ...s, lock, savings: s.savings + amount };
           }),
 
-        requestUnlock: () => update((s) => (s.lock ? { ...s, lock: requestEarlyUnlock(s.lock, s.demoDay) } : s)),
+        requestUnlock: (reason, note) =>
+          update((s) => {
+            if (!s.lock) return s;
+            const record: UnlockRecord[] = reason ? [{ day: s.demoDay, reason, amount: s.lock.amount, note, path: "wait" }] : [];
+            return { ...s, lock: requestEarlyUnlock(s.lock, s.demoDay), unlockReasons: [...s.unlockReasons, ...record] };
+          }),
 
-        emergencyRelease: (amount) => {
+        emergencyRelease: (amount, reason, note) => {
           const s = get();
           if (!s.lock) return { ok: false, reason: "notLocked" };
           const result = releaseFromLock(s.lock, amount);
-          if (result.ok) update((p) => ({ ...p, lock: result.lock, savings: p.savings - result.released }));
+          if (result.ok) {
+            const record: UnlockRecord[] = reason ? [{ day: s.demoDay, reason, amount: result.released, note, path: "emergency" }] : [];
+            update((p) => ({
+              ...p,
+              lock: result.lock,
+              savings: p.savings - result.released,
+              unlockReasons: [...p.unlockReasons, ...record],
+            }));
+          }
           return result;
         },
 
@@ -488,10 +612,11 @@ export const useBank = create<BankState>()(
     },
     {
       name: "atlas-ritm-demo",
-      version: 1,
+      version: 3,
       storage: createJSONStorage(() => safeStorage),
       partialize: pick,
-      // Rehydrated on the client by <BankHydrator/>, so the server HTML (day 1, RO) always matches.
+      migrate: migrateSaved,
+      // Rehydrated on the client by <BankHydrator/>, so the server HTML (day 0, EN) always matches.
       skipHydration: true,
       merge: (persisted, current) => {
         const next = { ...pick(current), ...(persisted as Partial<PersistedState>) };

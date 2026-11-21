@@ -5,6 +5,7 @@ import { useLayoutEffect, useState, type ReactNode } from "react";
 import { LocaleToggle } from "@/components/bank/LocaleToggle";
 import { RitmBack } from "@/components/ritm/RitmBack";
 import { useHydrated } from "@/components/ritm/useHydrated";
+import { NET_SALARY } from "@/lib/data/persona";
 import {
   interestEstimate,
   RULES,
@@ -17,6 +18,9 @@ import { useHtmlLang, useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { useBank } from "@/lib/store/useBank";
 
+/** Lock slider when setting one up here: up to 30% of the salary, in steps of 50 lei (same as onboarding). */
+const LOCK_MAX = Math.floor((NET_SALARY * 0.3) / 50) * 50;
+
 /** The Lock: how much, until when, what it earns, and the mirror (facts + your reason) before any unlock. */
 export default function LockScreen() {
   useHtmlLang();
@@ -25,13 +29,19 @@ export default function LockScreen() {
   const hydrated = useHydrated();
   const lock = useBank((s) => s.lock);
   const day = useBank((s) => s.demoDay);
-  const goal = useBank((s) => s.ritm.goal);
+  // The mirror talks about the main goal (the first one).
+  const goal = useBank((s) => s.ritm.goals[0]);
+  const ritm = useBank((s) => s.ritm);
   const saved = useBank((s) => s.savings);
+  const current = useBank((s) => s.balances.current);
   const requestUnlock = useBank((s) => s.requestUnlock);
   const emergencyRelease = useBank((s) => s.emergencyRelease);
+  const lockMoney = useBank((s) => s.lockMoney);
+  const [setupAmount, setSetupAmount] = useState<number>(RULES.lock.defaultAmount);
+  const [setupDay, setSetupDay] = useState<number>(RULES.lock.defaultUnlockDay);
 
   const [reason, setReason] = useState<UnlockReason | null>(null);
-  // shortcut: the reason and note stay on this screen; the store has no field for them yet (C7/C8, Cosma), so the month summary cannot mention them.
+  // The reason and note are stored with the unlock (useBank.unlockReasons) for the month summary.
   const [note, setNote] = useState("");
   const [amount, setAmount] = useState("");
   const [done, setDone] = useState<number | null>(null); // lei released by the emergency
@@ -51,7 +61,24 @@ export default function LockScreen() {
   if (!hydrated) return null;
   const lei = (n: number) => formatLei(n, locale);
 
+  // Ritm is on with a Lock chosen, but the salary isn't in yet (day 0): it's taken on payday.
+  if (!lock && ritm.enabled && ritm.lock.amount > 0 && day < 1) {
+    return (
+      <Screen>
+        <h1 className={H1}>{t("ritm.lock.title")}</h1>
+        <p role="status" className="rounded-2xl bg-ritm-tint p-4">
+          {t("ritm.lock.pending", { amount: lei(ritm.lock.amount), day: ritm.lock.unlockDay })}
+        </p>
+      </Screen>
+    );
+  }
+
   if (!lock || lock.amount <= 0) {
+    // Nothing locked: put money aside from here (never more than the current account holds).
+    const max = Math.min(LOCK_MAX, Math.floor(Math.max(0, current) / 50) * 50);
+    const value = Math.min(setupAmount, max);
+    const firstDay = Math.min(RULES.cycleLength - 1, day + 1);
+    const unlockDay = Math.max(setupDay, firstDay);
     return (
       <Screen>
         <h1 className={H1}>{t("ritm.lock.title")}</h1>
@@ -60,6 +87,34 @@ export default function LockScreen() {
             ? t("ritm.lock.emergencyDone", { amount: lei(done) })
             : t("ritm.lock.empty")}
         </p>
+        {max < 50 || firstDay >= RULES.cycleLength - 1 ? (
+          <p className="text-sm text-atlas-muted">{t("ritm.lock.setupNoMoney")}</p>
+        ) : (
+          <div className="flex flex-col gap-4 rounded-2xl border border-ritm/30 bg-white p-4">
+            <h2 className="font-display text-lg font-semibold">{t("ritm.lock.setupTitle")}</h2>
+            <Range
+              label={t("ritm.onboarding.s3.lockAmount")}
+              value={value}
+              valueText={lei(value)}
+              min={50}
+              max={max}
+              step={50}
+              onChange={setSetupAmount}
+            />
+            <Range
+              label={t("ritm.onboarding.s3.lockDay")}
+              value={unlockDay}
+              valueText={t("ritm.onboarding.s3.dayValue", { day: unlockDay })}
+              min={firstDay}
+              max={RULES.cycleLength - 1}
+              step={1}
+              onChange={setSetupDay}
+            />
+            <button type="button" onClick={() => lockMoney(value, unlockDay)} className={PRIMARY}>
+              {t("ritm.lock.setupCta", { amount: lei(value), day: unlockDay })}
+            </button>
+          </div>
+        )}
       </Screen>
     );
   }
@@ -94,7 +149,7 @@ export default function LockScreen() {
         reason,
         amount: Number(amount) || 0,
         saved,
-        goalAmount: goal.amount,
+        goalAmount: goal?.amount ?? 0,
       })
     : null;
   const pct = (share: number) => Math.round(share * 100);
@@ -106,9 +161,10 @@ export default function LockScreen() {
   };
 
   const confirm = () => {
-    if (!mirror) return;
-    if (mirror.route === "wait") return requestUnlock();
-    const result = emergencyRelease(mirror.released);
+    if (!mirror || !reason) return;
+    const why = note.trim() || undefined;
+    if (mirror.route === "wait") return requestUnlock(reason, why);
+    const result = emergencyRelease(mirror.released, reason, why);
     if (!result.ok)
       return setError(
         t(`ritm.lock.error.${result.reason}`, { max: lei(emergencyMax) }),
@@ -210,7 +266,9 @@ export default function LockScreen() {
                     min={1}
                     max={lock.amount}
                     value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
+                    // No minus sign: a negative amount would put money in, not take it out.
+                    onChange={(e) => setAmount(e.target.value.replace(/-/g, ""))}
+                    onKeyDown={(e) => ["-", "+", "e", "E"].includes(e.key) && e.preventDefault()}
                     className={INPUT}
                   />
                 </label>
@@ -219,7 +277,7 @@ export default function LockScreen() {
               <p className="rounded-xl bg-ritm-tint p-3" aria-live="polite">
                 {t("ritm.lock.mirror", {
                   amount: lei(mirror.released),
-                  goal: goal.name,
+                  goal: goal?.name ?? "",
                   before: pct(mirror.goalBefore),
                   after: pct(mirror.goalAfter),
                 })}{" "}
@@ -297,6 +355,43 @@ function Screen({ children }: { children: ReactNode }) {
         {children}
       </main>
     </>
+  );
+}
+
+function Range({
+  label,
+  value,
+  valueText,
+  min,
+  max,
+  step,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  valueText: string;
+  min: number;
+  max: number;
+  step: number;
+  onChange: (value: number) => void;
+}) {
+  return (
+    <label className="flex flex-col gap-1.5 text-sm font-medium">
+      <span className="flex items-baseline justify-between">
+        {label}
+        <span className="font-semibold tabular-nums">{valueText}</span>
+      </span>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        aria-valuetext={valueText}
+        className="h-11 w-full accent-ritm"
+      />
+    </label>
   );
 }
 

@@ -152,18 +152,18 @@ describe("planEdit", () => {
   const old = { ...DEFAULT_RITM_SETTINGS, enabled: true };
 
   it("a bigger Lock or a new goal applies now", () => {
-    const next = { ...old, lock: { amount: 800, unlockDay: 20 }, goal: { name: "Laptop", amount: 6000 } };
+    const next = { ...old, lock: { amount: 800, unlockDay: 20 }, goals: [{ name: "Laptop", amount: 6000, months: 12 }] };
     expect(planEdit(old, next, 5)).toEqual({ kind: "applied", settings: next });
   });
 
   it("a smaller Lock keeps the old Lock and asks for the reason screen", () => {
-    const next = { ...old, lock: { amount: 300, unlockDay: 20 }, goal: { name: "Laptop", amount: 6000 } };
+    const next = { ...old, lock: { amount: 300, unlockDay: 20 }, goals: [{ name: "Laptop", amount: 6000, months: 12 }] };
     const r = planEdit(old, next, 5);
     expect(r.kind).toBe("needsUnlock");
     if (r.kind === "needsUnlock") {
       expect(r.lockDecrease).toBe(200);
       expect(r.settings.lock).toEqual({ amount: 500, unlockDay: 20 });
-      expect(r.settings.goal.name).toBe("Laptop"); // the safe part applies anyway
+      expect(r.settings.goals[0].name).toBe("Laptop"); // the safe part applies anyway
     }
   });
 

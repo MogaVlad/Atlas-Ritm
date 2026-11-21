@@ -80,6 +80,18 @@ export function PaceBar({ pctSpent, pctMonthPassed, severity, dayOfCycle, cycleL
         </span>
       </figcaption>
 
+      {/* The hatched part needs saying in words: nobody reads hatching on their own. */}
+      {ahead > 0 && (
+        <p className="flex items-center gap-2 text-sm text-atlas-muted">
+          <span
+            aria-hidden
+            className={cn("h-2.5 w-5 shrink-0 rounded-sm", FILL[severity])}
+            style={{ maskImage: "repeating-linear-gradient(135deg, #000 0 3px, transparent 3px 6px)" }}
+          />
+          {t("ritm.pace.aheadLegend", { pct: ahead })}
+        </p>
+      )}
+
       <p className={cn("self-start rounded-full px-3 py-1 text-sm font-medium", TEXT[severity])}>
         {t(`ritm.pace.status.${severity}`)}
       </p>
