@@ -1,6 +1,7 @@
 "use client";
 
 import { CARD_LAST4 } from "@/components/bank/bankData";
+import { LanguageSetting } from "@/components/bank/LanguageSetting";
 import { RitmSettings } from "@/components/bank/RitmSettings";
 import { PERSONA } from "@/lib/data/persona";
 import { useT } from "@/lib/i18n";
@@ -27,6 +28,9 @@ export default function ProfilePage() {
 
       <h2 className="mt-2 font-display text-xl font-semibold">{t("bank.profile.ritmTitle")}</h2>
       <RitmSettings />
+
+      <h2 className="mt-2 font-display text-xl font-semibold">{t("bank.profile.appTitle")}</h2>
+      <LanguageSetting />
     </div>
   );
 }
