@@ -32,11 +32,11 @@ async function payForJacket(page: Page) {
 test("payday → onboarding → day 6 Heads-up → Speed bump on the jacket", async ({ page }) => {
   // Day 0, the day before payday: only the 150 lei left from last month.
   await page.goto("/?demo=1");
-  await expect(page.getByText("150,00 lei").first()).toBeVisible();
+  await expect(page.getByText("150,00 RON").first()).toBeVisible();
 
   // Day 1: the salary is in. 150 opening + 4.800 salary − 260 spent on day 1.
   await jumpToDay(page, 1, 0);
-  await expect(page.getByText("4.690,00 lei")).toBeVisible();
+  await expect(page.getByText("4.690,00 RON")).toBeVisible();
 
   // Onboarding: Heads-up is on by default; switch the Lock on (500 lei until day 20). Goal Islanda 2027.
   await page.goto("/ritm?demo=1");
@@ -50,12 +50,12 @@ test("payday → onboarding → day 6 Heads-up → Speed bump on the jacket", as
 
   // Home: the Ritm card shows the Lock, and 500 lei moved from the current account to savings.
   await expect(page).toHaveURL(/localhost:3000\/(\?.*)?$/);
-  await expect(page.getByText(fill(m.ritm.card.lock, { amount: "500,00 lei", day: 20 }))).toBeVisible();
-  await expect(page.getByText("4.190,00 lei")).toBeVisible();
+  await expect(page.getByText(fill(m.ritm.card.lock, { amount: "500,00 RON", day: 20 }))).toBeVisible();
+  await expect(page.getByText("4.190,00 RON")).toBeVisible();
 
   // Day 6: the spike. 1.166 of 2.120 lei gone; Ritm offers a Heads-up.
   await jumpToDay(page, 6);
-  await expect(page.getByText("1.104,00 lei")).toBeVisible();
+  await expect(page.getByText("1.104,00 RON")).toBeVisible();
   await page.getByRole("button", { name: m.ritm.card.headsUpCta }).click();
 
   const sheet = page.getByRole("dialog");
@@ -80,7 +80,7 @@ test("payday → onboarding → day 6 Heads-up → Speed bump on the jacket", as
 
   // Back home: the balance dropped by 300 lei.
   await page.getByRole("link", { name: m.bank.confirm.backHome }).click();
-  await expect(page.getByText("804,00 lei")).toBeVisible();
+  await expect(page.getByText("804,00 RON")).toBeVisible();
 });
 
 test("with Ritm off, the jacket is paid with no pause", async ({ page }) => {
@@ -116,7 +116,7 @@ test("demo tools: jump to a day, simulate any purchase, never below zero", async
   await payButton.click();
   await expect(page).toHaveURL(/\/payments\/confirm/);
   await page.getByRole("button", { name: m.bank.confirm.confirm }).click();
-  await expect(page.getByText(fill(m.bank.confirm.paidBody, { amount: "120,00 lei", merchant: "FoodGo" }))).toBeVisible();
+  await expect(page.getByText(fill(m.bank.confirm.paidBody, { amount: "120,00 RON", merchant: "FoodGo" }))).toBeVisible();
 });
 
 test("goals: several, each with a time; above 20% of the salary Ritm explains, then they can be edited", async ({ page }) => {
@@ -127,27 +127,27 @@ test("goals: several, each with a time; above 20% of the salary Ritm explains, t
   await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
 
   // Islanda 2027: 9.000 lei in 18 months = 500 lei a month, 10% of the 4.800 lei salary.
-  await expect(page.getByText(fill(g.total, { amount: "500,00 lei", pct: 10 }))).toBeVisible();
+  await expect(page.getByText(fill(g.total, { amount: "500,00 RON", pct: 10 }))).toBeVisible();
   await expect(page.getByText(g.within)).toBeVisible();
 
   // A laptop for 6.000 lei in 12 months adds 500 lei a month: 1.000 lei is 21%, above the guideline.
   await page.getByRole("button", { name: g.add }).click();
   await page.getByLabel(s3.goalName).nth(1).fill("Laptop");
   await page.getByLabel(s3.goalAmount).nth(1).fill("6000");
-  await expect(page.getByText(fill(g.total, { amount: "1.000,00 lei", pct: 21 }))).toBeVisible();
-  await expect(page.getByText(fill(g.over, { guideline: "960,00 lei" }))).toBeVisible();
+  await expect(page.getByText(fill(g.total, { amount: "1.000,00 RON", pct: 21 }))).toBeVisible();
+  await expect(page.getByText(fill(g.over, { guideline: "960,00 RON" }))).toBeVisible();
 
   // It explains, it doesn't block: Ritm starts with both goals.
   await page.getByRole("button", { name: m.ritm.onboarding.finish }).click();
   await page.getByRole("link", { name: exact(m.bank.nav.ritm) }).click();
-  await expect(page.getByText(fill(g.totalValue, { amount: "1.000,00 lei", pct: 21 }))).toBeVisible();
+  await expect(page.getByText(fill(g.totalValue, { amount: "1.000,00 RON", pct: 21 }))).toBeVisible();
 
   // Later: give the laptop 24 months and it fits in the 20% again.
   await page.getByRole("link", { name: g.editLink }).click();
   await page.getByLabel(g.reachIn).nth(1).fill("24");
   await expect(page.getByText(g.within)).toBeVisible();
   await page.getByRole("button", { name: g.save }).click();
-  await expect(page.getByText(fill(g.totalValue, { amount: "750,00 lei", pct: 16 }))).toBeVisible();
+  await expect(page.getByText(fill(g.totalValue, { amount: "750,00 RON", pct: 16 }))).toBeVisible();
 });
 
 test("after the money goes to Pillar III, Back to Atlas leads home and back doesn't reopen the payment", async ({ page }) => {
@@ -202,12 +202,12 @@ test("Lock: shown as on, and taking money out asks why with buttons (Health = no
   await page.getByRole("radio", { name: lock.reason.health }).click();
   await expect(page.getByText(lock.firstUnlock, { exact: false })).toBeVisible();
   await page.getByRole("button", { name: starts(lock.emergencyConfirm.split("{")[0]) }).click();
-  await expect(page.getByText(fill(lock.emergencyDone, { amount: "300,00 lei" }))).toBeVisible();
+  await expect(page.getByText(fill(lock.emergencyDone, { amount: "300,00 RON" }))).toBeVisible();
 
   // "Something I want" is never refused: it waits 24 hours.
   await page.getByRole("radio", { name: lock.reason.want }).click();
   await page.getByRole("button", { name: lock.earlyConfirm }).click();
-  await expect(page.getByText(fill(lock.requested, { amount: "200,00 lei", day: 2 }))).toBeVisible();
+  await expect(page.getByText(fill(lock.requested, { amount: "200,00 RON", day: 2 }))).toBeVisible();
 });
 
 test("the Lock opening pops up once and leads to the choice; Reset demo goes back Home", async ({ page }) => {

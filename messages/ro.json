@@ -29,11 +29,11 @@
         },
         "unlock": {
           "title": "Lacătul se deschide",
-          "body": "Ritm pornit, cei 500 lei se deblochează singuri."
+          "body": "Ritm pornit, cei 500 RON se deblochează singuri."
         },
         "payday": {
           "title": "Din nou salariu",
-          "body": "Ziua 30, cei 500 lei păstrați. Gata pentru rezumat."
+          "body": "Ziua 30, cei 500 RON păstrați. Gata pentru rezumat."
         }
       },
       "jumpTo": "Mergi la ziua {day}",
@@ -42,7 +42,7 @@
         "title": "Simulează o plată",
         "close": "Închide instrumentele de demo",
         "shop": "Magazin",
-        "amount": "Sumă (lei)",
+        "amount": "Sumă (RON)",
         "channel": "Cum plătești",
         "online": "Online",
         "inStore": "În magazin",
@@ -161,7 +161,10 @@
       "essentialsHint": "Ce e pornit aici nu intră în ritm: e scos dinainte din banii de cheltuit.",
       "perMonth": "{amount} pe lună",
       "essentialsTotal": "Esențiale pe lună",
-      "spendingMoney": "Bani de cheltuit luna asta"
+      "spendingMoney": "Bani de cheltuit luna asta",
+      "appTitle": "Aplicația",
+      "languageTitle": "Limba",
+      "languageHint": "Textele din aplicație și din Ritm."
     },
     "channels": {
       "card_in_store": "Card, în magazin",
@@ -348,7 +351,7 @@
         "plannedHint": "Știi deja că vei cumpăra ceva luna asta? Adaugă-l aici și nu va declanșa nicio atenționare.",
         "plannedAdd": "Adaugă o cumpărătură planificată",
         "plannedName": "Ce cumperi",
-        "plannedAmount": "Cât costă (lei)",
+        "plannedAmount": "Cât costă (RON)",
         "plannedSave": "Adaugă",
         "plannedCancel": "Renunță",
         "plannedRemove": "Șterge {name}",
@@ -364,7 +367,7 @@
         "lockNone": "Nu pui nimic deoparte luna asta. Poți schimba oricând.",
         "goalTitle": "Pentru ce strângi",
         "goalName": "Numele scopului",
-        "goalAmount": "Suma de care ai nevoie (lei)",
+        "goalAmount": "Suma de care ai nevoie (RON)",
         "goalInvalid": "Fiecare scop are nevoie de un nume, o sumă mai mare de 0 și un termen.",
         "pool": "Bani de cheltuit luna asta",
         "quick": "Sume rapide",
@@ -376,8 +379,8 @@
         "planBills": "Plăți fixe",
         "planLock": "Pus deoparte",
         "planPerDay": "Adică cam {amount} pe zi.",
-        "goalMinus": "Scade {step} lei",
-        "goalPlus": "Adaugă {step} lei"
+        "goalMinus": "Scade {step} RON",
+        "goalPlus": "Adaugă {step} RON"
       }
     },
     "card": {
@@ -459,7 +462,7 @@
       "catch": "Banii nu pot fi scoși înainte de pensie. Valoarea fondului urcă și coboară odată cu piețele, așa că nu promitem randamente.",
       "fund": "Atlas Pensii e fondul Atlas, nu singurul. Toate fondurile se pot compara pe",
       "asfLink": "site-ul ASF",
-      "amount": "Suma (lei)",
+      "amount": "Suma (RON)",
       "consent": "Înțeleg că banii aceștia sunt pentru pensie și nu îi pot folosi înainte.",
       "contribute": "Contribui cu {amount}",
       "notNow": "Nu acum",
@@ -480,7 +483,7 @@
       "waysOut": "Dacă ai nevoie de bani mai devreme",
       "earlyConfirm": "Cer deblocarea",
       "requested": "Ai cerut deblocarea. {amount} ies din Lacăt mâine, în ziua {day}.",
-      "emergencyAmount": "Cât îți trebuie (lei)",
+      "emergencyAmount": "Cât îți trebuie (RON)",
       "emergencyConfirm": "Scot {amount} acum",
       "emergencyDone": "Gata. {amount} au intrat în contul curent.",
       "cancel": "Renunț",
