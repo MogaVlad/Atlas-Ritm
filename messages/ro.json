@@ -111,7 +111,9 @@
       "card": "Card ••• {last4}",
       "savingsLabel": "Cont de economii",
       "recentTitle": "Ultimele tranzacții",
-      "seeAll": "Vezi toate"
+      "seeAll": "Vezi toate",
+      "emptyRecent": "Încă nu ai tranzacții luna asta. Povestea începe în ziua 1, când vine salariul.",
+      "emptyRecentCta": "Vezi cum funcționează"
     },
     "transactions": {
       "title": "Tranzacții",
@@ -333,6 +335,54 @@
       "history": "Transferurile tale",
       "rowToSavings": "În economii",
       "rowToCurrent": "În contul curent"
+    },
+    "welcome": {
+      "title": "Bun venit în Atlas",
+      "lead": "Atlas e o bancă inventată. Ritm e ideea pe care o arătăm: te ajută să-ți ajungă salariul până la următorul, fără să-ți interzică nimic.",
+      "mapTitle": "Harta lunii",
+      "dayShort": "ziua",
+      "day": "Ziua {day}",
+      "stops": {
+        "d1": {
+          "title": "Vine salariul",
+          "body": "Pornești Ritm în 3 pași și alegi cât de strict să fie."
+        },
+        "d6": {
+          "title": "Banii se duc prea repede",
+          "body": "Ritm te anunță din timp, iar o plată online mare poate primi o pauză scurtă."
+        },
+        "d20": {
+          "title": "Se deschide Lacătul",
+          "body": "Dacă ai pus bani deoparte, acum sunt iar ai tăi. Tu alegi unde rămân."
+        },
+        "d30": {
+          "title": "Din nou salariu",
+          "body": "Vezi cum a mers luna."
+        }
+      },
+      "simulated": "Totul e simulat: banii, plățile, salariul. Apasă orice fără grijă și treci de la o zi la alta din ceasul de sus.",
+      "start": "Începe cu ziua salariului",
+      "later": "Mă uit singur",
+      "reopen": "Ghidul îl găsești oricând pe Acasă și în Profil.",
+      "guide": "Ghid"
+    },
+    "hero": {
+      "balanceLabel": "În contul curent",
+      "savings": "În economii: {amount}",
+      "salaryIn": "{amount} au intrat azi de la {from}.",
+      "dayOf": "ziua {day} din {total}",
+      "paydayTomorrow": "Mâine vine salariul",
+      "paydayToday": "Azi vine din nou salariul",
+      "daysFew": "{n} zile până la salariu",
+      "daysMany": "{n} de zile până la salariu",
+      "beforePayday": "înainte de salariu"
+    },
+    "actions": {
+      "label": "Ce poți face",
+      "transfer": "Transferă",
+      "pay": "Plătește",
+      "history": "Istoric",
+      "guide": "Ghid"
     }
   },
   "ritm": {
