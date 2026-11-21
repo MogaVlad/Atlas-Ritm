@@ -1,6 +1,7 @@
 import type { Category, PaceState, RitmSettings, Transaction } from "./types";
 
-const NEVER_PAUSED: ReadonlySet<Category> = new Set(["salary", "own_transfer", "savings", "pension"]);
+/** Health purchases (pharmacy, doctor) are sensitive data: Ritm never pauses or comments on them. */
+const NEVER_PAUSED: ReadonlySet<Category> = new Set(["salary", "own_transfer", "savings", "pension", "health"]);
 
 /**
  * Should this payment pause on the Speed bump before Confirm?
