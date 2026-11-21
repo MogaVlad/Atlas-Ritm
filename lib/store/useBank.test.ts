@@ -86,6 +86,56 @@ describe("useBank", () => {
     expect(move?.amount).toBe(410);
   });
 
+  it("month 2: day 0 again, settings kept, last month's Lock exits remembered", () => {
+    store().enableRitm(DEFAULT_RITM_SETTINGS);
+    store().setDemoDay(5);
+    store().requestUnlock("want");
+    store().setMonth(2);
+    expect(store().month).toBe(2);
+    expect(store().demoDay).toBe(0);
+    expect(store().ritm.enabled).toBe(true);
+    expect(store().unlockReasons).toEqual([]);
+    expect(store().lastMonthUnlocks.map((r) => r.reason)).toEqual(["want"]);
+    expect(store().lastMonth?.suggestedLock).toBe(600);
+  });
+
+  it("month 2 day 6: the soft habit note instead of a Heads-up, asking for nothing", () => {
+    store().enableRitm(DEFAULT_RITM_SETTINGS);
+    store().setMonth(2);
+    store().setDemoDay(6);
+    const note = store().notifications.at(-1);
+    expect(note?.variant).toBe("habit");
+    expect(note?.actions).toEqual([]);
+    expect(note?.habits?.[0]).toBe("Mega Coș");
+  });
+
+  it("without month-1 exits, month 2 remembers the scripted 'Something I want' one", () => {
+    store().setMonth(2);
+    expect(store().lastMonthUnlocks).toEqual([{ day: 12, reason: "want", amount: 200, path: "wait" }]);
+  });
+
+  it("changing the Lock: more applies now, less needs a reason first", () => {
+    store().enableRitm(DEFAULT_RITM_SETTINGS);
+    store().setDemoDay(5);
+    expect(store().editLock(700, 22)).toEqual({ kind: "applied" });
+    expect(store().lock).toMatchObject({ amount: 700, unlockDay: 22 });
+    expect(store().ritm.lock).toEqual({ amount: 700, unlockDay: 22 });
+    expect(store().editLock(400, 22)).toEqual({ kind: "needsReason", decrease: 300 });
+    expect(store().lock?.amount).toBe(700);
+  });
+
+  it("lowering the Lock with 'Something I want' waits 24 h, then only that part comes out", () => {
+    store().enableRitm(DEFAULT_RITM_SETTINGS);
+    store().setDemoDay(5);
+    const savingsBefore = store().balances.savings;
+    expect(store().unlockWithReason(200, "want")).toBe("wait");
+    expect(store().lock?.status).toBe("unlockRequested");
+    store().nextDay();
+    expect(store().lock).toMatchObject({ status: "locked", amount: 300 });
+    expect(store().balances.savings).toBe(savingsBefore - 200);
+    expect(store().unlockReasons.at(-1)).toMatchObject({ reason: "want", amount: 200, path: "wait" });
+  });
+
   it("money taken out of the Lock early keeps its reason", () => {
     store().enableRitm(DEFAULT_RITM_SETTINGS);
     store().setDemoDay(5);

@@ -97,6 +97,8 @@ export interface PaceState {
   safeToSpendToday: number;
   severity: Severity;
   reasons: Reason[];
+  /** Compared with the user's own usual day (from the 2nd month), not an even split. */
+  personal: boolean;
 }
 
 export interface LockState {
