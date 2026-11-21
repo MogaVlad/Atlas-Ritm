@@ -317,6 +317,8 @@ test("the Speed bump shows one number per choice; lowering the Lock asks why", a
   await speedBump.getByRole("button", { name: m.ritm.speedBump.notNow }).click();
   await expect(speedBump.getByText(starts(m.ritm.speedBump.pensionNumber.split("{")[0]))).toBeVisible();
   await speedBump.getByRole("button", { name: m.ritm.speedBump.leaveIt }).click();
+  // The purchase is off and the money stays in the account: back into Atlas, not the shop.
+  await expect(page).toHaveURL(/localhost:3000\/(\?.*)?$/);
 
   // Lock screen: a lower Lock goes through the reason buttons.
   await page.goto("/ritm/lock?demo=1");
@@ -330,4 +332,29 @@ test("the Speed bump shows one number per choice; lowering the Lock asks why", a
   await change.getByRole("radio", { name: m.ritm.lock.reason.want }).click();
   await page.getByRole("button", { name: fill(m.ritm.lock.lowerConfirm, { amount: "200,00 RON" }) }).click();
   await expect(page.getByText(fill(m.ritm.lock.requested, { amount: "200,00 RON", day: 2 }))).toBeVisible();
+});
+
+test("Speed bump on a demo-tools purchase: Not now, then Leave it in the account, goes Home (not Payments)", async ({ page }) => {
+  const buy = m.common.demo.buy;
+  await page.goto("/?demo=1");
+  await jumpToDay(page, 1, 0);
+  await page.getByRole("link", { name: exact(m.bank.nav.ritm) }).click();
+  await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
+  await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
+  await page.getByRole("switch", { name: m.ritm.levels.speedbump.name }).click();
+  await page.getByRole("button", { name: m.ritm.onboarding.finish }).click();
+
+  const clock = page.getByRole("group", { name: m.common.demo.title });
+  await clock.getByRole("button", { name: fill(m.common.demo.day, { day: 1 }) }).click();
+  const panel = page.getByRole("region", { name: buy.button });
+  await panel.getByLabel(buy.shop, { exact: true }).selectOption({ label: "TechPunct" });
+  await panel.getByLabel(buy.amount).fill("450");
+  await panel.getByRole("radio", { name: buy.online }).click();
+  await panel.getByRole("button", { name: starts(fill(buy.pay, { amount: "" })) }).click();
+  await page.getByRole("button", { name: m.bank.confirm.confirm }).click();
+
+  const speedBump = page.getByRole("dialog", { name: m.ritm.speedBump.title });
+  await speedBump.getByRole("button", { name: m.ritm.speedBump.notNow }).click();
+  await speedBump.getByRole("button", { name: m.ritm.speedBump.leaveIt }).click();
+  await expect(page).toHaveURL(/localhost:3000\/(\?.*)?$/);
 });

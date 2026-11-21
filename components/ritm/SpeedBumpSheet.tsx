@@ -20,6 +20,8 @@ export interface SpeedBumpSheetProps {
   onBackToAtlas: () => void;
   /** Opens Ask Ritm (I4). Hidden until passed. */
   onAskRitm?: () => void;
+  /** False when the purchase didn't come from a shop page (demo tools): no "Back to the shop". */
+  fromShop?: boolean;
 }
 
 /**
@@ -28,7 +30,7 @@ export interface SpeedBumpSheetProps {
  * 2. after "Not now", in the same sheet: the money kept can go to the Lock, to Pillar III
  *    (explained first), or stay in the account.
  */
-export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAtlas, onAskRitm }: SpeedBumpSheetProps) {
+export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAtlas, onAskRitm, fromShop = true }: SpeedBumpSheetProps) {
   const t = useT();
   const locale = useLocale((s) => s.locale);
   const reduce = useReducedMotion();
@@ -141,9 +143,11 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAt
             <button type="button" onClick={onBackToAtlas} className={PRIMARY}>
               {t("ritm.speedBump.backToAtlas")}
             </button>
-            <button type="button" onClick={onNotNow} className={SECONDARY}>
-              {t("ritm.speedBump.backToShop")}
-            </button>
+            {fromShop && (
+              <button type="button" onClick={onNotNow} className={SECONDARY}>
+                {t("ritm.speedBump.backToShop")}
+              </button>
+            )}
           </div>
         ) : (
           <div className="mt-5 flex flex-col gap-3">
@@ -160,7 +164,8 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAt
               hint={t("ritm.speedBump.pensionNumber", { tax: formatLei(taxBack, locale) })}
               onClick={() => setPensionOpen(true)}
             />
-            <button type="button" onClick={onNotNow} className={SECONDARY}>
+            {/* The purchase is off and the money stays in the account: back into Atlas, not the shop or Payments. */}
+            <button type="button" onClick={onBackToAtlas} className={SECONDARY}>
               {t("ritm.speedBump.leaveIt")}
             </button>
           </div>
