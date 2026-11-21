@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Bricolage_Grotesque } from "next/font/google";
 import { BottomNav } from "@/components/bank/BottomNav";
+import { NotificationBanner } from "@/components/bank/NotificationBanner";
 import { PhoneFrame } from "@/components/bank/PhoneFrame";
 import { TopBar } from "@/components/bank/TopBar";
 
@@ -17,6 +18,7 @@ export default function BankLayout({ children }: { children: ReactNode }) {
         <TopBar />
         <main className="flex flex-1 flex-col px-5 pt-5 pb-8">{children}</main>
         <BottomNav />
+        <NotificationBanner />
       </div>
     </PhoneFrame>
   );

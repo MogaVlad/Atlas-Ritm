@@ -5,6 +5,7 @@ import Link from "next/link";
 import { BalancePanel } from "@/components/bank/BalancePanel";
 import { CARD_LAST4, useBalances, useVisibleTransactions } from "@/components/bank/bankData";
 import { RitmSlot } from "@/components/bank/RitmSlot";
+import { SalaryMoment } from "@/components/bank/SalaryMoment";
 import { TransactionRow } from "@/components/bank/TransactionRow";
 import { PERSONA } from "@/lib/data/persona";
 import { formatLei } from "@/lib/format";
@@ -21,6 +22,8 @@ export default function HomePage() {
       <h1 className="font-display text-[1.7rem] leading-tight font-semibold tracking-[-0.02em]">
         {t("bank.home.greeting", { name: PERSONA.name })}
       </h1>
+
+      <SalaryMoment />
 
       <BalancePanel balance={balances.current} cardLast4={CARD_LAST4} href="/accounts/current" />
 
