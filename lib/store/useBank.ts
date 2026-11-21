@@ -141,8 +141,8 @@ interface Actions {
   /** Close a notification. `acted: false` counts it as ignored. */
   dismissNotification: (id: string, acted?: boolean) => void;
   /**
-   * "Clear all" in the notification centre: closes every Heads-up (each counts as ignored, like
-   * closing it by hand) and hides the activity shown so far. Later activity still appears.
+   * "Clear all" in the notification centre: closes every Heads-up and hides the activity shown so far.
+   * Not counted as ignored (#59): one tap must not trigger the "suggest Speed bump" rule. Later activity still appears.
    */
   clearNotifications: () => void;
   resetDemo: () => void;
@@ -447,7 +447,6 @@ export const useBank = create<BankState>()(
               ...s,
               notifications: [],
               clearedActivityIds: [...new Set([...s.clearedActivityIds, ...shown])],
-              alertMemory: { ...s.alertMemory, ignoredCount: s.alertMemory.ignoredCount + s.notifications.length },
             };
           }),
 

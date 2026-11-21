@@ -196,7 +196,9 @@
       "salaryTitle": "Salary received",
       "salaryBody": "{amount} from {from}.",
       "paymentTitle": "Card payment",
-      "paymentBody": "You paid {amount} to {merchant}."
+      "paymentBody": "You paid {amount} to {merchant}.",
+      "clearAll": "Clear all",
+      "cleared": "Notifications cleared."
     },
     "salary": {
       "title": "Your salary is in",
