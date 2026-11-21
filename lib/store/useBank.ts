@@ -222,7 +222,7 @@ function evaluateDay(s: PersistedState): PersistedState {
 }
 
 const INITIAL: PersistedState = {
-  locale: "ro",
+  locale: "en",
   demoDay: 1,
   added: [],
   plannedIds: [],

@@ -35,6 +35,25 @@
           "title": "Payday again",
           "body": "Day 30, the 500 lei kept saved. Ready for the summary."
         }
+      },
+      "jumpTo": "Go to day {day}",
+      "buy": {
+        "button": "Simulate a purchase",
+        "title": "Simulate a purchase",
+        "close": "Close the demo tools",
+        "shop": "Shop",
+        "amount": "Amount (lei)",
+        "channel": "How it's paid",
+        "online": "Online",
+        "inStore": "In store",
+        "pay": "Pay {amount}",
+        "invalid": "Enter an amount above 0.",
+        "inStoreNote": "In-store payments never pause. Ritm shows what's left right after.",
+        "ritmOff": "Ritm is off, so this payment goes straight through.",
+        "headsUpOnly": "Ritm is on Heads-up: it warns, but it doesn't pause payments. The Speed bump only pauses on the Speed bump or Lock level.",
+        "enableSpeedBump": "Switch to Speed bump",
+        "underThreshold": "Under {threshold}, so no Speed bump.",
+        "willPause": "The Speed bump will pause this payment before you confirm."
       }
     }
   },
@@ -92,7 +111,8 @@
       "tapHint": "{merchant}, {amount}",
       "simulatedNote": "In-store payments can’t be paused. You get a message right away with what you have left.",
       "tapToast": "You just spent {amount} at {merchant}. Safe to spend today: {safe}.",
-      "tapToastNoRitm": "You just spent {amount} at {merchant}."
+      "tapToastNoRitm": "You just spent {amount} at {merchant}.",
+      "insufficient": "Not enough money for {amount} at {merchant}. Your current account has {balance}."
     },
     "profile": {
       "title": "Profile",
@@ -172,7 +192,8 @@
       "cancel": "Cancel",
       "paidTitle": "Payment approved",
       "paidBody": "You paid {amount} to {merchant}.",
-      "backHome": "Back to Atlas"
+      "backHome": "Back to Atlas",
+      "insufficient": "Not enough money in your current account. You have {balance}."
     },
     "speedBump": {
       "title": "A short pause",
