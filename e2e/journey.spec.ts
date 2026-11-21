@@ -174,3 +174,40 @@ test("after the money goes to Pillar III, Back to Atlas leads home and back does
   await page.goBack();
   await expect(page).not.toHaveURL(/\/payments\/confirm/);
 });
+
+test("Lock: shown as on, and taking money out asks why with buttons (Health = now, Something I want = 24 h)", async ({ page }) => {
+  const lock = m.ritm.lock;
+  await page.goto("/?demo=1");
+  await jumpToDay(page, 1, 0);
+
+  // Step 1 of onboarding has a Back: it leaves the way you came in.
+  await page.getByRole("link", { name: exact(m.bank.nav.ritm) }).click();
+  await page.getByRole("button", { name: exact(m.ritm.onboarding.back) }).click();
+  await expect(page).not.toHaveURL(/\/ritm\/onboarding/);
+
+  // Start Ritm with the Lock on.
+  await page.getByRole("link", { name: exact(m.bank.nav.ritm) }).click();
+  await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
+  await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
+  await page.getByRole("switch", { name: m.ritm.levels.lock.name }).click();
+  await page.getByRole("button", { name: m.ritm.onboarding.finish }).click();
+
+  // The Ritm tab shows the Lock as on, and opens it.
+  await page.getByRole("link", { name: exact(m.bank.nav.ritm) }).click();
+  const lockRow = page.getByRole("link", { name: new RegExp(`^${m.ritm.levels.lock.name}.*${m.ritm.features.on}`) });
+  await expect(lockRow).toBeVisible();
+  await lockRow.click();
+
+  // The mirror: facts first, then the reason buttons.
+  await page.getByRole("button", { name: starts(lock.takeOutTitle) }).click();
+  await expect(page.getByText(starts(lock.mirror.count.split("{")[0]))).toBeVisible();
+  await page.getByRole("radio", { name: lock.reasons.health }).click();
+  await page.getByRole("button", { name: starts(lock.emergencyConfirm.split("{")[0]) }).click();
+  await expect(page.getByText(fill(lock.emergencyDone, { amount: "300,00 lei" }))).toBeVisible();
+
+  // "Something I want" is never refused: it waits 24 hours.
+  await page.getByRole("button", { name: starts(lock.takeOutTitle) }).click();
+  await page.getByRole("radio", { name: lock.reasons.want }).click();
+  await page.getByRole("button", { name: lock.earlyConfirm }).click();
+  await expect(page.getByText(fill(lock.requested, { amount: "200,00 lei", day: 2 }))).toBeVisible();
+});

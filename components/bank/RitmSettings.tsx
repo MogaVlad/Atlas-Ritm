@@ -3,7 +3,7 @@
 import { Activity, CalendarClock } from "lucide-react";
 import Link from "next/link";
 import { useId, useState } from "react";
-import { FeatureSwitches } from "@/components/ritm/FeatureSwitches";
+import { FeatureSwitches, useLockLink } from "@/components/ritm/FeatureSwitches";
 import { ESSENTIAL_AMOUNTS } from "@/lib/data/persona";
 import { ritmOffDay, type Category } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
@@ -61,6 +61,7 @@ function RitmOn() {
   const requestRitmOff = useBank((s) => s.requestRitmOff);
   const cancelRitmOff = useBank((s) => s.cancelRitmOff);
   const setFeature = useBank((s) => s.setFeature);
+  const lockLink = useLockLink();
   const setThreshold = useBank((s) => s.setSpeedBumpThreshold);
   const setEssentials = useBank((s) => s.setEssentials);
 
@@ -148,6 +149,7 @@ function RitmOn() {
         <FeatureSwitches
           values={{ headsUp: ritm.headsUp, speedBump: ritm.speedBump }}
           onChange={(feature, on) => feature !== "lock" && setFeature(feature, on)}
+          lockLink={lockLink}
         />
       </section>
 

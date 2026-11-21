@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { FeatureSwitches } from "@/components/ritm/FeatureSwitches";
+import { FeatureSwitches, useLockLink } from "@/components/ritm/FeatureSwitches";
 import { PaceBar } from "@/components/ritm/PaceBar";
 import { SafeToSpend } from "@/components/ritm/SafeToSpend";
 import { useHydrated } from "@/components/ritm/useHydrated";
@@ -23,6 +23,7 @@ export default function RitmTab() {
   const lock = useBank((s) => s.lock);
   const pace = useBank((s) => s.pace);
   const setFeature = useBank((s) => s.setFeature);
+  const lockLink = useLockLink();
 
   useEffect(() => {
     if (hydrated && !ritm.enabled) router.replace("/ritm/onboarding");
@@ -56,6 +57,7 @@ export default function RitmTab() {
         <FeatureSwitches
           values={{ headsUp: ritm.headsUp, speedBump: ritm.speedBump }}
           onChange={(feature, on) => feature !== "lock" && setFeature(feature, on)}
+          lockLink={lockLink}
         />
       </section>
 

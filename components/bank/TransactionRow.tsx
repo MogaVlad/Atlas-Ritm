@@ -18,6 +18,20 @@ export function TransactionRow({ tx }: { tx: Transaction }) {
   const incoming = tx.amount < 0;
   const essential = useBank((s) => s.ritm.essentialCategories.includes(tx.category));
 
+  // A declined payment was never charged: shown so it doesn't vanish, but there's nothing to open.
+  if (tx.declined) {
+    return (
+      <li className="-mx-2 flex min-h-16 items-center gap-3 px-2 py-2.5 opacity-70">
+        <CategoryIcon category={tx.category} incoming={false} />
+        <span className="min-w-0 flex-1">
+          <span className="block truncate font-medium text-atlas-ink">{tx.merchant}</span>
+          <span className="text-sm text-ritm-spike">{t("bank.transactions.declined")}</span>
+        </span>
+        <span className="shrink-0 font-medium text-atlas-muted tabular-nums line-through">{signedLei(tx.amount, locale)}</span>
+      </li>
+    );
+  }
+
   return (
     <li>
       <Link
@@ -29,6 +43,12 @@ export function TransactionRow({ tx }: { tx: Transaction }) {
           <span className="block truncate font-medium text-atlas-ink">{tx.merchant}</span>
           <span className="flex items-center gap-2 text-sm text-atlas-muted">
             {t(`bank.categories.${tx.category}`)}
+            {/* Money in that isn't the salary is a refund: say so, or it looks like money from nowhere. */}
+            {incoming && tx.category !== "salary" && (
+              <span className="rounded-full border border-atlas-line px-2 text-xs leading-5 text-atlas-pine">
+                {t("bank.transactions.refund")}
+              </span>
+            )}
             {essential && (
               <span className="rounded-full border border-atlas-line px-2 text-xs leading-5 text-atlas-pine">
                 {t("bank.transactions.essential")}

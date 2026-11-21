@@ -82,7 +82,9 @@
       "yesterday": "Ieri",
       "essential": "Esențial",
       "empty": "Încă nu ai tranzacții luna asta.",
-      "planned": "Planificat"
+      "planned": "Planificat",
+      "declined": "Refuzată · fonduri insuficiente",
+      "refund": "Rambursare"
     },
     "categories": {
       "salary": "Salariu",
@@ -265,7 +267,8 @@
         "ok": "Ești în ritm",
         "watch": "Puțin peste ritm",
         "spike": "Mult peste ritm"
-      }
+      },
+      "aheadLegend": "Hașurat: {pct}% din banii de cheltuit, folosiți înaintea calendarului."
     },
     "safe": {
       "label": "Poți cheltui azi",
@@ -364,7 +367,7 @@
       },
       "intro": "Poți face ceva acum, dintr-o atingere. Sau nimic, tu decizi.",
       "actions": {
-        "moveToLock": "Mută {amount} în Lacăt",
+        "moveToLock": "Pune {amount} deoparte până în ziua {day}, ca să ai și la final de lună",
         "enableSpeedBump": "Pornește Pauza până la salariu",
         "markPlanned": "{merchant}, {amount}, era planificată"
       },
@@ -457,13 +460,35 @@
       "cancel": "Renunț",
       "error": {
         "overLimit": "Poți scoate cel mult {max}.",
-        "reason": "Scrie pe scurt pentru ce ai nevoie de bani.",
+        "reason": "Alege mai întâi un motiv.",
         "alreadyUsed": "Ai folosit deja urgența luna asta.",
         "notLocked": "Nu mai e nimic în Lacăt."
       },
       "unlocked": "Lacătul s-a deschis. {amount} sunt liberi.",
       "chooseCta": "Alege ce faci cu ei",
-      "empty": "Nu ai nimic în Lacăt acum."
+      "empty": "Nu ai nimic în Lacăt acum.",
+      "pending": "{amount} intră în Lacăt în ziua salariului, când îți vin banii. Se deblochează singuri în ziua {day}.",
+      "setupTitle": "Pune bani deoparte",
+      "setupCta": "Pune {amount} deoparte până în ziua {day}",
+      "setupNoMoney": "Acum nu ai destui bani în contul curent ca să pui deoparte.",
+      "takeOutTitle": "Scoate bani mai devreme",
+      "takeOutHint": "Spune-i lui Ritm de ce. Banii tăi îi primești mereu; se schimbă doar momentul.",
+      "mirror": {
+        "title": "Înainte să-i scoți",
+        "goal": "{goal}: {before}% strânși acum, {after}% după.",
+        "count": "De câte ori ai scos bani din Lacăt luna asta: {n}."
+      },
+      "reasonTitle": "De ce ai nevoie de ei?",
+      "reasons": {
+        "health": "Sănătate",
+        "bill": "O factură sau o reparație",
+        "unexpected": "Ceva neprevăzut",
+        "want": "Ceva ce îmi doresc"
+      },
+      "noteLabel": "Vrei să adaugi ceva? (opțional)",
+      "outcomeNow": "Îi primești imediat, până la {max}. Merge o dată pe lună.",
+      "outcomeWant": "Sunt banii tăi. Primești toți cei {amount} în ziua {day}, la 24 de ore după ce ceri.",
+      "outcomeUsed": "Ai folosit deja scoaterea imediată luna asta, așa că aștepți 24 de ore: toți cei {amount} în ziua {day}."
     },
     "unlock": {
       "title": "Ai ajuns la ziua {day} fără ei.",
@@ -552,6 +577,12 @@
       "editLink": "Schimbă-ți scopurile",
       "editTitle": "Scopurile tale",
       "save": "Salvează scopurile"
+    },
+    "features": {
+      "on": "Pornit",
+      "off": "Oprit",
+      "lockPending": "{amount} intră în ziua salariului.",
+      "lockOff": "Nimic pus deoparte. Apasă ca să-l pornești."
     }
   }
 }
