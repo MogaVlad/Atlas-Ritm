@@ -417,7 +417,7 @@
       },
       "speedbump": {
         "name": "Pauză",
-        "description": "Înainte de o plată online mare, îți arată cifrele și te lasă să confirmi după 5 secunde."
+        "description": "Înainte de o plată online mare, îți arată cifrele și te lasă să confirmi după ce ții apăsat {seconds} secunde."
       },
       "lock": {
         "name": "Lacăt",
@@ -526,7 +526,7 @@
       },
       "hint": {
         "moveToLock": "Banii stau deoparte și se deblochează singuri în ziua {day}.",
-        "enableSpeedBump": "Înainte de plățile online mari îți arătăm cifrele și confirmi după 5 secunde.",
+        "enableSpeedBump": "Înainte de plățile online mari îți arătăm cifrele și confirmi după ce ții apăsat {seconds} secunde.",
         "markPlanned": "Alegi tu care. Nu mai intră în calculul ritmului."
       },
       "done": {
@@ -657,7 +657,8 @@
         "overLimit": "Poți scoate cel mult {max}.",
         "reason": "Alege mai întâi un motiv.",
         "alreadyUsed": "Ai folosit deja urgența luna asta.",
-        "notLocked": "Nu mai e nimic în Lacăt."
+        "notLocked": "Nu mai e nimic în Lacăt.",
+        "noAmount": "Scrie o sumă mai mare de 0."
       },
       "unlocked": "Lacătul s-a deschis. {amount} sunt liberi.",
       "chooseCta": "Alege ce faci cu ei",
