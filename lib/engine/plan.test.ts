@@ -1,46 +1,79 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_RITM_SETTINGS } from "@/lib/data/persona";
-import { createLock, requestUnlockWithReason, resolveLock } from "./lock";
-import { goalPlan, goalProgress, lockPreview, planEdit, unlockFacts } from "./plan";
-import type { MonthPlan } from "./types";
+import { createLock, goalPlan, lockPreview, planEdit, requestUnlockWithReason, resolveLock, unlockMirror } from "@/lib/engine";
 
-const plan: MonthPlan = {
-  netSalary: 4800,
-  essentialsTotal: 2180,
-  goal: { name: "Islanda 2027", amount: 9000 },
-  saved: 0,
-  unlockDay: 20,
-};
-
-describe("lockPreview", () => {
-  it("day 1, Lock 500: 2.120 lei to spend, 70 a day, 500 + interest back on day 20", () => {
-    const p = lockPreview(plan, 500, 1);
-    expect(p.spendingMoney).toBe(2120);
-    expect(p.perDay).toBe(70);
-    expect(p.interest).toBe(0.94); // 500 × 4% × 19/365, minus 10% tax
-    expect(p.backOnUnlockDay).toBe(500.94);
+describe("lockPreview (section 11 B)", () => {
+  it("shows per day, what comes back with interest, and goal share", () => {
+    const p = lockPreview({
+      spendingMoney: 2120,
+      lockAmount: 500,
+      unlockDay: 20,
+      goalAmount: 9000,
+    });
+    expect(p.perDay).toBe(70.67);
+    expect(p.backOnUnlock).toBe(500.94); // 500 + 500 × 4% × 19/365, minus 10% tax
     expect(p.goalPct).toBeCloseTo(500 / 9000);
     expect(p.tight).toBe(false);
   });
 
-  it("a bigger Lock lowers the daily amount", () => {
-    expect(lockPreview(plan, 800, 1).perDay).toBe(60);
+  it("flags under 30 lei a day as tight", () => {
+    expect(
+      lockPreview({
+        spendingMoney: 800,
+        lockAmount: 1400,
+        unlockDay: 20,
+        goalAmount: 9000,
+      }).tight,
+    ).toBe(true);
   });
 
-  it("under 30 lei a day is tight", () => {
-    const p = lockPreview(plan, 1800, 1); // 820 lei ÷ 30 days
-    expect(p.perDay).toBe(27);
-    expect(p.tight).toBe(true);
+  it("no Lock: nothing comes back, no goal share", () => {
+    const p = lockPreview({
+      spendingMoney: 2620,
+      lockAmount: 0,
+      unlockDay: 20,
+      goalAmount: 9000,
+    });
+    expect(p.backOnUnlock).toBe(0);
+    expect(p.goalPct).toBe(0);
+  });
+});
+
+describe("unlockMirror (section 11 C)", () => {
+  const lock = createLock(500, 20);
+  const base = { lock, saved: 500, goalAmount: 1000 };
+
+  it("health, bill or unexpected up to 300 lei: emergency, right away", () => {
+    for (const reason of ["health", "bill", "unexpected"] as const) {
+      const m = unlockMirror({ ...base, reason, amount: 200 });
+      expect(m.route).toBe("emergency");
+      expect(m.released).toBe(200);
+    }
+    const m = unlockMirror({ ...base, reason: "health", amount: 200 });
+    expect(m.goalBefore).toBe(0.5);
+    expect(m.goalAfter).toBe(0.3);
+    expect(m.unlockNumber).toBe(1);
   });
 
-  it("later in the month the daily amount uses the days left; no interest after the unlock day", () => {
-    const p = lockPreview(plan, 500, 25);
-    expect(p.perDay).toBe(353); // 2120 ÷ 6
-    expect(p.interest).toBe(0);
+  it("something I want always waits 24 h, for the whole Lock (never blocked)", () => {
+    const m = unlockMirror({ ...base, reason: "want", amount: 200 });
+    expect(m.route).toBe("wait");
+    expect(m.released).toBe(500);
+    expect(m.goalAfter).toBe(0);
   });
 
-  it("goal progress never goes over 100%", () => {
-    expect(lockPreview({ ...plan, saved: 8800 }, 500, 1).goalPct).toBe(1);
+  it("over 300 lei, or the emergency already used: waits 24 h, and counts as the 2nd unlock", () => {
+    expect(unlockMirror({ ...base, reason: "bill", amount: 400 }).route).toBe(
+      "wait",
+    );
+    const used = unlockMirror({
+      ...base,
+      lock: { ...lock, amount: 300, emergencyUsed: true },
+      reason: "health",
+      amount: 100,
+    });
+    expect(used.route).toBe("wait");
+    expect(used.unlockNumber).toBe(2);
   });
 });
 
@@ -112,16 +145,6 @@ describe("requestUnlockWithReason (the mirror)", () => {
       ok: false,
       reason: "notLocked",
     });
-  });
-});
-
-describe("unlockFacts", () => {
-  it("shows goal progress before → after and the unlock number", () => {
-    const f = unlockFacts({ amount: 300, saved: 3060, goalAmount: 9000, unlocksThisCycle: 1 });
-    expect(Math.round(f.goalPctBefore * 100)).toBe(34);
-    expect(Math.round(f.goalPctAfter * 100)).toBe(31);
-    expect(f.unlockNumber).toBe(2);
-    expect(goalProgress(-50, 9000)).toBe(0);
   });
 });
 

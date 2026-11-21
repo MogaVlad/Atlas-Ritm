@@ -58,14 +58,6 @@ export function interestEstimate(amount: number, days: number, annualRate: numbe
 /** Reasons that may use the emergency release. "want" always waits 24h (never blocked). */
 const EMERGENCY_REASONS: readonly UnlockReason[] = ["health", "bill", "unexpected"];
 
-/** The four reason buttons on the mirror screen, in order, as i18n keys. */
-export const UNLOCK_REASONS: readonly { id: UnlockReason; key: string }[] = [
-  { id: "health", key: "ritm.mirror.reason.health" },
-  { id: "bill", key: "ritm.mirror.reason.bill" },
-  { id: "unexpected", key: "ritm.mirror.reason.unexpected" },
-  { id: "want", key: "ritm.mirror.reason.want" },
-];
-
 /**
  * Unlocking with a reason (section 11 C, "the mirror").
  * - health / bill / unexpected, up to 300 lei, first time this cycle: released now (emergency release).
