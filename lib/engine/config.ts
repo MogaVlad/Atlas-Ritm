@@ -68,8 +68,8 @@ export const RULES = {
     /** Pillar III contributions are deductible up to the lei equivalent of this, per year
      * (shared with private health insurance; the demo assumes none). */
     deductibleEurPerYear: 400,
-    /** Round demo rate. The real one is BNR's on the payment day (see the pitch sources table). */
-    eurToLei: 5,
+    /** EUR→RON rate (team decision, close to BNR's). In production: BNR's rate on the payment day. */
+    eurToLei: 5.35,
     /** Income tax saved on the deductible part. */
     incomeTax: 0.1,
   },
