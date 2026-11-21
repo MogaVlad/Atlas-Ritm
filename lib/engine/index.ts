@@ -4,7 +4,7 @@ export { RULES } from "./config";
 export { computePace, isCounted, usualDailySpend } from "./pace";
 export { detectHabits, habitNote, isHabit, lockSuggestion, type Habit, type HabitNote } from "./habits";
 export { shouldNotify, alertActions, moveToLockAmount, INITIAL_ALERT_MEMORY } from "./alerts";
-export { shouldShowSpeedBump } from "./speedbump";
+export { goalImpactDays, shouldShowSpeedBump } from "./speedbump";
 export { createLock, requestUnlock, requestUnlockWithReason, resolveLock, emergencyRelease, interestEstimate } from "./lock";
 export { monthSummary, raiseSavingPlan } from "./summary";
 export { lockPreview, unlockMirror, UNLOCK_REASONS, goalPlan, goalProgress, planEdit, type LockPreview, type UnlockMirror } from "./plan";
