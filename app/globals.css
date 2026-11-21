@@ -89,14 +89,15 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  /* Ritm: plum = calm and on pace; amber = watch; crimson = spike. All ≥ 4.5:1 on white. */
-  --ritm: #5b3f8f;
-  --ritm-tint: #f1ecf8;
+  /* Ritm (redesign): cobalt = calm and on pace; amber = watch; red = spike.
+     All ≥ 4.5:1 on white and on their own tint (cobalt 6.8:1, amber 5.4:1, red 6.5:1). */
+  --ritm: #2449e0;
+  --ritm-tint: #e4e9fb;
   --ritm-watch: #a35f00;
-  --ritm-watch-tint: #fbf0df;
-  --ritm-spike: #b0264a;
-  --ritm-spike-tint: #fbe7ec;
-  --ritm-track: #e7e3ee;
+  --ritm-watch-tint: #fcefd9;
+  --ritm-spike: #b42318;
+  --ritm-spike-tint: #fde8e6;
+  --ritm-track: #e3e7f0;
 }
 
 .dark {
@@ -144,15 +145,16 @@
     @apply font-sans;
   }
 }
-/* Atlas bank (Iustin): map-paper base, pine ink, one brass pin. Original palette, not a real bank's. */
+/* Atlas bank (redesign): deep navy ink, warm paper, cobalt actions, one gold for savings and the
+   Lock. Original palette, not a real bank's. Token names kept so every screen follows. */
 :root {
-  --atlas-ink: #0e2f2c;
-  --atlas-pine: #1f5f57;
-  --atlas-sea: #dcebe6;
-  --atlas-paper: #f6f7f4;
-  --atlas-line: #d7ddd8;
-  --atlas-muted: #56635f;
-  --atlas-brass: #b7893a;
+  --atlas-ink: #0a1628;
+  --atlas-pine: #2449e0;
+  --atlas-sea: #e4e9fb;
+  --atlas-paper: #f5f3ee;
+  --atlas-line: #e1e5ee;
+  --atlas-muted: #4a5568;
+  --atlas-brass: #a16207;
 }
 
 @theme inline {
@@ -176,9 +178,9 @@
   }
 }
 
-/* Atlas (Iustin): a lighter brass for "today" on the ink header (6.9:1 on #0e2f2c). */
+/* Atlas: a lighter gold for "today" and the Lock on the navy header (11:1 on #0a1628). */
 :root {
-  --atlas-brass-light: #d9ae5f;
+  --atlas-brass-light: #f2c46d;
 }
 @theme inline {
   --color-atlas-brass: var(--atlas-brass);

@@ -1,5 +1,6 @@
 "use client";
 
+import { LockKeyhole } from "lucide-react";
 import Link from "next/link";
 import { useLayoutEffect, useState, type ReactNode } from "react";
 import { RitmBack } from "@/components/ritm/RitmBack";
@@ -179,12 +180,26 @@ export default function LockScreen() {
     <Screen>
       <h1 className={H1}>{t("ritm.lock.title")}</h1>
 
-      <section className="flex flex-col gap-1 rounded-3xl bg-ritm p-5 text-white">
-        <h2 className="text-sm text-white/80">{t("ritm.lock.amountLabel")}</h2>
-        <p className="font-display text-5xl leading-none font-semibold tracking-tight tabular-nums">
-          {lei(lock.amount)}
-        </p>
-        <p className="mt-2 text-sm">
+      {/* Redesign: the Lock as a navy vault with a gold key; the bar runs from payday to the unlock day. */}
+      <section className="flex flex-col gap-4 rounded-[28px] bg-atlas-ink p-5 text-white">
+        <div className="flex items-center gap-4">
+          <span aria-hidden="true" className="flex size-14 shrink-0 items-center justify-center rounded-[18px] bg-atlas-brass-light text-atlas-ink">
+            <LockKeyhole className="size-7" strokeWidth={2.2} />
+          </span>
+          <div className="flex flex-col gap-1">
+            <h2 className="text-sm text-white/80">{t("ritm.lock.amountLabel")}</h2>
+            <p className="font-display text-[2.6rem] leading-none font-bold tracking-[-0.03em] tabular-nums">
+              {lei(lock.amount)}
+            </p>
+          </div>
+        </div>
+        <div aria-hidden="true" className="h-2.5 overflow-hidden rounded-full bg-white/15">
+          <div
+            className="h-full rounded-full bg-atlas-brass-light"
+            style={{ width: `${Math.round(Math.min(1, Math.max(0, (day - 1) / Math.max(1, lock.unlockDay - 1))) * 100)}%` }}
+          />
+        </div>
+        <p className="text-sm font-medium text-atlas-brass-light">
           {daysLeft === 1
             ? t("ritm.lock.unlockTomorrow", { day: lock.unlockDay })
             : t("ritm.lock.unlockOn", { day: lock.unlockDay, days: daysLeft })}

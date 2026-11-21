@@ -41,7 +41,7 @@ export function MonthHero() {
   const lei = (v: number) => formatLei(v, locale);
 
   return (
-    <section aria-labelledby="home-greeting" className="-mx-5 -mt-5 rounded-b-[32px] bg-atlas-ink px-5 pt-1 pb-7 text-white">
+    <section aria-labelledby="home-greeting" className="-mx-5 -mt-5 rounded-b-[32px] bg-atlas-ink px-5 pt-1 pb-20 text-white">
       <h1 id="home-greeting" className="font-display text-[1.6rem] leading-tight font-semibold tracking-[-0.02em]">
         {t("bank.home.greeting", { name: PERSONA.name })}
       </h1>

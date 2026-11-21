@@ -10,8 +10,8 @@ import { useWelcome } from "@/components/bank/welcomeGuide";
 import { useT } from "@/lib/i18n";
 
 /**
- * Home: the month header (balance, where you are between paydays), what you can do,
- * Ritm, and the latest money in and out.
+ * Home: the month header (balance, where you are between paydays), Ritm right on top of it
+ * (it's what the app is about), what you can do, and the latest money in and out.
  */
 export default function HomePage() {
   const t = useT();
@@ -21,9 +21,12 @@ export default function HomePage() {
     <div className="flex flex-col gap-6">
       <MonthHero />
 
-      <QuickActions />
+      {/* Redesign: Ritm overlaps the navy header, one card lifted off the page. */}
+      <div className="relative z-10 -mt-20 rounded-[28px] shadow-[0_18px_40px_rgb(10_22_40/0.14)]">
+        <RitmSlot />
+      </div>
 
-      <RitmSlot />
+      <QuickActions />
 
       <section aria-labelledby="recent-title">
         <div className="flex items-center justify-between">
