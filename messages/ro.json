@@ -326,7 +326,8 @@
       "title": "Ritm",
       "lock": "{amount} puși deoparte, se deblochează în ziua {day}.",
       "headsUpCta": "Vezi de ce te-a atenționat Ritm",
-      "lockOpen": "Lacătul s-a deschis: {amount} sunt liberi."
+      "lockOpen": "Lacătul s-a deschis: {amount} sunt liberi.",
+      "summaryCta": "Vezi cum a fost luna"
     },
     "reason": {
       "pctSpent": "Ziua {day}: ai folosit deja {pct}% din banii de cheltuit.",
@@ -386,7 +387,8 @@
       "lockNone": "Nimic pus deoparte",
       "essentials": "Plăți fixe pe lună",
       "settingsLink": "Alte setări Ritm, în Profil",
-      "lockOpen": "S-a deschis: {amount} liberi"
+      "lockOpen": "S-a deschis: {amount} liberi",
+      "summaryLink": "Rezumatul lunii"
     },
     "pension": {
       "title": "Cum funcționează Pilonul III",
@@ -490,6 +492,26 @@
           "note": "Atlas Pensii e fondul Atlas. Poți compara fondurile pe site-ul ASF."
         }
       }
+    },
+    "summary": {
+      "titlePayday": "Ai ajuns la salariu.",
+      "titleSoFar": "Luna ta, până în ziua {day}",
+      "leftLabel": "Ți-au rămas din banii de cheltuit",
+      "leftLine": "Din {pool} pe care i-ai avut de cheltuit luna asta.",
+      "overLabel": "Ai cheltuit peste plan",
+      "overLine": "Se întâmplă. Luna viitoare, Ritm te anunță mai devreme.",
+      "kept": "Pus deoparte, în economii",
+      "pension": "La Atlas Pensii",
+      "spent": "Cheltuit din banii de cheltuit",
+      "paceTitle": "Cum a mers luna",
+      "paceAria": "Grafic: banii folosiți, față de zilele trecute din lună. Ai fost în ritm {ok} din {days} zile.",
+      "daysOnPace": "Ai fost în ritm {ok} din {days} zile.",
+      "legendSpent": "Bani folosiți",
+      "legendMonth": "Zile trecute",
+      "raiseTitle": "La următoarea mărire de salariu, pui jumătate deoparte automat?",
+      "raiseExample": "De exemplu, la o mărire de {raise}: {saved} merg în economii, iar {kept} rămân la tine.",
+      "raiseOn": "Pornit. Îl poți opri oricând.",
+      "raiseOff": "Oprit. Nimic nu se mută fără acordul tău."
     }
   }
 }
