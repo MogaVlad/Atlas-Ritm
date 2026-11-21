@@ -328,6 +328,16 @@
       "askRitm": "Ask Ritm",
       "lockedDone": "Done. {amount} stays in the Lock until day {day}.",
       "backToShop": "Back to the shop"
+    },
+    "tab": {
+      "title": "Ritm",
+      "setupTitle": "What you've set up",
+      "goal": "Goal",
+      "lock": "Lock",
+      "lockValue": "{amount}, until day {day}",
+      "lockNone": "Nothing put aside",
+      "essentials": "Fixed payments per month",
+      "settingsLink": "More Ritm settings in Profile"
     }
   }
 }
