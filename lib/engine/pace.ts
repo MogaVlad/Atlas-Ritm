@@ -20,8 +20,24 @@ export function isCounted(t: Transaction, settings: RitmSettings): boolean {
 
 const sum = (list: Transaction[]) => list.reduce((s, t) => s + t.amount, 0);
 
-/** The pace of spending since payday, for one day of the cycle (the "Ritm rules" in CLAUDE.md). */
-export function computePace(transactions: readonly Transaction[], settings: RitmSettings, day: Day): PaceState {
+/** The user's usual day: what last month's counted spending comes to per day of the cycle. */
+export function usualDailySpend(history: readonly Transaction[], settings: RitmSettings): number {
+  return sum(history.filter((t) => isCounted(t, settings))) / RULES.cycleLength;
+}
+
+/**
+ * The pace of spending since payday, for one day of the cycle (the "Ritm rules" in CLAUDE.md).
+ * `history` = last month's transactions (days 1–30). With it (from the 2nd month, section 11 F) the
+ * pace is personal: expected spending is the user's usual day × the days passed, and the run-out
+ * forecast asks whether the money lasts at the usual day from now on. Not last month's shape:
+ * copying a front-loaded month would teach Ritm that a blown first week is normal.
+ */
+export function computePace(
+  transactions: readonly Transaction[],
+  settings: RitmSettings,
+  day: Day,
+  history?: readonly Transaction[],
+): PaceState {
   const cycleLength = RULES.cycleLength;
   const upToToday = transactions.filter((t) => t.day <= day);
   const counted = upToToday.filter((t) => isCounted(t, settings));
@@ -36,8 +52,12 @@ export function computePace(transactions: readonly Transaction[], settings: Ritm
   const pctSpent = pool > 0 ? spent / pool : 0;
   const pctMonthPassed = day / cycleLength;
 
-  // Pace = % used ÷ % of month passed; expected spend never computed below day 3.
-  const expectedPct = Math.max(day, RULES.pace.floorDay) / cycleLength;
+  // Pace = % used ÷ % expected; expected spend never computed below day 3.
+  const usualDaily = history && history.length > 0 ? usualDailySpend(history, settings) : null;
+  const expectedPct =
+    usualDaily !== null && pool > 0
+      ? Math.min(1, (usualDaily * Math.max(day, RULES.pace.floorDay)) / pool)
+      : Math.max(day, RULES.pace.floorDay) / cycleLength;
   const paceRatio = pctSpent / expectedPct;
 
   const last48hSpent = sum(counted.filter((t) => t.day > day - RULES.burst.windowDays));
@@ -48,7 +68,13 @@ export function computePace(transactions: readonly Transaction[], settings: Ritm
   const dailyAvg = day > 0 ? spent / day : 0;
   let projectedRunOutDay: Day | null = null;
   if (remaining <= 0) projectedRunOutDay = day;
-  else if (dailyAvg > 0) {
+  else if (usualDaily !== null) {
+    // Personal: from tomorrow at the usual day, when would it run out?
+    if (usualDaily > 0) {
+      const runOut = day + Math.floor(remaining / usualDaily);
+      if (runOut < cycleLength) projectedRunOutDay = runOut;
+    }
+  } else if (dailyAvg > 0) {
     const runOut = Math.floor(pool / dailyAvg);
     if (runOut < cycleLength) projectedRunOutDay = runOut;
   }
@@ -90,5 +116,6 @@ export function computePace(transactions: readonly Transaction[], settings: Ritm
     safeToSpendToday,
     severity,
     reasons,
+    personal: usualDaily !== null,
   };
 }

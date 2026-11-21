@@ -73,6 +73,62 @@ function buildScenario(): Transaction[] {
 /** Every transaction of the demo month, sorted by day. */
 export const SCENARIO: readonly Transaction[] = buildScenario();
 
+/**
+ * Month 2 (section 11 F): Luca has learned. No big spike. In the first week his habits come a bit
+ * more often than usual (groceries and coffee every day), so the pace is above his usual day, but
+ * the money lasts at his usual day from then on: Ritm sends the soft "your usual rhythm" note on
+ * day 6 instead of a Heads-up. Then the month is calm. Same fictional merchants and amounts as
+ * month 1, so his habits are recognised (Cafeneaua Nord ~12, Mega Coș ~55, FoodGo ~45).
+ */
+function buildMonth2(): Transaction[] {
+  let n = 0;
+  const m2 = (day: Day, amount: number, merchant: string, category: Category, channel: Channel): Transaction => ({
+    id: `m2-${String(++n).padStart(3, "0")}`,
+    day,
+    amount,
+    merchant,
+    category,
+    channel,
+  });
+  const list: Transaction[] = [
+    m2(1, -NET_SALARY, PERSONA.employer, "salary", "salary"),
+    m2(1, TRANSPORT_PASS, "TransUrban Cluj", "transport", "card_online"),
+    m2(2, RENT, "Chirie — proprietar", "rent", "transfer"),
+    m2(3, PHONE, "FonPlus", "phone", "card_online"),
+    m2(5, UTILITIES, "EnergoCasa", "utilities", "transfer"),
+  ];
+  // Days 1–6: groceries and coffee every day, FoodGo twice, two extra coffees: 519 lei of habits.
+  for (let d = 1; d <= 6; d++) {
+    list.push(m2(d, 55, "Mega Coș", "groceries", "card_in_store"));
+    list.push(m2(d, 12, "Cafeneaua Nord", "eating_out", "card_in_store"));
+  }
+  list.push(m2(2, 45, "FoodGo", "food_delivery", "card_online"));
+  list.push(m2(4, 45, "FoodGo", "food_delivery", "card_online"));
+  list.push(m2(6, 15, "Cafeneaua Nord", "eating_out", "card_in_store"));
+  list.push(m2(6, 12, "Cafeneaua Nord", "eating_out", "card_in_store"));
+  // Days 7–30: his usual rhythm, as in month 1.
+  for (let d = 7; d <= 30; d++) {
+    if (d % 3 === 0) list.push(m2(d, 55, "Mega Coș", "groceries", "card_in_store"));
+    if (d % 2 === 1) list.push(m2(d, 12, "Cafeneaua Nord", "eating_out", "card_in_store"));
+    if (d % 6 === 2) list.push(m2(d, 45, "FoodGo", "food_delivery", "card_online"));
+    if (d === 13) list.push(m2(d, 60, "Bar Nocturn", "entertainment", "card_in_store"));
+  }
+  return list.sort((a, b) => a.day - b.day || a.id.localeCompare(b.id));
+}
+
+/** Month 2 of the demo (DemoControls → Month 2). Month 1 becomes its history. */
+export const SCENARIO_MONTH_2: readonly Transaction[] = buildMonth2();
+
+/** The scripted month the demo is in. */
+export function scenarioFor(month: 1 | 2): readonly Transaction[] {
+  return month === 2 ? SCENARIO_MONTH_2 : SCENARIO;
+}
+
+/** Last month's transactions (days 1–30), for habits and the personal pace; none in month 1. */
+export function historyFor(month: 1 | 2): readonly Transaction[] {
+  return month === 2 ? SCENARIO : [];
+}
+
 /** Transactions up to and including `day` (what the demo clock shows on that day). */
 export function transactionsUntil(day: Day): Transaction[] {
   return SCENARIO.filter((t) => t.day <= day);

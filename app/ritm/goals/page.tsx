@@ -17,6 +17,7 @@ export default function GoalsScreen() {
   const hydrated = useHydrated();
   const saved = useBank((s) => s.ritm.goals);
   const setGoals = useBank((s) => s.setGoals);
+  const monthlyLock = useBank((s) => (s.ritm.lock.amount > 0 ? s.ritm.lock.amount : 0));
   // null = not edited yet: show the saved goals.
   const [drafts, setDrafts] = useState<GoalDraft[] | null>(null);
   const [invalid, setInvalid] = useState(false);
@@ -53,6 +54,7 @@ export default function GoalsScreen() {
           }}
           netSalary={NET_SALARY}
           invalid={invalid}
+          monthlyLock={monthlyLock}
         />
       </main>
       <footer className="sticky bottom-0 border-t border-atlas-line bg-atlas-paper/95 px-5 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur">
