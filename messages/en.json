@@ -5,11 +5,94 @@
     "switchTo": "Switch language to Romanian"
   },
   "bank": {
+    "brand": {
+      "homeLink": "Atlas, home"
+    },
+    "nav": {
+      "label": "Main navigation",
+      "home": "Home",
+      "payments": "Payments",
+      "ritm": "Ritm",
+      "profile": "Profile"
+    },
     "home": {
       "greeting": "Hi, {name}!",
       "balanceLabel": "Current account",
-      "comingSoon": "The app is under construction."
+      "card": "Card ••• {last4}",
+      "savingsLabel": "Savings account",
+      "recentTitle": "Recent transactions",
+      "seeAll": "See all"
+    },
+    "ritmSlot": {
+      "title": "Ritm",
+      "body": "See how fast your salary is going and what you can spend calmly today. Coming here soon."
+    },
+    "transactions": {
+      "title": "Transactions",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "essential": "Essential",
+      "empty": "No transactions this month yet."
+    },
+    "categories": {
+      "salary": "Salary",
+      "rent": "Rent",
+      "utilities": "Utilities",
+      "phone": "Phone",
+      "transport": "Transport",
+      "groceries": "Groceries",
+      "eatingOut": "Eating out",
+      "shopping": "Clothes and shopping",
+      "entertainment": "Free time",
+      "savings": "Savings"
+    },
+    "payments": {
+      "title": "Payments",
+      "comingSoon": "Pay online and in store from here. Coming soon."
+    },
+    "profile": {
+      "title": "Profile",
+      "comingSoon": "Your settings, Ritm included, will live here. Coming soon."
     }
   },
-  "ritm": {}
+  "ritm": {
+    "pace": {
+      "aria": "You've used {spent}% of your spending money and {month}% of the month has passed. {status}",
+      "spent": "used",
+      "today": "day {day} of {total} ·",
+      "status": {
+        "ok": "You're on pace",
+        "watch": "A little ahead of pace",
+        "spike": "Well ahead of pace"
+      }
+    },
+    "safe": {
+      "label": "Safe to spend today",
+      "line": {
+        "ok": "At this rate you'll reach payday comfortably.",
+        "watch": "You're spending a little faster than the month is passing.",
+        "spike": "Money is going faster than the days. Go easy today."
+      }
+    },
+    "levels": {
+      "label": "How strict Ritm should be",
+      "headsup": {
+        "name": "Heads-up",
+        "description": "Tells you when you spend faster than the month passes. Nothing is blocked."
+      },
+      "speedbump": {
+        "name": "Speed bump",
+        "description": "Before a big online payment, shows you the numbers and lets you confirm after 5 seconds."
+      },
+      "lock": {
+        "name": "Lock",
+        "description": "Puts an amount aside on payday and unlocks it on the day you choose."
+      }
+    },
+    "playground": {
+      "title": "Ritm · components",
+      "pickDay": "Pick a day of the month",
+      "day": "Day {day}"
+    }
+  }
 }
