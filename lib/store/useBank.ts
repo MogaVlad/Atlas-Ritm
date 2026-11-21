@@ -132,6 +132,10 @@ interface PersistedState {
   lastMonthUnlocks: UnlockRecord[];
   /** Both accounts before this month's payday. Month 2 starts with what month 1 ended with. */
   opening: Balances;
+  /** Month 2's "set Ritm up again" popup was answered (keep last month's settings or change them). */
+  monthPromptSeen: boolean;
+  /** The Speed bump was on until payday switched it off: last month's choice, for month 2. */
+  speedBumpPaydayOff: boolean;
 }
 
 interface DerivedState {
@@ -212,6 +216,10 @@ interface Actions {
   setRaiseCommitment: (on: boolean) => void;
   /** Close the day-30 popup, whether the user opened the summary or chose "later". */
   dismissSummaryPrompt: () => void;
+  /** Month 2 popup: turn Ritm on again with last month's settings (a Lock is taken today). */
+  keepLastMonthSettings: () => void;
+  /** Month 2 popup answered without keeping (the user goes to change the settings). */
+  dismissMonthPrompt: () => void;
   /** Close the "your Lock is open" popup, whether the user chose what to do now or later. */
   dismissLockPrompt: () => void;
   /** Close a notification. `acted: false` counts it as ignored. */
@@ -377,6 +385,7 @@ function evaluateDay(s: PersistedState): PersistedState {
   // Payday again: the Speed bump switches off.
   if (next.demoDay === RULES.cycleLength && next.ritm.speedBump) {
     next.ritm = { ...next.ritm, speedBump: false };
+    next.speedBumpPaydayOff = true;
   }
 
   // A requested turn-off comes into effect: Ritm goes quiet and its pending Heads-ups go away.
@@ -441,6 +450,8 @@ const INITIAL: PersistedState = {
   month: 1,
   lastMonthUnlocks: [],
   opening: { current: OPENING_CURRENT, savings: OPENING_SAVINGS },
+  monthPromptSeen: false,
+  speedBumpPaydayOff: false,
 };
 
 /** localStorage that never throws (private windows, blocked storage, server render). */
@@ -491,6 +502,8 @@ const pick = (s: BankState): PersistedState => ({
   month: s.month,
   lastMonthUnlocks: s.lastMonthUnlocks,
   opening: s.opening,
+  monthPromptSeen: s.monthPromptSeen,
+  speedBumpPaydayOff: s.speedBumpPaydayOff,
 });
 
 /* ─── store ───────────────────────────────────────────────────────────────── */
@@ -652,7 +665,8 @@ export const useBank = create<BankState>()(
             const start: PersistedState = {
               ...INITIAL,
               locale: s.locale,
-              ritm: { ...s.ritm, enabled: false },
+              // Off on payday is not a choice: last month's Speed bump stays in the settings.
+              ritm: { ...s.ritm, enabled: false, speedBump: s.ritm.speedBump || s.speedBumpPaydayOff },
               raiseCommitment: s.raiseCommitment,
               pensionContributions: s.pensionContributions,
               month,
@@ -766,6 +780,11 @@ export const useBank = create<BankState>()(
         setRaiseCommitment: (on) => update((s) => ({ ...s, raiseCommitment: on })),
 
         dismissSummaryPrompt: () => update((s) => ({ ...s, summaryPromptSeen: true })),
+
+        keepLastMonthSettings: () =>
+          update((s) => evaluateDay({ ...s, ritm: { ...s.ritm, enabled: true }, ritmOffDay: null, monthPromptSeen: true })),
+
+        dismissMonthPrompt: () => update((s) => ({ ...s, monthPromptSeen: true })),
 
         dismissLockPrompt: () => update((s) => ({ ...s, lockPromptSeen: true })),
 

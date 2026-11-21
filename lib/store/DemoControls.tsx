@@ -50,11 +50,11 @@ export function DemoControls() {
   // A fresh demo starts on Home, whatever screen it was reset from.
   const month = useBank((s) => s.month);
   const setMonth = useBank((s) => s.setMonth);
-  // Month 2 starts on payday with month 1's balances and asks again how to set Ritm up.
+  // Month 2 starts on payday with month 1's balances; a popup on Home asks how to set Ritm up.
   const switchMonth = (m: 1 | 2) => {
     setMonth(m);
     setPanelOpen(false);
-    router.push(m === 2 ? "/ritm/onboarding" : "/");
+    router.push("/");
   };
   const lastDayOfDemo = month === 2 && demoDay >= RULES.cycleLength;
   // Day 30 of month 1 → "next" opens month 2 on day 1.
