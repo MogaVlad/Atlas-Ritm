@@ -252,18 +252,27 @@ test("month 2: Ritm knows the habits, day 6 brings the soft note, the summary re
   await page.goto("/?demo=1");
   await jumpToDay(page, 1, 0);
 
-  // Start Ritm with the Lock on, then switch the demo to month 2 (back to day 0).
+  // Start Ritm with the Lock on and live month 1 to day 30.
   await page.getByRole("link", { name: exact(m.bank.nav.ritm) }).click();
   await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
   await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
   await page.getByRole("switch", { name: m.ritm.levels.lock.name }).click();
   await page.getByRole("button", { name: m.ritm.onboarding.finish }).click();
-  await clock.getByRole("button", { name: fill(m.common.demo.day, { day: 1 }) }).click();
-  await page.getByRole("button", { name: fill(m.common.demo.month, { n: 2 }) }).click();
-  await expect(clock.getByText(fill(m.common.demo.day, { day: 0 }), { exact: true })).toBeVisible();
+  await jumpToDay(page, 20);
+  await page.getByRole("button", { name: exact(m.common.lockPrompt.later) }).click();
+  await jumpToDay(page, 30, 20);
+  await page.getByRole("button", { name: exact(m.common.summaryPrompt.later) }).click();
+
+  // "Next" on day 30 opens month 2 on payday (no day 0) and Ritm asks again how to start.
+  await clock.getByRole("button", { name: m.common.demo.nextMonth }).click();
+  await expect(clock.getByText(fill(m.common.demo.day, { day: 1 }), { exact: true })).toBeVisible();
+  await expect(page).toHaveURL(/\/ritm\/onboarding/);
+  await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
+  await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
+  await page.getByRole("button", { name: m.ritm.onboarding.finish }).click();
 
   // Day 6: his habits came more often, but the money lasts: the soft note, no push.
-  await jumpToDay(page, 6, 0);
+  await jumpToDay(page, 6);
   await page.getByRole("button", { name: m.ritm.card.headsUpCta }).click();
   const sheet = page.getByRole("dialog");
   await expect(sheet.getByText(m.ritm.headsUp.habit.title)).toBeVisible();
