@@ -35,7 +35,7 @@ import {
   type PensionSource,
   type PensionSummary,
   type Reason,
-  type RitmLevel,
+  type RitmFeature,
   type RitmSettings,
   type Severity,
   type Transaction,
@@ -118,7 +118,8 @@ interface Actions {
   addTransaction: (tx: Omit<Transaction, "id" | "day"> & Partial<Pick<Transaction, "id" | "day">>) => Transaction;
   markPlanned: (txId: string) => void;
   enableRitm: (settings: RitmSettings, planned?: PlannedPurchase[]) => void;
-  setLevel: (level: RitmLevel) => void;
+  /** Switch Heads-up or the Speed bump on or off. */
+  setFeature: (feature: RitmFeature, on: boolean) => void;
   /** Replace the savings goals (at least one, each valid). Returns false and changes nothing otherwise. */
   setGoals: (goals: Goal[]) => boolean;
   /** Turn Ritm off: it stays on until the next demo day (24 h rule). The Lock is not touched. */
@@ -156,18 +157,27 @@ export type BankState = PersistedState & DerivedState & Actions;
 
 /* ─── helpers ─────────────────────────────────────────────────────────────── */
 
-const clampDay = (day: number) => Math.min(RULES.cycleLength, Math.max(1, Math.round(day)));
+/** Day 0 is the day before payday (the demo starts there); day 1 is payday. */
+const clampDay = (day: number) => Math.min(RULES.cycleLength, Math.max(0, Math.round(day)));
+
+type SavedRitm = Partial<RitmSettings> & { goal?: { name: string; amount: number }; level?: "headsup" | "speedbump" | "lock" };
 
 /**
- * Saved demos from version 1 had one `goal` with no time: it becomes the first of `goals`,
- * with the default time, so a browser that already ran the demo doesn't break.
+ * Demos saved by older versions keep working:
+ * - version 1 had one `goal` with no time: it becomes the first of `goals`, with the default time;
+ * - versions 1–2 had one `level`: it becomes the Heads-up and Speed bump switches.
  */
 export function migrateSaved(persisted: unknown, version: number): unknown {
-  if (version >= 2 || !persisted || typeof persisted !== "object") return persisted;
-  const saved = persisted as { ritm?: Omit<RitmSettings, "goals"> & { goal?: { name: string; amount: number }; goals?: unknown } };
-  if (!saved.ritm?.goal || saved.ritm.goals) return persisted;
-  const { goal, ...ritm } = saved.ritm;
-  return { ...saved, ritm: { ...ritm, goals: [{ ...goal, months: GOAL.months }] } };
+  if (version >= 3 || !persisted || typeof persisted !== "object") return persisted;
+  const saved = persisted as { ritm?: SavedRitm };
+  if (!saved.ritm) return persisted;
+  const { goal, level, ...ritm } = saved.ritm;
+  if (goal && !ritm.goals) ritm.goals = [{ ...goal, months: GOAL.months }];
+  if (level) {
+    ritm.headsUp = true;
+    ritm.speedBump = level !== "headsup";
+  }
+  return { ...saved, ritm };
 }
 
 function allTransactions(s: Pick<PersistedState, "added" | "plannedIds">): Transaction[] {
@@ -204,11 +214,19 @@ function derive(s: PersistedState): DerivedState {
 /** Day changed or money moved: resolve the Lock, maybe queue a Heads-up. */
 function evaluateDay(s: PersistedState): PersistedState {
   const next = { ...s };
+
+  // The Lock moves its amount to savings on payday (day 1): never before the salary is in,
+  // so starting Ritm on day 0 can't take the current account below zero. Created before it's
+  // resolved, so a jump from day 0 straight to the unlock day opens it.
+  if (next.ritm.enabled && !next.lock && next.ritm.lock.amount > 0 && next.demoDay >= 1) {
+    next.lock = createLock(next.ritm.lock.amount, next.ritm.lock.unlockDay);
+    next.savings = next.savings + next.ritm.lock.amount;
+  }
   if (next.lock) next.lock = resolveLock(next.lock, next.demoDay);
 
-  // Payday again: the Speed bump level switches off.
-  if (next.demoDay === RULES.cycleLength && next.ritm.level === "speedbump") {
-    next.ritm = { ...next.ritm, level: "headsup" };
+  // Payday again: the Speed bump switches off.
+  if (next.demoDay === RULES.cycleLength && next.ritm.speedBump) {
+    next.ritm = { ...next.ritm, speedBump: false };
   }
 
   // A requested turn-off comes into effect: Ritm goes quiet and its pending Heads-ups go away.
@@ -218,7 +236,7 @@ function evaluateDay(s: PersistedState): PersistedState {
     next.notifications = [];
   }
 
-  if (!next.ritm.enabled) return next;
+  if (!next.ritm.enabled || !next.ritm.headsUp) return next;
   const pace = computePace(allTransactions(next), engineSettings(next), next.demoDay);
   if (shouldNotify(pace, next.alertMemory, next.demoDay)) {
     next.notifications = [
@@ -239,7 +257,7 @@ function evaluateDay(s: PersistedState): PersistedState {
 
 const INITIAL: PersistedState = {
   locale: "en",
-  demoDay: 1,
+  demoDay: 0,
   added: [],
   plannedIds: [],
   plannedPurchases: [],
@@ -329,23 +347,17 @@ export const useBank = create<BankState>()(
 
         enableRitm: (settings, planned = []) =>
           update((s) => {
-            let next: PersistedState = {
+            // The Lock itself is taken in evaluateDay: now if the salary is in, otherwise on payday.
+            const next: PersistedState = {
               ...s,
               ritm: { ...settings, enabled: true },
               ritmOffDay: null,
               plannedPurchases: planned,
             };
-            if (settings.lock.amount > 0 && !s.lock) {
-              next = {
-                ...next,
-                lock: createLock(settings.lock.amount, settings.lock.unlockDay),
-                savings: next.savings + settings.lock.amount,
-              };
-            }
             return evaluateDay(next);
           }),
 
-        setLevel: (level) => update((s) => evaluateDay({ ...s, ritm: { ...s.ritm, level } })),
+        setFeature: (feature, on) => update((s) => evaluateDay({ ...s, ritm: { ...s.ritm, [feature]: on } })),
 
         setGoals: (goals) => {
           if (goals.length === 0 || goals.length > RULES.goals.maxGoals || !goals.every(isValidGoal)) return false;
@@ -477,11 +489,11 @@ export const useBank = create<BankState>()(
     },
     {
       name: "atlas-ritm-demo",
-      version: 2,
+      version: 3,
       storage: createJSONStorage(() => safeStorage),
       partialize: pick,
       migrate: migrateSaved,
-      // Rehydrated on the client by <BankHydrator/>, so the server HTML (day 1, EN) always matches.
+      // Rehydrated on the client by <BankHydrator/>, so the server HTML (day 0, EN) always matches.
       skipHydration: true,
       merge: (persisted, current) => {
         const next = { ...pick(current), ...(persisted as Partial<PersistedState>) };

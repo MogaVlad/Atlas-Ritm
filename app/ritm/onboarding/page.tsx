@@ -5,12 +5,12 @@ import { useRouter } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { LocaleToggle } from "@/components/bank/LocaleToggle";
 import { fromDraft, GoalsEditor, toDraft, type GoalDraft } from "@/components/ritm/GoalsEditor";
-import { LevelChips } from "@/components/ritm/LevelChips";
+import { FeatureSwitches } from "@/components/ritm/FeatureSwitches";
 import { leaveRitm, RitmBack } from "@/components/ritm/RitmBack";
 import { useBank } from "@/lib/store/useBank";
 import { ESSENTIAL_CATEGORIES, NET_SALARY } from "@/lib/data/persona";
 import { SCENARIO, transactionsUntil } from "@/lib/data/scenario";
-import { computePace, isValidGoal, RULES, type Category, type RitmLevel, type RitmSettings } from "@/lib/engine";
+import { computePace, isValidGoal, RULES, type Category, type RitmSettings } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
 import { useHtmlLang, useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -42,8 +42,9 @@ export default function RitmOnboarding() {
   const [planned, setPlanned] = useState<PlannedPurchase[]>([]);
   const [draft, setDraft] = useState<{ name: string; amount: string } | null>(null);
   const [draftError, setDraftError] = useState(false);
-  const [level, setLevel] = useState<RitmLevel>(defaults.level);
-  const [lockAmount, setLockAmount] = useState(defaults.lock.amount);
+  // What Ritm does: Heads-up starts on, the Speed bump and the Lock start off.
+  const [features, setFeatures] = useState({ headsUp: defaults.headsUp, speedBump: defaults.speedBump, lock: false });
+  const [lockAmount, setLockAmount] = useState(defaults.lock.amount || RULES.lock.defaultAmount);
   const [unlockDay, setUnlockDay] = useState(defaults.lock.unlockDay);
   const [goals, setGoals] = useState<GoalDraft[]>(() => defaults.goals.map(toDraft));
   const [goalError, setGoalError] = useState(false);
@@ -64,11 +65,12 @@ export default function RitmOnboarding() {
   const essentials = DETECTED.filter((tx) => essentialOn[tx.category]);
   const settings: RitmSettings = {
     ...defaults,
-    level,
+    headsUp: features.headsUp,
+    speedBump: features.speedBump,
     essentialCategories: essentials.map((tx) => tx.category),
     essentialsTotal: essentials.reduce((s, tx) => s + tx.amount, 0),
     goals: goals.map(fromDraft),
-    lock: { amount: lockAmount, unlockDay },
+    lock: { amount: features.lock ? lockAmount : 0, unlockDay },
   };
   // The engine owns the "spending money" rule; we only show its result.
   const pool = computePace(transactionsUntil(1), settings, 1).pool;
@@ -236,24 +238,27 @@ export default function RitmOnboarding() {
 
         {step === 3 && (
           <>
-            <LevelChips value={level} onChange={setLevel} />
+            <section className="flex flex-col gap-3">
+              <h2 className="font-display text-lg font-semibold">{t("ritm.levels.label")}</h2>
+              <FeatureSwitches values={features} onChange={(feature, on) => setFeatures((f) => ({ ...f, [feature]: on }))} />
+            </section>
 
-            <section className="flex flex-col gap-4">
-              <h2 className="font-display text-lg font-semibold">{t("ritm.onboarding.s3.lockTitle")}</h2>
-              <Field id="lock-amount" label={t("ritm.onboarding.s3.lockAmount")} value={formatLei(lockAmount, locale)}>
-                <input
-                  id="lock-amount"
-                  type="range"
-                  min={0}
-                  max={LOCK_MAX}
-                  step={50}
-                  value={lockAmount}
-                  onChange={(e) => setLockAmount(Number(e.target.value))}
-                  aria-valuetext={formatLei(lockAmount, locale)}
-                  className="h-11 w-full accent-ritm"
-                />
-              </Field>
-              {lockAmount > 0 && (
+            {features.lock && (
+              <section className="flex flex-col gap-4">
+                <h2 className="font-display text-lg font-semibold">{t("ritm.onboarding.s3.lockTitle")}</h2>
+                <Field id="lock-amount" label={t("ritm.onboarding.s3.lockAmount")} value={formatLei(lockAmount, locale)}>
+                  <input
+                    id="lock-amount"
+                    type="range"
+                    min={50}
+                    max={LOCK_MAX}
+                    step={50}
+                    value={lockAmount}
+                    onChange={(e) => setLockAmount(Number(e.target.value))}
+                    aria-valuetext={formatLei(lockAmount, locale)}
+                    className="h-11 w-full accent-ritm"
+                  />
+                </Field>
                 <Field id="unlock-day" label={t("ritm.onboarding.s3.lockDay")} value={t("ritm.onboarding.s3.dayValue", { day: unlockDay })}>
                   <input
                     id="unlock-day"
@@ -266,13 +271,11 @@ export default function RitmOnboarding() {
                     className="h-11 w-full accent-ritm"
                   />
                 </Field>
-              )}
-              <p className="rounded-xl bg-ritm-tint px-4 py-3 text-sm leading-relaxed">
-                {lockAmount > 0
-                  ? t("ritm.onboarding.s3.lockExplain", { amount: formatLei(lockAmount, locale), day: unlockDay })
-                  : t("ritm.onboarding.s3.lockNone")}
-              </p>
-            </section>
+                <p className="rounded-xl bg-ritm-tint px-4 py-3 text-sm leading-relaxed">
+                  {t("ritm.onboarding.s3.lockExplain", { amount: formatLei(lockAmount, locale), day: unlockDay })}
+                </p>
+              </section>
+            )}
 
             <GoalsEditor
               goals={goals}

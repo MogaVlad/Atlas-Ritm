@@ -50,10 +50,10 @@
         "invalid": "Enter an amount above 0.",
         "inStoreNote": "In-store payments never pause. Ritm shows what's left right after.",
         "ritmOff": "Ritm is off, so this payment goes straight through.",
-        "headsUpOnly": "Ritm is on Heads-up: it warns, but it doesn't pause payments. The Speed bump only pauses on the Speed bump or Lock level.",
-        "enableSpeedBump": "Switch to Speed bump",
+        "enableSpeedBump": "Turn on the Speed bump",
         "underThreshold": "Under {threshold}, so no Speed bump.",
-        "willPause": "The Speed bump will pause this payment before you confirm."
+        "willPause": "The Speed bump will pause this payment before you confirm.",
+        "speedBumpOff": "The Speed bump is off, so Ritm won't pause this payment. Turn it on to pause big online payments."
       }
     }
   },
@@ -129,7 +129,7 @@
       "offConfirmLock": "The money in the Lock ({amount}) stays there until day {day}.",
       "offConfirmYes": "Turn Ritm off",
       "offConfirmCancel": "Cancel",
-      "levelTitle": "How strict",
+      "levelTitle": "What Ritm does",
       "thresholdTitle": "The pause starts at",
       "thresholdHint": "At the Speed bump and Lock levels, online payments of {amount} or more get a short pause. In-store payments are never stopped.",
       "essentialsTitle": "Essential costs",
@@ -276,7 +276,7 @@
       }
     },
     "levels": {
-      "label": "How strict Ritm should be",
+      "label": "What Ritm does for you",
       "headsup": {
         "name": "Heads-up",
         "description": "Tells you when you spend faster than the month passes. Nothing is blocked."
@@ -397,7 +397,8 @@
       "confirmIn": "Pay anyway · {seconds} s",
       "askRitm": "Ask Ritm",
       "lockedDone": "Done. {amount} stays in the Lock until day {day}.",
-      "backToShop": "Back to the shop"
+      "backToShop": "Back to the shop",
+      "backToAtlas": "Back to Atlas"
     },
     "tab": {
       "title": "Ritm",

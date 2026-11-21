@@ -12,8 +12,8 @@ import { useBank } from "./useBank";
 
 const MODE_KEY = "atlas-demo-mode";
 
-/** One-tap jumps next to the arrows: every 6 days, from payday to payday. */
-const JUMPS = [1, 6, 12, 18, 24, 30] as const;
+/** One-tap jumps: day 0 (before payday), payday, then every 6 days to the next payday. */
+const JUMPS = [0, 1, 6, 12, 18, 24, 30] as const;
 
 /** Demo mode is remembered in this browser, so a reload or a typed URL keeps the controls. */
 function readMode(): boolean {
@@ -27,18 +27,17 @@ function readMode(): boolean {
   }
 }
 
-const BUTTON =
-  "flex size-9 min-[500px]:size-11 items-center justify-center rounded-full transition-colors hover:bg-white/15 disabled:opacity-35 disabled:hover:bg-transparent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
-const JUMP =
-  "flex h-9 min-w-9 items-center justify-center rounded-full px-2 tabular-nums transition-colors hover:bg-white/15 aria-pressed:bg-background aria-pressed:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
-const DIVIDER = "mx-0.5 hidden h-6 w-px bg-background/25 min-[500px]:block";
+const ARROW =
+  "flex size-9 min-[500px]:size-10 items-center justify-center rounded-full transition-colors hover:bg-white/15 disabled:opacity-35 disabled:hover:bg-transparent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
+const DOCK_BUTTON =
+  "flex min-h-10 items-center gap-2 rounded-xl px-3 font-medium transition-colors hover:bg-white/15 aria-pressed:bg-background aria-pressed:text-foreground aria-expanded:bg-background aria-expanded:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
 /**
- * The demo clock: one small pill with previous day, the day, next day, jumps to days 1/6/12/18/24/30,
- * Reset demo and "Simulate a purchase". Visible in demo mode (?demo=1, remembered; ?demo=0 turns it
- * off). On a laptop it sits outside the phone, bottom right. On a phone it sits in the empty middle
- * of the top bar, so it never covers a Confirm button at the bottom; there tapping the day opens the
- * panel, which also holds the jumps and Reset.
+ * The demo clock. Visible in demo mode (?demo=1, remembered; ?demo=0 turns it off).
+ * - Laptop: a vertical panel outside the phone, bottom right: the day with ‹ ›, jumps to days
+ *   0/1/6/12/18/24/30, Reset demo and "Simulate a purchase" (its form opens above the panel).
+ * - Phone: a small ‹ Day › pill in the empty middle of the top bar, so it never covers a Confirm
+ *   button; tapping the day opens a panel with the jumps, Reset and the purchase form.
  */
 export function DemoControls() {
   const t = useT();
@@ -56,79 +55,78 @@ export function DemoControls() {
 
   if (!mode) return null;
 
-  const jumps = (className: string, buttonClass: string) => (
-    <div className={className}>
-      {JUMPS.map((day) => (
-        <button
-          key={day}
-          type="button"
-          onClick={() => setDemoDay(day)}
-          aria-pressed={demoDay === day}
-          aria-label={t("common.demo.jumpTo", { day })}
-          className={buttonClass}
-        >
-          {day}
-        </button>
-      ))}
-    </div>
-  );
+  const jumpButtons = (className: string) =>
+    JUMPS.map((day) => (
+      <button
+        key={day}
+        type="button"
+        onClick={() => setDemoDay(day)}
+        aria-pressed={demoDay === day}
+        aria-label={t("common.demo.jumpTo", { day })}
+        className={className}
+      >
+        {day}
+      </button>
+    ));
 
   return (
-    <>
+    // On a laptop the column stacks bottom-up: the purchase form opens above the controls.
+    // No transform on this wrapper: the phone panel is position: fixed, which a transform would break.
+    <div className="fixed top-2.5 left-[calc(50%-5.25rem)] z-50 flex flex-col gap-2 min-[500px]:top-auto min-[500px]:right-4 min-[500px]:bottom-4 min-[500px]:left-auto min-[500px]:w-64 min-[500px]:flex-col-reverse">
       <div
         role="group"
         aria-label={t("common.demo.title")}
-        className="fixed top-2.5 left-1/2 z-50 flex -translate-x-[70%] items-center rounded-full bg-foreground/85 text-xs font-medium text-background shadow-lg backdrop-blur min-[500px]:top-auto min-[500px]:right-4 min-[500px]:bottom-4 min-[500px]:left-auto min-[500px]:translate-x-0 min-[500px]:p-0.5 min-[500px]:text-sm"
+        className="flex flex-col rounded-full bg-foreground/85 text-xs font-medium text-background shadow-lg backdrop-blur min-[500px]:gap-2 min-[500px]:rounded-2xl min-[500px]:p-2 min-[500px]:text-sm"
       >
-        <button
-          type="button"
-          onClick={() => setDemoDay(demoDay - 1)}
-          disabled={demoDay <= 1}
-          aria-label={t("common.demo.prevDay")}
-          className={BUTTON}
-        >
-          <ChevronLeft className="size-5" aria-hidden="true" />
-        </button>
-        {/* Tapping the day opens the demo tools: on a phone the pill has no room for another button. */}
-        <button
-          type="button"
-          onClick={() => setPanelOpen((o) => !o)}
-          aria-expanded={panelOpen}
-          className="min-h-9 min-w-12 rounded-full px-1 text-center tabular-nums underline decoration-background/40 decoration-dotted underline-offset-4 transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring min-[500px]:min-h-11 min-[500px]:min-w-16 min-[500px]:no-underline"
-        >
-          <span aria-live="polite">{t("common.demo.day", { day: demoDay })}</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setDemoDay(demoDay + 1)}
-          disabled={demoDay >= RULES.cycleLength}
-          aria-label={t("common.demo.nextDay")}
-          className={BUTTON}
-        >
-          <ChevronRight className="size-5" aria-hidden="true" />
-        </button>
-        <span className={DIVIDER} aria-hidden="true" />
-        {jumps("hidden items-center gap-0.5 min-[500px]:flex", JUMP)}
-        <span className={DIVIDER} aria-hidden="true" />
-        <button type="button" onClick={resetDemo} aria-label={t("common.demo.reset")} className={`${BUTTON} max-[499px]:hidden`}>
-          <RotateCcw className="size-4" aria-hidden="true" />
-        </button>
-        <button
-          type="button"
-          onClick={() => setPanelOpen((o) => !o)}
-          aria-expanded={panelOpen}
-          className={cn(BUTTON, "gap-2 px-4 whitespace-nowrap max-[499px]:hidden min-[500px]:w-auto")}
-        >
-          <ShoppingBag className="size-4" aria-hidden="true" />
-          {t("common.demo.buy.button")}
-        </button>
+        <div className="flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => setDemoDay(demoDay - 1)}
+            disabled={demoDay <= 0}
+            aria-label={t("common.demo.prevDay")}
+            className={ARROW}
+          >
+            <ChevronLeft className="size-5" aria-hidden="true" />
+          </button>
+          {/* On a phone, tapping the day opens the demo tools: the pill has no room for more buttons. */}
+          <button
+            type="button"
+            onClick={() => setPanelOpen((o) => !o)}
+            aria-expanded={panelOpen}
+            className="min-h-9 min-w-12 rounded-full px-1 text-center tabular-nums underline decoration-background/40 decoration-dotted underline-offset-4 transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring min-[500px]:min-h-10 min-[500px]:flex-1 min-[500px]:font-semibold min-[500px]:no-underline"
+          >
+            <span aria-live="polite">{t("common.demo.day", { day: demoDay })}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setDemoDay(demoDay + 1)}
+            disabled={demoDay >= RULES.cycleLength}
+            aria-label={t("common.demo.nextDay")}
+            className={ARROW}
+          >
+            <ChevronRight className="size-5" aria-hidden="true" />
+          </button>
+        </div>
+
+        {/* Laptop only: on a phone these live in the panel. */}
+        <div className="hidden grid-cols-4 gap-1 min-[500px]:grid">{jumpButtons(cn(DOCK_BUTTON, "justify-center px-0 tabular-nums"))}</div>
+        <div className="hidden flex-col gap-1 border-t border-background/20 pt-2 min-[500px]:flex">
+          <button type="button" onClick={resetDemo} className={DOCK_BUTTON}>
+            <RotateCcw className="size-4" aria-hidden="true" />
+            {t("common.demo.reset")}
+          </button>
+          <button type="button" onClick={() => setPanelOpen((o) => !o)} aria-expanded={panelOpen} className={DOCK_BUTTON}>
+            <ShoppingBag className="size-4" aria-hidden="true" />
+            {t("common.demo.buy.button")}
+          </button>
+        </div>
       </div>
 
       {panelOpen && (
         <section
           aria-label={t("common.demo.buy.button")}
           onKeyDown={(e) => e.key === "Escape" && setPanelOpen(false)}
-          className="fixed inset-x-3 top-14 z-50 max-h-[80dvh] overflow-y-auto rounded-2xl border bg-background p-4 text-sm text-foreground shadow-2xl min-[500px]:inset-x-auto min-[500px]:top-auto min-[500px]:right-4 min-[500px]:bottom-20 min-[500px]:w-80"
+          className="fixed inset-x-3 top-14 max-h-[80dvh] overflow-y-auto rounded-2xl border bg-background p-4 text-sm text-foreground shadow-2xl min-[500px]:static min-[500px]:max-h-[calc(100dvh-19rem)]"
         >
           <div className="flex items-center justify-between gap-2">
             <h2 className="font-semibold">{t("common.demo.title")}</h2>
@@ -144,10 +142,11 @@ export function DemoControls() {
 
           {/* On a phone the pill has no room for the jumps and Reset: they live here. */}
           <div className="mb-4 flex flex-col gap-2 border-b pb-4 min-[500px]:hidden">
-            {jumps(
-              "grid grid-cols-6 gap-1.5",
-              "min-h-11 rounded-lg bg-muted font-medium tabular-nums aria-pressed:bg-foreground aria-pressed:text-background focus-visible:outline-2 focus-visible:outline-ring",
-            )}
+            <div className="grid grid-cols-7 gap-1">
+              {jumpButtons(
+                "min-h-11 rounded-lg bg-muted font-medium tabular-nums aria-pressed:bg-foreground aria-pressed:text-background focus-visible:outline-2 focus-visible:outline-ring",
+              )}
+            </div>
             <button
               type="button"
               onClick={resetDemo}
@@ -161,7 +160,7 @@ export function DemoControls() {
           <PurchaseSimulator onOnline={() => setPanelOpen(false)} />
         </section>
       )}
-    </>
+    </div>
   );
 }
 
@@ -175,7 +174,7 @@ function PurchaseSimulator({ onOnline }: { onOnline: () => void }) {
   const ids = { shop: useId(), amount: useId() };
   const locale = useBank((s) => s.locale);
   const ritm = useBank((s) => s.ritm);
-  const setLevel = useBank((s) => s.setLevel);
+  const setFeature = useBank((s) => s.setFeature);
   const addTransaction = useBank((s) => s.addTransaction);
   const setPurchase = usePendingPurchase((s) => s.setPurchase);
 
@@ -193,7 +192,7 @@ function PurchaseSimulator({ onOnline }: { onOnline: () => void }) {
   let hint: string;
   if (!online) hint = t("common.demo.buy.inStoreNote");
   else if (!ritm.enabled) hint = t("common.demo.buy.ritmOff");
-  else if (ritm.level === "headsup") hint = t("common.demo.buy.headsUpOnly");
+  else if (!ritm.speedBump) hint = t("common.demo.buy.speedBumpOff");
   else if (valid && amount < ritm.speedBumpThreshold) hint = t("common.demo.buy.underThreshold", { threshold: lei(ritm.speedBumpThreshold) });
   else hint = t("common.demo.buy.willPause");
 
@@ -289,10 +288,10 @@ function PurchaseSimulator({ onOnline }: { onOnline: () => void }) {
       </div>
 
       <p className="text-muted-foreground">{hint}</p>
-      {online && ritm.enabled && ritm.level === "headsup" && (
+      {online && ritm.enabled && !ritm.speedBump && (
         <button
           type="button"
-          onClick={() => setLevel("speedbump")}
+          onClick={() => setFeature("speedBump", true)}
           className="min-h-11 rounded-lg border font-medium focus-visible:outline-2 focus-visible:outline-ring"
         >
           {t("common.demo.buy.enableSpeedBump")}

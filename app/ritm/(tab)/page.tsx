@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { LevelChips } from "@/components/ritm/LevelChips";
+import { FeatureSwitches } from "@/components/ritm/FeatureSwitches";
 import { PaceBar } from "@/components/ritm/PaceBar";
 import { SafeToSpend } from "@/components/ritm/SafeToSpend";
 import { useHydrated } from "@/components/ritm/useHydrated";
@@ -22,7 +22,7 @@ export default function RitmTab() {
   const ritm = useBank((s) => s.ritm);
   const lock = useBank((s) => s.lock);
   const pace = useBank((s) => s.pace);
-  const setLevel = useBank((s) => s.setLevel);
+  const setFeature = useBank((s) => s.setFeature);
 
   useEffect(() => {
     if (hydrated && !ritm.enabled) router.replace("/ritm/onboarding");
@@ -53,7 +53,10 @@ export default function RitmTab() {
         <h2 id="ritm-level" className="font-display text-lg font-semibold">
           {t("ritm.levels.label")}
         </h2>
-        <LevelChips value={ritm.level} onChange={setLevel} />
+        <FeatureSwitches
+          values={{ headsUp: ritm.headsUp, speedBump: ritm.speedBump }}
+          onChange={(feature, on) => feature !== "lock" && setFeature(feature, on)}
+        />
       </section>
 
       <section aria-labelledby="ritm-setup" className="flex flex-col gap-2">
