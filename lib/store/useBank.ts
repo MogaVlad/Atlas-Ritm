@@ -116,6 +116,12 @@ interface Actions {
   setDemoDay: (day: Day) => void;
   nextDay: () => void;
   addTransaction: (tx: Omit<Transaction, "id" | "day"> & Partial<Pick<Transaction, "id" | "day">>) => Transaction;
+  /**
+   * An in-store card payment from the "Simulate a card payment" sheet. Returns the current-account
+   * balance before and after, and safe-to-spend today (null when Ritm is off), so the sheet can show
+   * "1.104,00 lei → 1.087,00 lei".
+   */
+  payInStore: (purchase: Omit<Transaction, "id" | "day">) => InStoreResult;
   markPlanned: (txId: string) => void;
   enableRitm: (settings: RitmSettings, planned?: PlannedPurchase[]) => void;
   setLevel: (level: RitmLevel) => void;
@@ -150,6 +156,13 @@ interface Actions {
    */
   clearNotifications: () => void;
   resetDemo: () => void;
+}
+
+export interface InStoreResult {
+  tx: Transaction;
+  balanceBefore: number;
+  balanceAfter: number;
+  safeToSpendToday: number | null;
 }
 
 export type BankState = PersistedState & DerivedState & Actions;
@@ -306,6 +319,18 @@ export const useBank = create<BankState>()(
         setDemoDay: (day) => update((s) => evaluateDay({ ...s, demoDay: clampDay(day) })),
 
         nextDay: () => update((s) => evaluateDay({ ...s, demoDay: clampDay(s.demoDay + 1) })),
+
+        payInStore: (purchase) => {
+          const balanceBefore = get().balances.current;
+          const tx = get().addTransaction({ ...purchase, channel: "card_in_store" });
+          const after = get();
+          return {
+            tx,
+            balanceBefore,
+            balanceAfter: after.balances.current,
+            safeToSpendToday: after.ritm.enabled ? after.pace.safeToSpendToday : null,
+          };
+        },
 
         addTransaction: (input) => {
           const s = get();
