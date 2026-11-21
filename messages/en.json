@@ -67,7 +67,14 @@
     },
     "payments": {
       "title": "Payments",
-      "comingSoon": "Pay online and in store from here. Coming soon."
+      "intro": "Pay online or by card in store. In this demo, payments are simulated.",
+      "online": "Buy online",
+      "onlineHint": "{merchant}: a jacket, {amount}",
+      "tap": "Simulate an in-store card payment",
+      "tapHint": "{merchant}, {amount}",
+      "simulatedNote": "In-store payments can’t be paused. You get a message right away with what you have left.",
+      "tapToast": "You just spent {amount} at {merchant}. Safe to spend today: {safe}.",
+      "tapToastNoRitm": "You just spent {amount} at {merchant}."
     },
     "profile": {
       "title": "Profile",
@@ -103,6 +110,38 @@
         "essential": "It’s an essential cost, already taken out of your spending money.",
         "notCounted": "The money stays yours, between your own accounts or set aside."
       }
+    },
+    "toast": {
+      "close": "Close message"
+    },
+    "checkout": {
+      "back": "Back to Atlas",
+      "address": "modahub · fictional online shop",
+      "cart": "Your basket",
+      "item": "Autumn jacket",
+      "itemDetail": "Navy, size M",
+      "shipping": "Delivery",
+      "free": "Free",
+      "total": "Total",
+      "payWithAtlas": "Pay with Atlas"
+    },
+    "confirm": {
+      "secure": "Secure payment",
+      "title": "Confirm payment",
+      "intro": "An online shop is asking for this payment.",
+      "merchant": "Merchant",
+      "confirm": "Confirm payment",
+      "cancel": "Cancel",
+      "paidTitle": "Payment approved",
+      "paidBody": "You paid {amount} to {merchant}.",
+      "backHome": "Back to Atlas"
+    },
+    "speedBump": {
+      "title": "A short pause",
+      "body": "You’re about to pay {amount} to {merchant}. Safe to spend today: {safe}. The choice is yours.",
+      "notNow": "Not now",
+      "confirm": "Pay anyway",
+      "confirmIn": "Pay anyway ({seconds} s)"
     }
   },
   "ritm": {
