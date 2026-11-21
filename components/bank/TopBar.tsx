@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useHtmlLang, useT } from "@/lib/i18n";
 import { useBank } from "@/lib/store/useBank";
 import { AtlasWordmark } from "./AtlasMark";
-import { LocaleToggle } from "./LocaleToggle";
 
 function BellLink() {
   const t = useT();
@@ -49,10 +48,8 @@ export function TopBar() {
       >
         <AtlasWordmark />
       </Link>
-      <div className="flex items-center gap-1">
-        <BellLink />
-        <LocaleToggle />
-      </div>
+      {/* The language is a setting in Profile, not a switch on every screen. */}
+      <BellLink />
     </header>
   );
 }

@@ -9,7 +9,6 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { LocaleToggle } from "@/components/bank/LocaleToggle";
 import { LevelChips } from "@/components/ritm/LevelChips";
 import { RitmBack } from "@/components/ritm/RitmBack";
 import { useBank } from "@/lib/store/useBank";
@@ -146,7 +145,6 @@ export default function RitmOnboarding() {
               ))}
             </div>
           </div>
-          <LocaleToggle />
         </div>
       </header>
 

@@ -132,7 +132,10 @@
       "essentialsHint": "Ce e pornit aici nu intră în ritm: e scos dinainte din banii de cheltuit.",
       "perMonth": "{amount} pe lună",
       "essentialsTotal": "Esențiale pe lună",
-      "spendingMoney": "Bani de cheltuit luna asta"
+      "spendingMoney": "Bani de cheltuit luna asta",
+      "appTitle": "Aplicația",
+      "languageTitle": "Limba",
+      "languageHint": "Textele din aplicație și din Ritm."
     },
     "channels": {
       "card_in_store": "Card, în magazin",
