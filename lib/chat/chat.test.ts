@@ -73,7 +73,7 @@ describe("validateChatRequest", () => {
 describe("buildSystemPrompt", () => {
   it("fills CONTEXT with the screen numbers", () => {
     const prompt = buildSystemPrompt({ safeToSpendToday: 0, pctSpent: 0.55, dayOfCycle: 6, goal: "Islanda 2027" });
-    expect(prompt).toContain("safeToSpendToday=0 lei; pctSpent=55%; dayOfCycle=6 of 30; goal=Islanda 2027");
+    expect(prompt).toContain("safeToSpendToday=0 RON; pctSpent=55%; dayOfCycle=6 of 30; goal=Islanda 2027");
     expect(prompt).not.toContain("{context}");
   });
 });

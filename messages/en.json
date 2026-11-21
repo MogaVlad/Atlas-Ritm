@@ -29,11 +29,11 @@
         },
         "unlock": {
           "title": "The Lock opens",
-          "body": "Ritm on; the 500 lei unlock by themselves."
+          "body": "Ritm on; the 500 RON unlock by themselves."
         },
         "payday": {
           "title": "Payday again",
-          "body": "Day 30, the 500 lei kept saved. Ready for the summary."
+          "body": "Day 30, the 500 RON kept saved. Ready for the summary."
         }
       },
       "jumpTo": "Go to day {day}",
@@ -42,7 +42,7 @@
         "title": "Simulate a purchase",
         "close": "Close the demo tools",
         "shop": "Shop",
-        "amount": "Amount (lei)",
+        "amount": "Amount (RON)",
         "channel": "How it's paid",
         "online": "Online",
         "inStore": "In store",
@@ -340,7 +340,7 @@
         "plannedHint": "Already know you'll buy something this month? Add it here and it won't trigger any heads-up.",
         "plannedAdd": "Add a planned purchase",
         "plannedName": "What you're buying",
-        "plannedAmount": "How much it costs (lei)",
+        "plannedAmount": "How much it costs (RON)",
         "plannedSave": "Add",
         "plannedCancel": "Cancel",
         "plannedRemove": "Remove {name}",
@@ -356,7 +356,7 @@
         "lockNone": "You're not putting anything aside this month. You can change this anytime.",
         "goalTitle": "What you're saving for",
         "goalName": "Goal name",
-        "goalAmount": "Amount you need (lei)",
+        "goalAmount": "Amount you need (RON)",
         "goalInvalid": "Every goal needs a name, an amount above 0 and a time.",
         "pool": "Spending money this month",
         "quick": "Quick amounts",
@@ -368,8 +368,8 @@
         "planBills": "Fixed bills",
         "planLock": "Put aside",
         "planPerDay": "That's about {amount} a day.",
-        "goalMinus": "{step} lei less",
-        "goalPlus": "{step} lei more"
+        "goalMinus": "{step} RON less",
+        "goalPlus": "{step} RON more"
       }
     },
     "card": {
@@ -451,7 +451,7 @@
       "catch": "The money can't be taken out before retirement. The fund's value goes up and down with the markets, so there are no promised returns.",
       "fund": "Atlas Pensii is Atlas's own fund, not the only one. You can compare every fund on the",
       "asfLink": "ASF website",
-      "amount": "Amount (lei)",
+      "amount": "Amount (RON)",
       "consent": "I understand this money is for retirement and I can't use it before then.",
       "contribute": "Contribute {amount}",
       "notNow": "Not now",
@@ -472,7 +472,7 @@
       "waysOut": "If you need the money sooner",
       "earlyConfirm": "Request unlock",
       "requested": "Unlock requested. {amount} leaves the Lock tomorrow, on day {day}.",
-      "emergencyAmount": "How much you need (lei)",
+      "emergencyAmount": "How much you need (RON)",
       "emergencyConfirm": "Take out {amount} now",
       "emergencyDone": "Done. {amount} is in your current account.",
       "cancel": "Never mind",

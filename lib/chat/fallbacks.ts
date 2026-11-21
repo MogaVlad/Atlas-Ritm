@@ -13,16 +13,16 @@ const ANSWERS: Record<Topic, Record<ChatLocale, string>> = {
     en: "Ritm watches how fast you spend your spending money since payday. At the level you choose, it gives you a Heads-up, adds a short pause to online payments (Speed bump) or locks part of your salary in savings (Lock). You can turn it off any time in settings.",
   },
   pause: {
-    ro: "Pauza apare la plățile online de peste 100 lei când cheltui mai repede decât de obicei. Îți arată ce înseamnă plata pentru obiectivul tău și cât poți cheltui azi; după 5 secunde poți confirma. Decizia rămâne a ta.",
-    en: "The pause shows up on online payments over 100 lei when you spend faster than usual. It shows what the payment means for your goal and how much is safe to spend today; after 5 seconds you can confirm. The choice is yours.",
+    ro: "Pauza apare la plățile online de peste 100 RON când cheltui mai repede decât de obicei. Îți arată ce înseamnă plata pentru obiectivul tău și cât poți cheltui azi; după 5 secunde poți confirma. Decizia rămâne a ta.",
+    en: "The pause shows up on online payments over 100 RON when you spend faster than usual. It shows what the payment means for your goal and how much is safe to spend today; after 5 seconds you can confirm. The choice is yours.",
   },
   pension: {
     ro: "Pilonul III e o pensie privată facultativă: banii rămân investiți până la pensie, iar contribuțiile sunt deductibile până la echivalentul a 400 EUR pe an. Atlas Pensii este fondul propriu al Atlas; poți compara toate fondurile pe site-ul ASF.",
-    en: "Pillar III is a voluntary private pension: the money stays invested until retirement, and contributions are deductible up to the lei equivalent of 400 EUR a year. Atlas Pensii is Atlas's own fund; you can compare all funds on the ASF website.",
+    en: "Pillar III is a voluntary private pension: the money stays invested until retirement, and contributions are deductible up to the RON equivalent of 400 EUR a year. Atlas Pensii is Atlas's own fund; you can compare all funds on the ASF website.",
   },
   unlock: {
-    ro: "Lock se deblochează singur în ziua aleasă. Poți cere deblocarea mai devreme și banii vin după 24 de ore, iar o dată pe lună poți scoate imediat până la 300 lei pentru o urgență.",
-    en: "The Lock opens by itself on the day you chose. You can ask to unlock early and the money arrives after 24 hours, and once a month you can take out up to 300 lei right away for an emergency.",
+    ro: "Lock se deblochează singur în ziua aleasă. Poți cere deblocarea mai devreme și banii vin după 24 de ore, iar o dată pe lună poți scoate imediat până la 300 RON pentru o urgență.",
+    en: "The Lock opens by itself on the day you chose. You can ask to unlock early and the money arrives after 24 hours, and once a month you can take out up to 300 RON right away for an emergency.",
   },
   other: {
     ro: "Te pot ajuta doar cu Ritm și cu banii din această aplicație. Întreabă-mă, de exemplu, ce este Ritm, de ce a apărut pauza sau ce este Pilonul III.",
