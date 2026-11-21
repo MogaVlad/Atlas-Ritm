@@ -70,12 +70,14 @@ test("payday → onboarding → day 6 Heads-up → Speed bump on the jacket", as
   const speedBump = page.getByRole("dialog", { name: m.ritm.speedBump.title });
   await expect(speedBump).toBeVisible();
 
-  // Confirm stays inactive for 5 seconds, then the choice is the user's.
-  const countdown = speedBump.getByRole("button", { name: /^Pay anyway · \d s$/ });
-  await expect(countdown).toBeDisabled();
+  // Pay anyway needs a 3-second hold: a short press does nothing, then the choice is the user's.
   const payAnyway = speedBump.getByRole("button", { name: exact(m.ritm.speedBump.confirm) });
-  await expect(payAnyway).toBeEnabled({ timeout: 8_000 });
   await payAnyway.click();
+  await expect(speedBump).toBeVisible();
+  await payAnyway.hover();
+  await page.mouse.down();
+  await page.waitForTimeout(3_500);
+  await page.mouse.up();
   await expect(page.getByText(m.bank.confirm.paidTitle)).toBeVisible();
 
   // Back home: the balance dropped by 300 lei.

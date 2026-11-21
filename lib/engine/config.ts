@@ -31,7 +31,8 @@ export const RULES = {
   },
   speedBump: {
     thresholdLei: 100,
-    confirmDelaySeconds: 5,
+    /** "Pay anyway" needs the button held this long. */
+    holdSeconds: 3,
   },
   lock: {
     defaultAmount: 500,
