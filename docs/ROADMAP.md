@@ -540,3 +540,106 @@ Tick every box before submitting.
 - [ ] Submission form: updated description, repo link, live link, video link.
 - [ ] `.env.local` isn't in the repo; the API key has a spending limit (revoke it after the event).
 - [ ] Everyone has read the Q&A answers in section 8.
+
+## 11. Additions after the first review
+
+These additions came after sections 1–10 were written. Where an addition changes an earlier section, the earlier text is replaced by the version here. Each item says which part it changes and who owns it.
+
+| # | Addition | Changes | Owner | Priority |
+| --- | --- | --- | --- | --- |
+| A | My month plan in onboarding, editable later | Journey step 2, H2 | Horia, Cosma | Must run at Gate 3 |
+| B | Lock amount with a live impact preview | Journey step 2, Lock rules, H2, H5 | Horia, Cosma | Must run at Gate 3 |
+| C | Lock override with a reason ("the mirror") | Early unlock + Emergency release rules, H5 | Horia, Cosma | Must run at Gate 3 |
+| D | Simulate a payment from the demo controls | C5 DemoControls, I2 | Cosma, Iustin | Must run at Gate 3 |
+| E | Speed bump that teaches without overwhelming | Journey steps 5–7, H4, H5, H6 | Horia | Depth (22:30–02:00) |
+| F | Habits and a personal pace, shown in a 2nd month | Rules, C3, C4, C5, Heads-up | Cosma, Horia | Depth, cut first |
+
+### A. My month plan
+
+- Onboarding stays 3 steps. Step 2 shows the plan pre-filled from what the bank already knows (salary, recurring bills); the user confirms and adjusts instead of typing.
+- The goal has an amount and a date. The plan shows the monthly amount needed to reach it; if that's more than is realistic, it shows the date reachable with the chosen Lock instead.
+- Step 3 ends on one summary card: Salary → Bills → Lock → **Spending money → about X lei a day**.
+- The plan is editable any time from the Ritm card and from Profile.
+- **Edit rule:** anything that makes the plan safer (more in the Lock, a new goal) applies instantly. Lowering the Lock mid-month goes through the same reason screen and 24-hour wait as cancelling the Lock (C). There is no back door around the Lock.
+
+### B. Lock amount with impact preview
+
+- Slider plus three quick buttons (300 / 500 / 800 lei).
+- As it moves, one line updates: spending per day, what comes back on the unlock day with the interest estimate, and the goal progress in %.
+- If the daily amount drops below 30 lei, a gentle warning: "This leaves under 30 lei a day. That's tight."
+
+### C. Lock override with a reason (the mirror)
+
+- Cancelling the Lock always asks for a reason. The screen shows facts first, no judgement: "Unlocking 300 lei: Iceland goes from 34% → 28% · this is your 2nd unlock this month" (example format; the real numbers come from the engine).
+- Reason buttons: **Health · Bill or repair · Unexpected cost · Something I want**, plus an optional short note.
+- The first three use the emergency release (up to 300 lei instantly, once per month); above that, or the second time, the 24-hour wait applies. **Something I want** always means the 24-hour wait. It is never blocked.
+- Reasons are stored and come back in the month summary ("Last month you unlocked once for 'Something I want'. Keep the Lock at 500, or try 400?").
+- Copy rule: the mirror is the facts and the user's own choice of reason. The app never adds blame.
+
+### D. Simulate a payment
+
+- DemoControls gets a "Simulate payment" block: amount 50 / 150 / 300 lei, online or in-store.
+- Online goes through the ModaHub checkout (I2) with the chosen amount; in-store shows the feedback toast.
+- What it shows: 50 lei online → no Speed bump (under the threshold); 300 lei online → Speed bump; 300 lei in-store → toast only.
+
+### E. Speed bump that teaches without overwhelming
+
+- **No info dumps:** one line and one number per option; details are one tap deeper, only if the user asks.
+- The Speed bump shows the purchase in goal terms, then:
+  - **Save it:** "Keep it, spend it whenever you want. +~X lei by payday." (interest estimate, labelled)
+  - **Pillar III:** "Lower taxes now. Locked until retirement." (the tax saving in lei)
+  - **Skip it:** "Your safe-to-spend stays at X lei today."
+  - **Buy anyway** stays just as visible as the others.
+- The pension explainer becomes 3 short steps instead of one block: what it is (one sentence) → what you get (the tax saving in lei) → the catch (locked until retirement). Then the checkbox and the button. No projected returns anywhere.
+- The unlock comparison uses three simple indicators per option (access to money, risk, time horizon), not a table.
+
+### F. Habits and personal pace (deterministic, no AI)
+
+- **No AI decides anything.** These are pure functions in `lib/engine`: the same history always gives the same result, and every rule has a test. The chatbot only explains.
+- **Habit:** a merchant that appears in at least 3 of the last 4 weeks with an amount within ±25% of its usual amount (e.g. Cafeneaua Nord, ~17 lei, weekly).
+- **Personal pace:** from the 2nd month, expected spending by day comes from the user's previous months instead of an even line. Month 1 uses the rules in section 1.
+- **Tone, not math:** habit spending still counts toward the spending money. If the extra pace comes mostly from habits and the money still lasts until payday, the user gets the soft note ("Your usual coffee rhythm. You're on track for it this month") instead of the Heads-up. If the money would run out early, the normal Heads-up comes, worded gently.
+- **2nd month in the demo:** the scenario gets a month 1 with weekly coffee and one unlock for "Something I want", and a month 2 where Ritm uses them: the soft habit note, a summary that refers back to last month, and a plan suggestion based on real spending. DemoControls gets a "Month 2" jump.
+
+### Prompts
+
+**C7, engine additions (after Gate 2)**
+
+```
+Read section 11 of docs/ROADMAP.md. In lib/engine add: lockPreview(plan, lockAmount, day) returning spending money, per-day amount, amount back on unlock day with interestEstimate, goal progress and a tight flag under 30 lei a day; goalPlan(goal, plan) returning the monthly amount needed or the reachable date; requestUnlock(reason, note) with reasons health, bill, unexpected, want, where the first three use emergencyRelease (max 300 lei, once per cycle) and everything else waits 24h; planEdit(old, new) that applies instantly when safer and routes a lower Lock through requestUnlock. Add detectHabits(transactions, day): a merchant in at least 3 of the last 4 weeks with amounts within ±25% of its median; personalExpectedSpend(history, day) using previous months' average cumulative spend, falling back to the section 1 rule with no history; and an alert variant "habit" when the extra pace comes mostly from habits and the run-out forecast is not before payday. Everything pure and deterministic, reasons as i18n keys. Write Vitest tests for each rule, run until all pass, then commit and push.
+```
+
+**C8, second month and demo controls**
+
+```
+Read section 11 of docs/ROADMAP.md. Extend lib/data/scenario.ts to two months: month 1 is the existing month plus a weekly coffee at Cafeneaua Nord (about 17 lei) and one Lock unlock with reason "want"; month 2 keeps the coffee habit, has habit-only extra spending in the first week and no big spike. In useBank store unlock reasons and the plan, and add setMonth. In DemoControls add a Month 1 / Month 2 switch and a "Simulate payment" block (50 / 150 / 300 lei, online or in-store) that calls the existing payment flow. Test with Vitest, then commit and push.
+```
+
+**H8, plan, Lock preview and the mirror**
+
+```
+Read section 11 of docs/ROADMAP.md. Update onboarding: step 2 is "My month plan", prefilled from the store, with goal amount and date and the goalPlan result; step 3 ends on a summary card Salary → Bills → Lock → Spending money → per day. Add an "Edit plan" screen reachable from the Ritm card, using planEdit. Replace the Lock amount input with a slider plus 300/500/800 buttons and the live lockPreview line, with the gentle warning when tight. Replace the early unlock / emergency flow with the mirror screen: facts first (goal progress before → after, unlock count this month), then the four reason buttons and an optional note. No blaming words. All texts through useT(). Check at 390x844, commit and push.
+```
+
+**H9, teaching without overwhelming**
+
+```
+Read section 11 of docs/ROADMAP.md. In SpeedBumpSheet show three options with one line and one number each (Save it, Pillar III, Skip it) plus an equally visible Buy anyway; details open one tap deeper. Split PensionExplainer into 3 short steps (what it is, what you get in lei, the catch) before the checkbox and button; no projected returns. In the unlock comparison use three small indicators per option (access, risk, horizon). Add the soft "habit" variant of the Heads-up. All texts through useT(). Check at 390x844, commit and push.
+```
+
+**P2, copy for section 11 (after the new keys exist)**
+
+```
+Read section 11 of docs/ROADMAP.md, CLAUDE.md and messages/*.json. Rewrite the text values of every key added for section 11 (plan, Lock preview, mirror screen, reason buttons, Speed bump options, pension steps, habit note) following P1's rules: short, friendly, never shaming, the mirror shows facts and never blames. Don't add or remove keys. Show me the changes before saving, then commit and push to my branch.
+```
+
+### Pitch changes (section 8)
+
+- The live demo stays at 2:00: show days 1–5 in passing, keep the pension explainer short, add a one-tap jump to month 2 (about 20 s) for the habit note and the summary that refers to last month.
+- New judge answers:
+  - **"Is this AI?"** "No AI decides anything about your money. The rules are deterministic and tested; AI only explains."
+  - **"Why make me give a reason?"** "It's a mirror, not a lock. You always get your money; you just see what it costs you first."
+
+### Cut list (replaces the order in section 9)
+
+If behind at Gate 3: cut F (habits and month 2) first, then the chatbot, the day-30 summary, English. A–D are part of the core journey and are never cut.
