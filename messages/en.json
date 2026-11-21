@@ -516,7 +516,7 @@
       "holdHint": "Hold for {seconds} seconds to pay.",
       "notNowHint": "Your safe-to-spend stays at {safe} today.",
       "moveToLockNumber": "+~{interest} interest by day {day}, then it's yours again.",
-      "pensionNumber": "You can pay up to {tax} less tax. The money stays in the fund until age 60.",
+      "pensionNumber": "Up to {tax} less tax. The money stays in the fund until age 60.",
       "detailsTitle": "How we got these numbers",
       "detailsSafe": "Safe to spend today: what's left, split over the days to payday, minus what you spent today.",
       "detailsLock": "Interest: an estimate at {rate}% a year on savings, after 10% tax, until day {day}.",
@@ -540,7 +540,7 @@
       "whatTitle": "What it is",
       "what": "A private pension you choose yourself. The money is invested in a fund until you retire.",
       "getTitle": "What you get",
-      "get": "What you put in comes off your taxable income, up to {limit} a year (400 EUR, shared with private health insurance). For {amount}, you can lower your tax by up to {tax}. Your employer applies it through payroll: give them the payment proof we send you.",
+      "get": "What you put in comes off your taxable income, up to {limit} a year (400 EUR, shared with private health insurance). For {amount}, your tax goes down by up to {tax}.",
       "catchTitle": "What to know",
       "catch": "The money stays in the fund until age 60, after at least 90 monthly payments. The fund's value goes up and down with the markets, so there are no promised returns.",
       "fees": "Fees: up to 5% of each payment and a small monthly fee on the balance. See the fund's prospectus.",
@@ -552,32 +552,20 @@
       "notNow": "Not now",
       "donePopup": {
         "title": "Done! {amount} went to Atlas Pensii",
-        "tax": "You can pay up to {tax} less tax",
-        "note": "Give your employer the payment proof: they apply the deduction through payroll. The money stays in the fund until age 60, after at least 90 monthly payments.",
-        "ok": "Got it",
-        "proof": "Send proof to my employer",
-        "proofHint": "Downloads a PDF you can send to your employer."
+        "tax": "Your tax goes down by up to {tax}",
+        "note": "The money stays in the fund until age 60, after at least 90 monthly payments. Atlas Pensii is Atlas's own fund; you can compare every fund on the ASF website.",
+        "ok": "Got it"
       },
-      "done": "Done. {amount} went to Atlas Pensii. Give your employer the payment proof we sent you to lower your tax by up to {tax}.",
+      "done": "Done. {amount} went to Atlas Pensii. Your tax goes down by up to {tax}.",
       "error": {
         "noConsent": "First tick that you understand.",
         "invalidAmount": "Enter an amount above 0.",
         "notEnoughMoney": "You don't have enough money for this amount."
       },
       "step": "Step {step} of {total}",
-      "getBig": "You can pay up to {tax} less tax",
+      "getBig": "Up to {tax} less tax",
       "next": "Next",
       "back": "Back",
-      "proof": {
-        "file": "atlas-pensii-payment-proof",
-        "title": "Atlas Pensii: payment proof",
-        "demo": "DEMO: Atlas is a fictional bank. This document is not valid.",
-        "member": "Member: Atlas demo customer",
-        "fund": "Fund: Atlas Pensii (Pillar III, voluntary pension)",
-        "amount": "Amount paid: {amount}",
-        "date": "Date: {date}",
-        "forEmployer": "For the employer: please deduct this contribution from taxable income through payroll, up to the RON equivalent of 400 EUR a year (shared with private health insurance)."
-      },
       "join": {
         "title": "Join Atlas Pensii",
         "intro": "To put money in a pension fund, you first join it by signing an adhesion act. It takes about 2 minutes.",
@@ -690,7 +678,7 @@
         },
         "pillar3": {
           "name": "Pillar III (Atlas Pensii)",
-          "tradeoff": "You can pay less tax now, but the money stays in the fund until age 60.",
+          "tradeoff": "You pay less tax now, but the money stays in the fund until age 60.",
           "note": "Atlas Pensii is Atlas's own fund. You can compare funds on the ASF website."
         }
       },
@@ -698,7 +686,7 @@
       "featured": {
         "today": "Today, age {age}",
         "retirement": "At retirement",
-        "taxLabel": "For {amount}, you can lower your tax by",
+        "taxLabel": "For {amount}, your tax goes down by",
         "taxValue": "up to {tax}",
         "taxNote": "The deduction is capped at {limit} a year (400 EUR), shared with private health insurance."
       }
