@@ -48,6 +48,20 @@ export function DemoControls() {
   const resetDemo = useBank((s) => s.resetDemo);
   const router = useRouter();
   // A fresh demo starts on Home, whatever screen it was reset from.
+  const month = useBank((s) => s.month);
+  const setMonth = useBank((s) => s.setMonth);
+  // Month 2 starts on day 0 with month 1 as its history (habits, personal pace); settings and goals stay.
+  const switchMonth = (m: 1 | 2) => {
+    setMonth(m);
+    setPanelOpen(false);
+    router.push("/");
+  };
+  const monthButtons = (className: string) =>
+    ([1, 2] as const).map((m) => (
+      <button key={m} type="button" onClick={() => switchMonth(m)} aria-pressed={month === m} className={className}>
+        {t("common.demo.month", { n: m })}
+      </button>
+    ));
   const reset = () => {
     resetDemo();
     setPanelOpen(false);
@@ -116,6 +130,9 @@ export function DemoControls() {
         </div>
 
         {/* Laptop only: on a phone these live in the panel. */}
+        <div role="group" aria-label={t("common.demo.monthLabel")} className="hidden grid-cols-2 gap-1 min-[500px]:grid">
+          {monthButtons(cn(DOCK_BUTTON, "justify-center"))}
+        </div>
         <div className="hidden grid-cols-4 gap-1 min-[500px]:grid">{jumpButtons(cn(DOCK_BUTTON, "justify-center px-0 tabular-nums"))}</div>
         <div className="hidden flex-col gap-1 border-t border-background/20 pt-2 min-[500px]:flex">
           <button type="button" onClick={reset} className={DOCK_BUTTON}>
@@ -149,6 +166,11 @@ export function DemoControls() {
 
           {/* On a phone the pill has no room for the jumps and Reset: they live here. */}
           <div className="mb-4 flex flex-col gap-2 border-b pb-4 min-[500px]:hidden">
+            <div role="group" aria-label={t("common.demo.monthLabel")} className="grid grid-cols-2 gap-1">
+              {monthButtons(
+                "min-h-11 rounded-lg bg-muted font-medium aria-pressed:bg-foreground aria-pressed:text-background focus-visible:outline-2 focus-visible:outline-ring",
+              )}
+            </div>
             <div className="grid grid-cols-7 gap-1">
               {jumpButtons(
                 "min-h-11 rounded-lg bg-muted font-medium tabular-nums aria-pressed:bg-foreground aria-pressed:text-background focus-visible:outline-2 focus-visible:outline-ring",

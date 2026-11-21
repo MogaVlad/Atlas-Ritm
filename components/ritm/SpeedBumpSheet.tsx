@@ -2,7 +2,7 @@
 
 import { animate, motion, useMotionValue, useReducedMotion, useTransform, type MotionValue } from "motion/react";
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
-import { RULES, type PaceState } from "@/lib/engine";
+import { interestEstimate, pensionDeductibleLimit, pensionTaxBenefit, RULES, type PaceState } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
 import { useBank } from "@/lib/store/useBank";
@@ -38,6 +38,7 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAt
   const monthlySaving = useBank((s) => s.ritm.lock.amount);
   const unlockDay = useBank((s) => s.lock?.unlockDay ?? s.ritm.lock.unlockDay);
   const lockMoney = useBank((s) => s.lockMoney);
+  const pensionSoFar = useBank((s) => s.pension.total);
 
   useEffect(() => heading.current?.focus(), []);
   // Next keeps hidden routes alive (<Activity>): start fresh every time the sheet is shown again.
@@ -53,6 +54,10 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAt
   const amount = formatLei(purchase.amount, locale);
   // shortcut: goal impact computed here (days of saving at the monthly Lock amount); move to lib/engine as goalImpactDays when Cosma has time.
   const goalDays = monthlySaving > 0 ? Math.ceil(purchase.amount / (monthlySaving / RULES.cycleLength)) : null;
+  // One number per option (section 11 E): what each choice gives, in RON.
+  const lockDays = Math.max(1, unlockDay - pace.dayOfCycle);
+  const lockInterest = interestEstimate(purchase.amount, lockDays, RULES.savings.annualRate);
+  const taxBack = pensionTaxBenefit(purchase.amount, pensionSoFar).taxSavedUpTo;
 
   const moveToLock = () => {
     lockMoney(purchase.amount);
@@ -117,8 +122,30 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAt
             <button type="button" onClick={onNotNow} className={PRIMARY}>
               {t("ritm.speedBump.notNow")}
             </button>
-            <Option label={t("ritm.speedBump.moveToLock", { amount })} hint={t("ritm.speedBump.moveToLockHint", { day: unlockDay })} onClick={moveToLock} />
-            <Option label={t("ritm.speedBump.pension")} hint={t("ritm.speedBump.pensionHint")} onClick={() => setPensionOpen(true)} />
+            <p className="-mt-1 text-center text-sm text-atlas-muted">
+              {pace.safeToSpendToday > 0
+                ? t("ritm.speedBump.notNowHint", { safe: formatLei(pace.safeToSpendToday, locale) })
+                : t("ritm.speedBump.notNowHintUsed")}
+            </p>
+            <Option
+              label={t("ritm.speedBump.moveToLock", { amount })}
+              hint={t("ritm.speedBump.moveToLockNumber", { interest: formatLei(lockInterest, locale), day: unlockDay })}
+              onClick={moveToLock}
+            />
+            <Option
+              label={t("ritm.speedBump.pension")}
+              hint={t("ritm.speedBump.pensionNumber", { tax: formatLei(taxBack, locale) })}
+              onClick={() => setPensionOpen(true)}
+            />
+            {/* The details stay one tap deeper: the numbers above are enough to choose. */}
+            <details className="rounded-2xl px-4 py-2 text-sm ring-1 ring-atlas-line">
+              <summary className="min-h-9 cursor-pointer py-1.5 font-medium text-ritm">{t("ritm.speedBump.detailsTitle")}</summary>
+              <ul className="mt-2 mb-1 flex list-disc flex-col gap-1.5 pl-5 text-atlas-muted">
+                <li>{t("ritm.speedBump.detailsSafe")}</li>
+                <li>{t("ritm.speedBump.detailsLock", { rate: RULES.savings.annualRate * 100, day: unlockDay })}</li>
+                <li>{t("ritm.speedBump.detailsPension", { limit: formatLei(pensionDeductibleLimit(), locale) })}</li>
+              </ul>
+            </details>
             <HoldToPay label={t("ritm.speedBump.confirm")} hintId={hintId} reduce={!!reduce} onDone={onConfirm} />
             <p id={hintId} className="-mt-1 text-center text-sm text-atlas-muted">
               {t("ritm.speedBump.holdHint", { seconds: RULES.speedBump.holdSeconds })}

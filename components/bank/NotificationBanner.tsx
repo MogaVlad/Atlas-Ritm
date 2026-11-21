@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 import { HeadsUpSheet } from "@/components/ritm/HeadsUpSheet";
+import { headsUpLine, headsUpTitleKey } from "@/components/ritm/headsUpText";
 import { useT } from "@/lib/i18n";
 import { useBank, type HeadsUpNotification } from "@/lib/store/useBank";
 import { AtlasGlobe } from "./AtlasMark";
@@ -44,7 +45,7 @@ export function NotificationBanner() {
 
   // Handled elsewhere (e.g. from the Ritm card) → the banner has nothing left to say.
   const visible = current && !sheet && queue.some((n) => n.id === current.id) ? current : null;
-  const firstReason = visible?.reasons[0];
+  const firstReason = visible ? headsUpLine(visible) : null;
 
   return (
     <>
@@ -83,7 +84,7 @@ export function NotificationBanner() {
                   <span>{t("bank.notifications.now")}</span>
                 </span>
                 <span className="mt-0.5 block text-sm leading-snug font-semibold text-atlas-ink">
-                  {t(`ritm.headsUp.title.${visible.severity}`)}
+                  {t(headsUpTitleKey(visible))}
                 </span>
                 {firstReason && (
                   <span className="mt-0.5 line-clamp-2 block text-sm leading-snug text-atlas-ink/80">
