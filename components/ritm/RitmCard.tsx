@@ -8,7 +8,7 @@ import { useLocale, useT } from "@/lib/i18n";
 import { useBank, type HeadsUpNotification } from "@/lib/store/useBank";
 import { HeadsUpSheet } from "./HeadsUpSheet";
 import { PaceBar } from "./PaceBar";
-import { SafeToSpend } from "./SafeToSpend";
+import { SafeToSpend, safeLineKey } from "./SafeToSpend";
 
 /** Ritm on the Atlas Home screen: what's safe today, the month's pace, level and Lock. */
 export function RitmCard() {
@@ -45,7 +45,7 @@ export function RitmCard() {
         </ul>
       </div>
 
-      <SafeToSpend amount={pace.safeToSpendToday} line={t(`ritm.safe.line.${pace.severity}`)} />
+      <SafeToSpend amount={pace.safeToSpendToday} line={t(safeLineKey(pace))} />
       <PaceBar
         pctSpent={pace.pctSpent}
         pctMonthPassed={pace.pctMonthPassed}

@@ -3,6 +3,7 @@ import { DEFAULT_RITM_SETTINGS } from "@/lib/data/persona";
 import { SCENARIO } from "@/lib/data/scenario";
 import {
   alertActions,
+  moveToLockAmount,
   computePace,
   createLock,
   emergencyRelease,
@@ -94,6 +95,18 @@ describe("alerts", () => {
     const memory = { lastNotifiedDay: 5, lastSeverity: "spike" as const, ignoredCount: 0, lastPctSpent: day5.pctSpent };
     // Same level as the last Heads-up, only one day later, but 26% → 55% used: worth saying.
     expect(shouldNotify(pace(6), memory, 6)).toBe(true);
+  });
+
+  it("suggests moving what the days after the Lock opens need, not a fixed 200 lei", () => {
+    const day6 = pace(6);
+    expect(day6.remaining).toBe(954);
+    // 954 lei over 25 days = 38,16 a day; days 20–30 are 11 days → 419,76 → 410 lei.
+    expect(moveToLockAmount(day6, 20)).toBe(410);
+    expect(alertActions(day6, INITIAL_ALERT_MEMORY, 20)[0]).toMatchObject({ kind: "moveToLock", amount: 410 });
+    // A later unlock day needs less; once the Lock's day has come there's nothing to suggest.
+    expect(moveToLockAmount(day6, 25)).toBe(220);
+    expect(moveToLockAmount(day6, 6)).toBe(0);
+    expect(alertActions(day6, INITIAL_ALERT_MEMORY, 6).some((a) => a.kind === "moveToLock")).toBe(false);
   });
 
   it("suggests the Speed bump first after 2 ignored alerts", () => {

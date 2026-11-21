@@ -61,6 +61,13 @@
       "body": "You were on pace {days} of {total} days. See how the month went.",
       "open": "See the summary",
       "later": "Later"
+    },
+    "lockPrompt": {
+      "title": "Your Lock is open",
+      "body": "You made it to day {day} without it. {amount} is free now.",
+      "bodyEarly": "The money you asked for is out of the Lock: {amount} is free now.",
+      "open": "Choose what to do with it",
+      "later": "Later"
     }
   },
   "bank": {
@@ -295,7 +302,8 @@
         "ok": "At this rate you'll reach payday comfortably.",
         "watch": "You're spending a little faster than the month is passing.",
         "spike": "Money is going faster than the days. Go easy today."
-      }
+      },
+      "usedToday": "You have used today's share. Tomorrow there's a new one, and the month is still on track."
     },
     "levels": {
       "label": "What Ritm does for you",
@@ -396,7 +404,7 @@
       },
       "intro": "You can do something now, with one tap. Or nothing, it's your call.",
       "actions": {
-        "moveToLock": "Put {amount} aside until day {day}, so the end of the month is covered",
+        "moveToLock": "Put {amount} aside until day {day}: enough for the last {days} days of the month",
         "enableSpeedBump": "Turn on Speed bump until payday",
         "markPlanned": "{merchant}, {amount}, was planned"
       },

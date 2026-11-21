@@ -61,6 +61,31 @@ describe("useBank", () => {
     expect(store().balances.current).toBe(0);
   });
 
+  it("the 'your Lock is open' popup waits for the Lock to open, once per Lock", () => {
+    store().enableRitm(DEFAULT_RITM_SETTINGS);
+    expect(store().lock?.status).toBe("locked");
+    store().setDemoDay(20);
+    expect(store().lock?.status).toBe("unlocked");
+    expect(store().lockPromptSeen).toBe(false);
+    store().dismissLockPrompt();
+    expect(store().lockPromptSeen).toBe(true);
+    // Choosing what to do with the money also answers it.
+    store().resetDemo();
+    store().setDemoDay(1);
+    store().enableRitm(DEFAULT_RITM_SETTINGS);
+    store().setDemoDay(20);
+    store().keepSaved(500);
+    expect(store().lockPromptSeen).toBe(true);
+  });
+
+  it("the Heads-up suggests what the days after the Lock opens need", () => {
+    store().enableRitm(DEFAULT_RITM_SETTINGS);
+    store().setDemoDay(6);
+    const move = store().notifications.at(-1)?.actions.find((a) => a.kind === "moveToLock");
+    // Lock until day 20: 954 lei left ÷ 25 days × 11 days (20–30) → 410 lei, not a fixed 200.
+    expect(move?.amount).toBe(410);
+  });
+
   it("money taken out of the Lock early keeps its reason", () => {
     store().enableRitm(DEFAULT_RITM_SETTINGS);
     store().setDemoDay(5);

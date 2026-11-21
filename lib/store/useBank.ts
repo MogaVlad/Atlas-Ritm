@@ -99,6 +99,8 @@ interface PersistedState {
   raiseCommitment: boolean;
   /** The day-30 popup ("see how the month went") was answered; Reset demo shows it again. */
   summaryPromptSeen: boolean;
+  /** The "your Lock is open" popup was answered for the current Lock; a new Lock shows it again. */
+  lockPromptSeen: boolean;
   notifications: HeadsUpNotification[];
   /** Activity entries (salary, live payments) the user cleared from the notification centre. */
   clearedActivityIds: string[];
@@ -165,6 +167,8 @@ interface Actions {
   setRaiseCommitment: (on: boolean) => void;
   /** Close the day-30 popup, whether the user opened the summary or chose "later". */
   dismissSummaryPrompt: () => void;
+  /** Close the "your Lock is open" popup, whether the user chose what to do now or later. */
+  dismissLockPrompt: () => void;
   /** Close a notification. `acted: false` counts it as ignored. */
   dismissNotification: (id: string, acted?: boolean) => void;
   /**
@@ -290,6 +294,7 @@ function evaluateDay(s: PersistedState): PersistedState {
     const amount = Math.min(next.ritm.lock.amount, Math.max(0, currentBalance(next, next.demoDay)));
     if (amount > 0) {
       next.lock = createLock(amount, next.ritm.lock.unlockDay);
+      next.lockPromptSeen = false;
       next.savings = next.savings + amount;
     }
   }
@@ -318,7 +323,7 @@ function evaluateDay(s: PersistedState): PersistedState {
         day: next.demoDay,
         severity: pace.severity,
         reasons: pace.reasons,
-        actions: alertActions(pace, next.alertMemory),
+        actions: alertActions(pace, next.alertMemory, next.lock?.unlockDay ?? next.ritm.lock.unlockDay),
       },
     ];
     next.alertMemory = {
@@ -344,6 +349,7 @@ const INITIAL: PersistedState = {
   pensionContributions: [],
   raiseCommitment: false,
   summaryPromptSeen: false,
+  lockPromptSeen: false,
   notifications: [],
   clearedActivityIds: [],
   alertMemory: INITIAL_ALERT_MEMORY,
@@ -389,6 +395,7 @@ const pick = (s: BankState): PersistedState => ({
   pensionContributions: s.pensionContributions,
   raiseCommitment: s.raiseCommitment,
   summaryPromptSeen: s.summaryPromptSeen,
+  lockPromptSeen: s.lockPromptSeen,
   notifications: s.notifications,
   clearedActivityIds: s.clearedActivityIds,
   alertMemory: s.alertMemory,
@@ -504,7 +511,7 @@ export const useBank = create<BankState>()(
             const lock = s.lock
               ? { ...s.lock, amount: s.lock.amount + amount }
               : createLock(amount, unlockDay ?? s.ritm.lock.unlockDay);
-            return { ...s, lock, savings: s.savings + amount };
+            return { ...s, lock, savings: s.savings + amount, lockPromptSeen: s.lock ? s.lockPromptSeen : false };
           }),
 
         requestUnlock: (reason, note) =>
@@ -535,7 +542,7 @@ export const useBank = create<BankState>()(
             if (!s.lock) return s;
             const kept = Math.max(0, Math.min(amount, s.lock.amount));
             const back = s.lock.amount - kept;
-            return { ...s, lock: { ...s.lock, status: "unlocked", amount: kept }, savings: s.savings - back };
+            return { ...s, lock: { ...s.lock, status: "unlocked", amount: kept }, savings: s.savings - back, lockPromptSeen: true };
           }),
 
         contributeToPension: ({ amount, source, consent }) => {
@@ -586,6 +593,8 @@ export const useBank = create<BankState>()(
         setRaiseCommitment: (on) => update((s) => ({ ...s, raiseCommitment: on })),
 
         dismissSummaryPrompt: () => update((s) => ({ ...s, summaryPromptSeen: true })),
+
+        dismissLockPrompt: () => update((s) => ({ ...s, lockPromptSeen: true })),
 
         dismissNotification: (id, acted = false) =>
           update((s) => ({
