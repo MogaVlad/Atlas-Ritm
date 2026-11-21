@@ -32,7 +32,8 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onAskRitm 
   const [pensionOpen, setPensionOpen] = useState(false);
   const [pensioned, setPensioned] = useState<{ amount: number; taxSavedUpTo: number } | null>(null);
 
-  const goal = useBank((s) => s.ritm.goal);
+  // The main goal (the first one).
+  const goal = useBank((s) => s.ritm.goals[0]);
   const monthlySaving = useBank((s) => s.ritm.lock.amount);
   const unlockDay = useBank((s) => s.lock?.unlockDay ?? s.ritm.lock.unlockDay);
   const lockMoney = useBank((s) => s.lockMoney);
@@ -95,7 +96,7 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onAskRitm 
               pct: Math.round(pace.pctSpent * 100),
             })}
           </li>
-          {goalDays !== null && <li>{t("ritm.speedBump.goal", { days: goalDays, goal: goal.name })}</li>}
+          {goalDays !== null && goal && <li>{t("ritm.speedBump.goal", { days: goalDays, goal: goal.name })}</li>}
           <li>{t("ritm.speedBump.safe", { amount: formatLei(pace.safeToSpendToday, locale) })}</li>
         </ul>
 

@@ -8,3 +8,4 @@ export { createLock, requestUnlock, resolveLock, emergencyRelease, interestEstim
 export { monthSummary, raiseSavingPlan } from "./summary";
 export { pensionDeductibleLimit, pensionTaxBenefit, checkPensionContribution, pensionSummary } from "./pension";
 export { ritmOffDay, isRitmOffDue, essentialsTotal } from "./settings";
+export { goalMonthly, goalsPlan, isValidGoal, type GoalsPlan } from "./goals";

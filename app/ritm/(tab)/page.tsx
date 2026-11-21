@@ -7,6 +7,8 @@ import { LevelChips } from "@/components/ritm/LevelChips";
 import { PaceBar } from "@/components/ritm/PaceBar";
 import { SafeToSpend } from "@/components/ritm/SafeToSpend";
 import { useHydrated } from "@/components/ritm/useHydrated";
+import { NET_SALARY } from "@/lib/data/persona";
+import { goalMonthly, goalsPlan } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
 import { useBank } from "@/lib/store/useBank";
@@ -29,6 +31,7 @@ export default function RitmTab() {
   if (!hydrated || !ritm.enabled) return null;
 
   const locked = lock && lock.status !== "unlocked" && lock.amount > 0;
+  const goals = goalsPlan(ritm.goals, NET_SALARY);
 
   return (
     <div className="flex flex-col gap-6">
@@ -58,10 +61,29 @@ export default function RitmTab() {
           {t("ritm.tab.setupTitle")}
         </h2>
         <dl className="divide-y divide-atlas-line rounded-2xl border border-atlas-line bg-white px-4">
+          {ritm.goals.map((goal, i) => (
+            <div key={i} className="flex min-h-14 items-center justify-between gap-4 py-3">
+              <dt className="text-sm text-atlas-muted">{t(ritm.goals.length > 1 ? "ritm.goals.label" : "ritm.tab.goal", { n: i + 1 })}</dt>
+              <dd className="text-right">
+                <span className="block font-medium">
+                  {goal.name} · <span className="tabular-nums">{formatLei(goal.amount, locale)}</span>
+                </span>
+                <span className="block text-sm text-atlas-muted tabular-nums">
+                  {t("ritm.goals.plan", {
+                    months: t(goal.months === 1 ? "ritm.goals.monthsOne" : "ritm.goals.months", { months: goal.months }),
+                    amount: formatLei(goalMonthly(goal), locale),
+                  })}
+                </span>
+              </dd>
+            </div>
+          ))}
           <div className="flex min-h-14 items-center justify-between gap-4 py-3">
-            <dt className="text-sm text-atlas-muted">{t("ritm.tab.goal")}</dt>
-            <dd className="text-right font-medium">
-              {ritm.goal.name} · <span className="tabular-nums">{formatLei(ritm.goal.amount, locale)}</span>
+            <dt className="text-sm text-atlas-muted">{t("ritm.goals.totalLabel")}</dt>
+            <dd className="text-right font-medium tabular-nums">
+              {t("ritm.goals.totalValue", {
+                amount: formatLei(goals.totalMonthly, locale),
+                pct: Math.round(goals.shareOfSalary * 100),
+              })}
             </dd>
           </div>
           <div className="flex min-h-14 items-center justify-between gap-4 py-3">
@@ -86,6 +108,12 @@ export default function RitmTab() {
             <dd className="text-right font-medium tabular-nums">{formatLei(ritm.essentialsTotal, locale)}</dd>
           </div>
         </dl>
+        <Link
+          href="/ritm/goals"
+          className="flex min-h-11 items-center self-start rounded-lg px-1 text-sm font-medium text-ritm underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-ritm"
+        >
+          {t("ritm.goals.editLink")}
+        </Link>
         <Link
           href="/profile"
           className="flex min-h-11 items-center self-start rounded-lg px-1 text-sm font-medium text-ritm underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-ritm"

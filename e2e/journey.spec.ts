@@ -110,3 +110,34 @@ test("demo tools: jump to a day, simulate any purchase, never below zero", async
   await page.getByRole("button", { name: m.bank.confirm.confirm }).click();
   await expect(page.getByText(fill(m.bank.confirm.paidBody, { amount: "120,00 lei", merchant: "FoodGo" }))).toBeVisible();
 });
+
+test("goals: several, each with a time; above 20% of the salary Ritm explains, then they can be edited", async ({ page }) => {
+  const g = m.ritm.goals;
+  const s3 = m.ritm.onboarding.s3;
+  await page.goto("/ritm?demo=1");
+  await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
+  await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
+
+  // Islanda 2027: 9.000 lei in 18 months = 500 lei a month, 10% of the 4.800 lei salary.
+  await expect(page.getByText(fill(g.total, { amount: "500,00 lei", pct: 10 }))).toBeVisible();
+  await expect(page.getByText(g.within)).toBeVisible();
+
+  // A laptop for 6.000 lei in 12 months adds 500 lei a month: 1.000 lei is 21%, above the guideline.
+  await page.getByRole("button", { name: g.add }).click();
+  await page.getByLabel(s3.goalName).nth(1).fill("Laptop");
+  await page.getByLabel(s3.goalAmount).nth(1).fill("6000");
+  await expect(page.getByText(fill(g.total, { amount: "1.000,00 lei", pct: 21 }))).toBeVisible();
+  await expect(page.getByText(fill(g.over, { guideline: "960,00 lei" }))).toBeVisible();
+
+  // It explains, it doesn't block: Ritm starts with both goals.
+  await page.getByRole("button", { name: m.ritm.onboarding.finish }).click();
+  await page.getByRole("link", { name: exact(m.bank.nav.ritm) }).click();
+  await expect(page.getByText(fill(g.totalValue, { amount: "1.000,00 lei", pct: 21 }))).toBeVisible();
+
+  // Later: give the laptop 24 months and it fits in the 20% again.
+  await page.getByRole("link", { name: g.editLink }).click();
+  await page.getByLabel(g.reachIn).nth(1).fill("24");
+  await expect(page.getByText(g.within)).toBeVisible();
+  await page.getByRole("button", { name: g.save }).click();
+  await expect(page.getByText(fill(g.totalValue, { amount: "750,00 lei", pct: 16 }))).toBeVisible();
+});

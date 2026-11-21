@@ -4,12 +4,13 @@ import { Plus, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { LocaleToggle } from "@/components/bank/LocaleToggle";
+import { fromDraft, GoalsEditor, toDraft, type GoalDraft } from "@/components/ritm/GoalsEditor";
 import { LevelChips } from "@/components/ritm/LevelChips";
 import { leaveRitm, RitmBack } from "@/components/ritm/RitmBack";
 import { useBank } from "@/lib/store/useBank";
 import { ESSENTIAL_CATEGORIES, NET_SALARY } from "@/lib/data/persona";
 import { SCENARIO, transactionsUntil } from "@/lib/data/scenario";
-import { computePace, RULES, type Category, type RitmLevel, type RitmSettings } from "@/lib/engine";
+import { computePace, isValidGoal, RULES, type Category, type RitmLevel, type RitmSettings } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
 import { useHtmlLang, useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -44,8 +45,7 @@ export default function RitmOnboarding() {
   const [level, setLevel] = useState<RitmLevel>(defaults.level);
   const [lockAmount, setLockAmount] = useState(defaults.lock.amount);
   const [unlockDay, setUnlockDay] = useState(defaults.lock.unlockDay);
-  const [goalName, setGoalName] = useState(defaults.goal.name);
-  const [goalAmount, setGoalAmount] = useState(String(defaults.goal.amount));
+  const [goals, setGoals] = useState<GoalDraft[]>(() => defaults.goals.map(toDraft));
   const [goalError, setGoalError] = useState(false);
 
   // Move focus to the new step's heading so screen readers announce it (not on first load).
@@ -67,7 +67,7 @@ export default function RitmOnboarding() {
     level,
     essentialCategories: essentials.map((tx) => tx.category),
     essentialsTotal: essentials.reduce((s, tx) => s + tx.amount, 0),
-    goal: { name: goalName.trim(), amount: Number(goalAmount) },
+    goals: goals.map(fromDraft),
     lock: { amount: lockAmount, unlockDay },
   };
   // The engine owns the "spending money" rule; we only show its result.
@@ -82,7 +82,7 @@ export default function RitmOnboarding() {
   };
 
   const finish = () => {
-    if (!settings.goal.name || !(settings.goal.amount > 0)) return setGoalError(true);
+    if (settings.goals.length === 0 || !settings.goals.every(isValidGoal)) return setGoalError(true);
     enableRitm(settings);
     // Back where onboarding was opened from (Home, Payments, Profile...), not always Home.
     leaveRitm(router);
@@ -274,28 +274,15 @@ export default function RitmOnboarding() {
               </p>
             </section>
 
-            <section className="flex flex-col gap-4">
-              <h2 className="font-display text-lg font-semibold">{t("ritm.onboarding.s3.goalTitle")}</h2>
-              <Field id="goal-name" label={t("ritm.onboarding.s3.goalName")}>
-                <input id="goal-name" value={goalName} onChange={(e) => setGoalName(e.target.value)} className={INPUT} />
-              </Field>
-              <Field id="goal-amount" label={t("ritm.onboarding.s3.goalAmount")}>
-                <input
-                  id="goal-amount"
-                  type="number"
-                  inputMode="decimal"
-                  min={1}
-                  value={goalAmount}
-                  onChange={(e) => setGoalAmount(e.target.value)}
-                  className={INPUT}
-                />
-              </Field>
-              {goalError && (
-                <p role="alert" className="text-sm text-ritm-spike">
-                  {t("ritm.onboarding.s3.goalInvalid")}
-                </p>
-              )}
-            </section>
+            <GoalsEditor
+              goals={goals}
+              onChange={(next) => {
+                setGoals(next);
+                setGoalError(false);
+              }}
+              netSalary={NET_SALARY}
+              invalid={goalError}
+            />
 
             <section className="rounded-3xl border border-atlas-line bg-white px-5 py-4" aria-live="polite">
               <p className="text-sm text-atlas-muted">{t("ritm.onboarding.s3.pool")}</p>
