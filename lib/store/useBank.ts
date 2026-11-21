@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { createJSONStorage, persist, type StateStorage } from "zustand/middleware";
-import { DEFAULT_RITM_SETTINGS } from "@/lib/data/persona";
+import { DEFAULT_RITM_SETTINGS, ESSENTIAL_AMOUNTS } from "@/lib/data/persona";
 import { SCENARIO } from "@/lib/data/scenario";
 import {
   alertActions,
@@ -10,15 +10,19 @@ import {
   computePace,
   createLock,
   emergencyRelease as releaseFromLock,
+  essentialsTotal,
   INITIAL_ALERT_MEMORY,
   monthSummary,
   pensionSummary,
+  isRitmOffDue,
   requestUnlock as requestEarlyUnlock,
   resolveLock,
+  ritmOffDay,
   RULES,
   shouldNotify,
   type AlertAction,
   type AlertMemory,
+  type Category,
   type Day,
   type EmergencyResult,
   type LockState,
@@ -79,6 +83,8 @@ interface PersistedState {
   /** Planned purchases entered at onboarding. Shown by Ritm; not yet used by the engine. */
   plannedPurchases: PlannedPurchase[];
   ritm: RitmSettings;
+  /** Day a requested turn-off takes effect (24 h after the request); null if none is pending. */
+  ritmOffDay: Day | null;
   lock: LockState | null;
   savings: number;
   /** Pillar III contributions (Atlas Pensii). Each one is also a transfer in the transactions. */
@@ -109,6 +115,14 @@ interface Actions {
   markPlanned: (txId: string) => void;
   enableRitm: (settings: RitmSettings, planned?: PlannedPurchase[]) => void;
   setLevel: (level: RitmLevel) => void;
+  /** Turn Ritm off: it stays on until the next demo day (24 h rule). The Lock is not touched. */
+  requestRitmOff: () => void;
+  /** Keep Ritm on after all (cancels a pending turn-off). */
+  cancelRitmOff: () => void;
+  /** Online payments at or above this amount (lei) can meet the Speed bump. */
+  setSpeedBumpThreshold: (lei: number) => void;
+  /** Which categories are essentials; their monthly total is taken out of the spending money. */
+  setEssentials: (categories: Category[]) => void;
   /** Move money to the Lock (creates it if needed). */
   lockMoney: (amount: number, unlockDay?: Day) => void;
   requestUnlock: () => void;
@@ -174,6 +188,13 @@ function evaluateDay(s: PersistedState): PersistedState {
     next.ritm = { ...next.ritm, level: "headsup" };
   }
 
+  // A requested turn-off comes into effect: Ritm goes quiet and its pending Heads-ups go away.
+  if (isRitmOffDue(next.ritmOffDay, next.demoDay)) {
+    next.ritm = { ...next.ritm, enabled: false };
+    next.ritmOffDay = null;
+    next.notifications = [];
+  }
+
   if (!next.ritm.enabled) return next;
   const pace = computePace(allTransactions(next), engineSettings(next), next.demoDay);
   if (shouldNotify(pace, next.alertMemory, next.demoDay)) {
@@ -200,6 +221,7 @@ const INITIAL: PersistedState = {
   plannedIds: [],
   plannedPurchases: [],
   ritm: DEFAULT_RITM_SETTINGS,
+  ritmOffDay: null,
   lock: null,
   savings: OPENING_SAVINGS,
   pensionContributions: [],
@@ -240,6 +262,7 @@ const pick = (s: BankState): PersistedState => ({
   plannedIds: s.plannedIds,
   plannedPurchases: s.plannedPurchases,
   ritm: s.ritm,
+  ritmOffDay: s.ritmOffDay,
   lock: s.lock,
   savings: s.savings,
   pensionContributions: s.pensionContributions,
@@ -281,7 +304,12 @@ export const useBank = create<BankState>()(
 
         enableRitm: (settings, planned = []) =>
           update((s) => {
-            let next: PersistedState = { ...s, ritm: { ...settings, enabled: true }, plannedPurchases: planned };
+            let next: PersistedState = {
+              ...s,
+              ritm: { ...settings, enabled: true },
+              ritmOffDay: null,
+              plannedPurchases: planned,
+            };
             if (settings.lock.amount > 0 && !s.lock) {
               next = {
                 ...next,
@@ -293,6 +321,31 @@ export const useBank = create<BankState>()(
           }),
 
         setLevel: (level) => update((s) => evaluateDay({ ...s, ritm: { ...s.ritm, level } })),
+
+        requestRitmOff: () =>
+          update((s) => {
+            if (!s.ritm.enabled || s.ritmOffDay !== null) return s;
+            const next = { ...s, ritmOffDay: ritmOffDay(s.demoDay) };
+            // Only re-evaluate if the delay is 0; otherwise asking to turn off changes nothing today.
+            return isRitmOffDue(next.ritmOffDay, s.demoDay) ? evaluateDay(next) : next;
+          }),
+
+        cancelRitmOff: () => update((s) => ({ ...s, ritmOffDay: null })),
+
+        setSpeedBumpThreshold: (lei) =>
+          update((s) => ({ ...s, ritm: { ...s.ritm, speedBumpThreshold: Math.max(0, Math.round(lei)) } })),
+
+        setEssentials: (categories) =>
+          update((s) =>
+            evaluateDay({
+              ...s,
+              ritm: {
+                ...s.ritm,
+                essentialCategories: categories,
+                essentialsTotal: essentialsTotal(categories, ESSENTIAL_AMOUNTS),
+              },
+            }),
+          ),
 
         lockMoney: (amount, unlockDay) =>
           update((s) => {

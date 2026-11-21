@@ -7,3 +7,4 @@ export { shouldShowSpeedBump } from "./speedbump";
 export { createLock, requestUnlock, resolveLock, emergencyRelease, interestEstimate } from "./lock";
 export { monthSummary, raiseSavingPlan } from "./summary";
 export { pensionDeductibleLimit, pensionTaxBenefit, checkPensionContribution, pensionSummary } from "./pension";
+export { ritmOffDay, isRitmOffDue, essentialsTotal } from "./settings";

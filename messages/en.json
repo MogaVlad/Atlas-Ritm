@@ -94,7 +94,27 @@
     },
     "profile": {
       "title": "Profile",
-      "comingSoon": "Your settings, Ritm included, will live here. Coming soon."
+      "you": "Your details",
+      "ritmTitle": "Ritm settings",
+      "offTitle": "Ritm is off",
+      "offBody": "Once it’s on, it watches how fast your salary goes and tells you early. You choose how strict it is.",
+      "statusTitle": "Ritm on",
+      "statusHint": "Watches the pace of your spending since payday.",
+      "offPending": "Ritm turns off on day {day}. Until then it stays on.",
+      "keepOn": "Keep Ritm on",
+      "offConfirmTitle": "Turn Ritm off?",
+      "offConfirmBody": "It turns off in 24 hours, on day {day}. Until then everything stays as it is.",
+      "offConfirmLock": "The money in the Lock ({amount}) stays there until day {day}.",
+      "offConfirmYes": "Turn Ritm off",
+      "offConfirmCancel": "Cancel",
+      "levelTitle": "How strict",
+      "thresholdTitle": "The pause starts at",
+      "thresholdHint": "At the Speed bump and Lock levels, online payments of {amount} or more get a short pause. In-store payments are never stopped.",
+      "essentialsTitle": "Essential costs",
+      "essentialsHint": "What’s on here doesn’t count towards your pace: it’s taken out of your spending money first.",
+      "perMonth": "{amount} a month",
+      "essentialsTotal": "Essentials per month",
+      "spendingMoney": "Spending money this month"
     },
     "channels": {
       "card_in_store": "Card, in store",
@@ -348,6 +368,16 @@
       "askRitm": "Ask Ritm",
       "lockedDone": "Done. {amount} stays in the Lock until day {day}.",
       "backToShop": "Back to the shop"
+    },
+    "tab": {
+      "title": "Ritm",
+      "setupTitle": "What you've set up",
+      "goal": "Goal",
+      "lock": "Lock",
+      "lockValue": "{amount}, until day {day}",
+      "lockNone": "Nothing put aside",
+      "essentials": "Fixed payments per month",
+      "settingsLink": "More Ritm settings in Profile"
     }
   }
 }
