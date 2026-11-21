@@ -55,6 +55,12 @@
         "willPause": "The Speed bump will pause this payment before you confirm.",
         "speedBumpOff": "The Speed bump is off, so Ritm won't pause this payment. Turn it on to pause big online payments."
       }
+    },
+    "summaryPrompt": {
+      "title": "Your first month with Ritm is done",
+      "body": "You were on pace {days} of {total} days. See how the month went.",
+      "open": "See the summary",
+      "later": "Later"
     }
   },
   "bank": {
@@ -114,7 +120,17 @@
       "simulatedNote": "In-store payments can’t be paused. You get a message right away with what you have left.",
       "tapToast": "You just spent {amount} at {merchant}. Safe to spend today: {safe}.",
       "tapToastNoRitm": "You just spent {amount} at {merchant}.",
-      "insufficient": "Not enough money for {amount} at {merchant}. Your current account has {balance}."
+      "insufficient": "Not enough money for {amount} at {merchant}. Your current account has {balance}.",
+      "tapHintMany": "{count} payments, from {min} to {max}",
+      "sheet": {
+        "title": "Pick an in-store payment",
+        "close": "Close",
+        "balance": "Current balance:",
+        "paid": "You paid {amount} at {merchant}.",
+        "balanceChange": "{before} → {after}",
+        "safe": "You can still spend {safe} today, calmly.",
+        "hint": "Pick another payment or close this window."
+      }
     },
     "profile": {
       "title": "Profile",
@@ -343,7 +359,17 @@
         "goalAmount": "Amount you need (lei)",
         "goalInvalid": "Every goal needs a name, an amount above 0 and a time.",
         "pool": "Spending money this month",
-        "poolHint": "Your salary, minus fixed payments and the amount put aside."
+        "quick": "Quick amounts",
+        "preview": "That leaves about {perDay} a day. On day {day} you get back {back}, with the estimated interest. That's {pct}% of {goal}.",
+        "previewNone": "That leaves about {perDay} a day.",
+        "tight": "This leaves under {min} a day. That's tight.",
+        "planTitle": "Your plan for this month",
+        "planSalary": "Salary",
+        "planBills": "Fixed bills",
+        "planLock": "Put aside",
+        "planPerDay": "That's about {amount} a day.",
+        "goalMinus": "{step} lei less",
+        "goalPlus": "{step} lei more"
       }
     },
     "card": {
@@ -444,19 +470,11 @@
       "interest": "Until then, interest adds about {amount}.",
       "interestNote": "Estimate: {rate}% a year on savings, after 10% tax. In the demo, interest is simulated.",
       "waysOut": "If you need the money sooner",
-      "earlyTitle": "Unlock early",
-      "earlyHint": "You get all the money after 24 hours.",
-      "earlyExplain": "You ask now, and {amount} leaves the Lock tomorrow, on day {day}. That money stops being set aside for {goal}.",
       "earlyConfirm": "Request unlock",
       "requested": "Unlock requested. {amount} leaves the Lock tomorrow, on day {day}.",
-      "emergencyTitle": "Emergency: up to {max} now",
-      "emergencyHint": "The money arrives right away. Once a month.",
-      "emergencyExplain": "The money goes straight to your current account and the rest stays in the Lock. You can do this once a month.",
       "emergencyAmount": "How much you need (lei)",
-      "emergencyReason": "What for? One word is enough.",
       "emergencyConfirm": "Take out {amount} now",
       "emergencyDone": "Done. {amount} is in your current account.",
-      "emergencyUsed": "You've already used the emergency release this month. Unlocking with the 24-hour wait is still there.",
       "cancel": "Never mind",
       "error": {
         "overLimit": "You can take out up to {max}.",
@@ -471,24 +489,22 @@
       "setupTitle": "Put money aside",
       "setupCta": "Put {amount} aside until day {day}",
       "setupNoMoney": "There isn't enough in your current account to put money aside right now.",
-      "takeOutTitle": "Take money out early",
-      "takeOutHint": "Tell Ritm why. You always get your money; only the timing changes.",
-      "mirror": {
-        "title": "Before you take it out",
-        "goal": "{goal}: {before}% saved now, {after}% after.",
-        "count": "Times you took money out of the Lock this month: {n}."
-      },
-      "reasonTitle": "Why do you need it?",
-      "reasons": {
+      "mirrorIntro": "The money isn't blocked. We just show what changes, before you decide.",
+      "reasonLabel": "What do you need it for?",
+      "reason": {
         "health": "Health",
-        "bill": "A bill or a repair",
-        "unexpected": "Something unexpected",
+        "bill": "Bill or repair",
+        "unexpected": "Unexpected cost",
         "want": "Something I want"
       },
-      "noteLabel": "Anything to add? (optional)",
-      "outcomeNow": "You get it right away, up to {max}. This works once a month.",
-      "outcomeWant": "It's your money. You get all {amount} on day {day}, 24 hours after asking.",
-      "outcomeUsed": "You've already used this month's instant release, so this waits 24 hours: all {amount} on day {day}."
+      "mirror": "Unlocking {amount}: {goal} goes from {before}% to {after}%.",
+      "firstUnlock": "This is your first unlock this month.",
+      "nthUnlock": "This is unlock number {n} this month.",
+      "routeNow": "The money goes straight to your current account. The rest stays in the Lock.",
+      "routeWait": "Over {max}, all the money leaves after 24 hours, on day {day}.",
+      "routeWant": "All the money leaves after 24 hours, on day {day}.",
+      "note": "A short note, if you like",
+      "routeUsed": "The emergency release is used this month, so all the money leaves after 24 hours, on day {day}."
     },
     "unlock": {
       "title": "You made it to day {day} without it.",

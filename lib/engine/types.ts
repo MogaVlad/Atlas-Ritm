@@ -105,6 +105,8 @@ export interface LockState {
   unlockDay: Day;
   /** Set when the user asks for an early unlock; money is released 24h (1 demo day) later. */
   requestedAtDay?: Day;
+  /** Lei asked for in that request; missing = the whole Lock. Less than `amount` = the rest stays locked. */
+  requestedAmount?: number;
   /** Emergency release used this cycle (max once). */
   emergencyUsed: boolean;
 }
@@ -200,3 +202,53 @@ export type PensionResult =
 export type EmergencyResult =
   | { ok: true; lock: LockState; released: number }
   | { ok: false; reason: "alreadyUsed" | "overLimit" | "notLocked" };
+
+/* ─── Section 11: plan, Lock preview, the mirror ─────────────────────────── */
+
+export interface GoalPlanInput {
+  amount: number;
+  saved: number;
+  /** Months until the date the user picked (UI turns the date into months). */
+  monthsLeft: number;
+}
+
+export interface GoalPlan {
+  /** Lei a month needed to reach the goal by the date. */
+  neededPerMonth: number;
+  /** The chosen monthly Lock covers it. */
+  fitsLock: boolean;
+  /** Months to reach the goal with the chosen Lock; null if the Lock is 0. UI turns this into a date. */
+  monthsWithLock: number | null;
+}
+
+export type UnlockReason = "health" | "bill" | "unexpected" | "want";
+
+export interface UnlockRequest {
+  amount: number;
+  reason: UnlockReason;
+  note?: string;
+}
+
+/** Stored for the month summary ("Last month you unlocked once for 'Something I want'"). */
+export interface UnlockRecord {
+  day: Day;
+  amount: number;
+  reason: UnlockReason;
+  note?: string;
+  path: "emergency" | "wait";
+}
+
+export type UnlockDecision =
+  | { ok: true; path: "emergency"; lock: LockState; released: number; record: UnlockRecord }
+  | { ok: true; path: "wait"; lock: LockState; releaseDay: Day; record: UnlockRecord }
+  | { ok: false; reason: "notLocked" | "invalidAmount" };
+
+export type PlanEditResult =
+  | { kind: "applied"; settings: RitmSettings }
+  | {
+      /** The safe parts are applied; the lower Lock waits for the reason screen + 24h (requestUnlockWithReason). */
+      kind: "needsUnlock";
+      settings: RitmSettings;
+      lockDecrease: number;
+      requestedUnlockDay: Day;
+    };

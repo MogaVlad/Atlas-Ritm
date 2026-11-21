@@ -39,6 +39,8 @@ import {
   type RitmSettings,
   type Severity,
   type Transaction,
+  type UnlockReason,
+  type UnlockRecord,
 } from "@/lib/engine";
 import type { Locale } from "@/lib/i18n";
 
@@ -75,16 +77,7 @@ export interface Balances {
   savings: number;
 }
 
-/** Why money left the Lock early. "want" always waits 24 hours; the others can use the emergency release. */
-export type UnlockReason = "health" | "bill" | "unexpected" | "want";
-
-export interface UnlockRecord {
-  day: Day;
-  reason: UnlockReason;
-  /** Lei taken out (the whole Lock for an early unlock). */
-  amount: number;
-  note?: string;
-}
+export type { UnlockReason, UnlockRecord } from "@/lib/engine";
 
 interface PersistedState {
   locale: Locale;
@@ -104,6 +97,8 @@ interface PersistedState {
   pensionContributions: PensionContribution[];
   /** Commitment card on day 30: "Next raise: save half of it automatically?" Off until the user turns it on. */
   raiseCommitment: boolean;
+  /** The day-30 popup ("see how the month went") was answered; Reset demo shows it again. */
+  summaryPromptSeen: boolean;
   notifications: HeadsUpNotification[];
   /** Activity entries (salary, live payments) the user cleared from the notification centre. */
   clearedActivityIds: string[];
@@ -133,6 +128,12 @@ interface Actions {
   setDemoDay: (day: Day) => void;
   nextDay: () => void;
   addTransaction: (tx: Omit<Transaction, "id" | "day"> & Partial<Pick<Transaction, "id" | "day">>) => Transaction;
+  /**
+   * An in-store card payment from the "Simulate a card payment" sheet. Returns the current-account
+   * balance before and after, and safe-to-spend today (null when Ritm is off), so the sheet can show
+   * "1.104,00 lei → 1.087,00 lei".
+   */
+  payInStore: (purchase: Omit<Transaction, "id" | "day">) => InStoreResult;
   markPlanned: (txId: string) => void;
   enableRitm: (settings: RitmSettings, planned?: PlannedPurchase[]) => void;
   /** Switch Heads-up or the Speed bump on or off. */
@@ -162,6 +163,8 @@ interface Actions {
    */
   contributeToPension: (input: { amount: number; source: PensionSource; consent: boolean }) => PensionResult;
   setRaiseCommitment: (on: boolean) => void;
+  /** Close the day-30 popup, whether the user opened the summary or chose "later". */
+  dismissSummaryPrompt: () => void;
   /** Close a notification. `acted: false` counts it as ignored. */
   dismissNotification: (id: string, acted?: boolean) => void;
   /**
@@ -170,6 +173,15 @@ interface Actions {
    */
   clearNotifications: () => void;
   resetDemo: () => void;
+}
+
+export interface InStoreResult {
+  tx: Transaction;
+  balanceBefore: number;
+  balanceAfter: number;
+  safeToSpendToday: number | null;
+  /** The current account couldn't cover it: nothing was charged (a card never goes below zero). */
+  declined: boolean;
 }
 
 export type BankState = PersistedState & DerivedState & Actions;
@@ -331,6 +343,7 @@ const INITIAL: PersistedState = {
   savings: OPENING_SAVINGS,
   pensionContributions: [],
   raiseCommitment: false,
+  summaryPromptSeen: false,
   notifications: [],
   clearedActivityIds: [],
   alertMemory: INITIAL_ALERT_MEMORY,
@@ -375,6 +388,7 @@ const pick = (s: BankState): PersistedState => ({
   savings: s.savings,
   pensionContributions: s.pensionContributions,
   raiseCommitment: s.raiseCommitment,
+  summaryPromptSeen: s.summaryPromptSeen,
   notifications: s.notifications,
   clearedActivityIds: s.clearedActivityIds,
   alertMemory: s.alertMemory,
@@ -403,6 +417,29 @@ export const useBank = create<BankState>()(
 
         nextDay: () =>
           update((s) => evaluateDay(settleDays({ ...s, demoDay: clampDay(s.demoDay + 1) }, s.demoDay, clampDay(s.demoDay + 1)))),
+
+        payInStore: (purchase) => {
+          const balanceBefore = get().balances.current;
+          if (purchase.amount > balanceBefore) {
+            const s = get();
+            return {
+              tx: { id: "declined", day: s.demoDay, ...purchase, channel: "card_in_store" },
+              balanceBefore,
+              balanceAfter: balanceBefore,
+              safeToSpendToday: s.ritm.enabled ? s.pace.safeToSpendToday : null,
+              declined: true,
+            };
+          }
+          const tx = get().addTransaction({ ...purchase, channel: "card_in_store" });
+          const after = get();
+          return {
+            tx,
+            balanceBefore,
+            balanceAfter: after.balances.current,
+            safeToSpendToday: after.ritm.enabled ? after.pace.safeToSpendToday : null,
+            declined: false,
+          };
+        },
 
         addTransaction: (input) => {
           const s = get();
@@ -473,7 +510,7 @@ export const useBank = create<BankState>()(
         requestUnlock: (reason, note) =>
           update((s) => {
             if (!s.lock) return s;
-            const record: UnlockRecord[] = reason ? [{ day: s.demoDay, reason, amount: s.lock.amount, note }] : [];
+            const record: UnlockRecord[] = reason ? [{ day: s.demoDay, reason, amount: s.lock.amount, note, path: "wait" }] : [];
             return { ...s, lock: requestEarlyUnlock(s.lock, s.demoDay), unlockReasons: [...s.unlockReasons, ...record] };
           }),
 
@@ -482,7 +519,7 @@ export const useBank = create<BankState>()(
           if (!s.lock) return { ok: false, reason: "notLocked" };
           const result = releaseFromLock(s.lock, amount);
           if (result.ok) {
-            const record: UnlockRecord[] = reason ? [{ day: s.demoDay, reason, amount: result.released, note }] : [];
+            const record: UnlockRecord[] = reason ? [{ day: s.demoDay, reason, amount: result.released, note, path: "emergency" }] : [];
             update((p) => ({
               ...p,
               lock: result.lock,
@@ -547,6 +584,8 @@ export const useBank = create<BankState>()(
         },
 
         setRaiseCommitment: (on) => update((s) => ({ ...s, raiseCommitment: on })),
+
+        dismissSummaryPrompt: () => update((s) => ({ ...s, summaryPromptSeen: true })),
 
         dismissNotification: (id, acted = false) =>
           update((s) => ({

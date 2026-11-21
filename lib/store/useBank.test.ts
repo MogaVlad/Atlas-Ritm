@@ -1,3 +1,4 @@
+import { IN_STORE_PAYMENTS } from "@/lib/data/inStorePayments";
 import { beforeEach, describe, expect, it } from "vitest";
 import { DEFAULT_RITM_SETTINGS } from "@/lib/data/persona";
 import { shouldShowSpeedBump } from "@/lib/engine";
@@ -66,8 +67,8 @@ describe("useBank", () => {
     expect(store().emergencyRelease(200, "health").ok).toBe(true);
     store().requestUnlock("want", "concert");
     expect(store().unlockReasons).toEqual([
-      { day: 5, reason: "health", amount: 200, note: undefined },
-      { day: 5, reason: "want", amount: 300, note: "concert" },
+      { day: 5, reason: "health", amount: 200, note: undefined, path: "emergency" },
+      { day: 5, reason: "want", amount: 300, note: "concert", path: "wait" },
     ]);
   });
 
@@ -142,6 +143,26 @@ describe("useBank", () => {
     // A new Heads-up after clearing still arrives (48h after the last one).
     store().setDemoDay(8);
     expect(store().notifications).toHaveLength(1);
+  });
+
+  it("the day-30 popup closes once and comes back after Reset demo", () => {
+    expect(store().summaryPromptSeen).toBe(false);
+    store().dismissSummaryPrompt();
+    expect(store().summaryPromptSeen).toBe(true);
+    store().resetDemo();
+    expect(store().summaryPromptSeen).toBe(false);
+  });
+
+  it("an in-store payment returns the balance before and after", () => {
+    store().setDemoDay(6);
+    const coffee = IN_STORE_PAYMENTS.find((p) => p.amount === 17)!;
+    const r = store().payInStore(coffee);
+    expect(r.balanceBefore - r.balanceAfter).toBe(17);
+    expect(r.balanceAfter).toBe(store().balances.current);
+    expect(r.tx).toMatchObject({ day: 6, channel: "card_in_store", merchant: "Cafeneaua Nord" });
+    expect(r.safeToSpendToday).toBeNull(); // Ritm off
+    store().enableRitm(DEFAULT_RITM_SETTINGS);
+    expect(store().payInStore(coffee).safeToSpendToday).toBe(store().pace.safeToSpendToday);
   });
 
   it("adding the jacket lowers safe to spend", () => {

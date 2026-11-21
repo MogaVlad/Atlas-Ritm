@@ -198,16 +198,14 @@ test("Lock: shown as on, and taking money out asks why with buttons (Health = no
   await expect(lockRow).toBeVisible();
   await lockRow.click();
 
-  // The mirror: facts first, then the reason buttons.
-  await page.getByRole("button", { name: starts(lock.takeOutTitle) }).click();
-  await expect(page.getByText(starts(lock.mirror.count.split("{")[0]))).toBeVisible();
-  await page.getByRole("radio", { name: lock.reasons.health }).click();
+  // The mirror: pick a reason from the buttons, see the facts, then decide.
+  await page.getByRole("radio", { name: lock.reason.health }).click();
+  await expect(page.getByText(lock.firstUnlock, { exact: false })).toBeVisible();
   await page.getByRole("button", { name: starts(lock.emergencyConfirm.split("{")[0]) }).click();
   await expect(page.getByText(fill(lock.emergencyDone, { amount: "300,00 lei" }))).toBeVisible();
 
   // "Something I want" is never refused: it waits 24 hours.
-  await page.getByRole("button", { name: starts(lock.takeOutTitle) }).click();
-  await page.getByRole("radio", { name: lock.reasons.want }).click();
+  await page.getByRole("radio", { name: lock.reason.want }).click();
   await page.getByRole("button", { name: lock.earlyConfirm }).click();
   await expect(page.getByText(fill(lock.requested, { amount: "200,00 lei", day: 2 }))).toBeVisible();
 });
