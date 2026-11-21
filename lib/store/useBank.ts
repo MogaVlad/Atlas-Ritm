@@ -42,6 +42,12 @@ export interface HeadsUpNotification {
   actions: AlertAction[];
 }
 
+/** A purchase the user plans this month (onboarding step 2), e.g. shoes for 280 lei. */
+export interface PlannedPurchase {
+  name: string;
+  amount: number;
+}
+
 export interface Balances {
   current: number;
   savings: number;
@@ -54,6 +60,8 @@ interface PersistedState {
   added: Transaction[];
   /** Scenario or added transactions the user marked as planned. */
   plannedIds: string[];
+  /** Planned purchases entered at onboarding. Shown by Ritm; not yet used by the engine. */
+  plannedPurchases: PlannedPurchase[];
   ritm: RitmSettings;
   lock: LockState | null;
   savings: number;
@@ -75,7 +83,7 @@ interface Actions {
   nextDay: () => void;
   addTransaction: (tx: Omit<Transaction, "id" | "day"> & Partial<Pick<Transaction, "id" | "day">>) => Transaction;
   markPlanned: (txId: string) => void;
-  enableRitm: (settings: RitmSettings) => void;
+  enableRitm: (settings: RitmSettings, planned?: PlannedPurchase[]) => void;
   setLevel: (level: RitmLevel) => void;
   /** Move money to the Lock (creates it if needed). */
   lockMoney: (amount: number, unlockDay?: Day) => void;
@@ -150,6 +158,7 @@ const INITIAL: PersistedState = {
   demoDay: 1,
   added: [],
   plannedIds: [],
+  plannedPurchases: [],
   ritm: DEFAULT_RITM_SETTINGS,
   lock: null,
   savings: OPENING_SAVINGS,
@@ -187,6 +196,7 @@ const pick = (s: BankState): PersistedState => ({
   demoDay: s.demoDay,
   added: s.added,
   plannedIds: s.plannedIds,
+  plannedPurchases: s.plannedPurchases,
   ritm: s.ritm,
   lock: s.lock,
   savings: s.savings,
@@ -225,9 +235,9 @@ export const useBank = create<BankState>()(
         markPlanned: (txId) =>
           update((s) => (s.plannedIds.includes(txId) ? s : { ...s, plannedIds: [...s.plannedIds, txId] })),
 
-        enableRitm: (settings) =>
+        enableRitm: (settings, planned = []) =>
           update((s) => {
-            let next: PersistedState = { ...s, ritm: { ...settings, enabled: true } };
+            let next: PersistedState = { ...s, ritm: { ...settings, enabled: true }, plannedPurchases: planned };
             if (settings.lock.amount > 0 && !s.lock) {
               next = {
                 ...next,
