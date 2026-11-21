@@ -24,7 +24,7 @@ export interface SpeedBumpSheetProps {
 
 /**
  * The pause before a big online payment, in one sheet:
- * 1. the payment and what it means for the main goal; "Not now", or hold 3 s to pay anyway;
+ * 1. the payment and what it means for the main goal; "Not now", or hold (RULES.speedBump.holdSeconds) to pay anyway;
  * 2. after "Not now", in the same sheet: the money kept can go to the Lock, to Pillar III
  *    (explained first), or stay in the account.
  */

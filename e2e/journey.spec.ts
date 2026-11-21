@@ -70,7 +70,7 @@ test("payday → onboarding → day 6 Heads-up → Speed bump on the jacket", as
   const speedBump = page.getByRole("dialog", { name: m.ritm.speedBump.title });
   await expect(speedBump).toBeVisible();
 
-  // Pay anyway needs a 3-second hold: a short press does nothing, then the choice is the user's.
+  // Pay anyway needs a 2-second hold: a short press does nothing, then the choice is the user's.
   const payAnyway = speedBump.getByRole("button", { name: exact(m.ritm.speedBump.confirm) });
   await payAnyway.click();
   await expect(speedBump).toBeVisible();
