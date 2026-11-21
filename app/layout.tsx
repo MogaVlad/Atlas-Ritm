@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { BankHydrator } from "@/lib/store/BankHydrator";
 import { DemoControls } from "@/lib/store/DemoControls";
+import { SummaryPrompt } from "@/lib/store/SummaryPrompt";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {children}
         <BankHydrator />
         <DemoControls />
+        <SummaryPrompt />
       </body>
     </html>
   );

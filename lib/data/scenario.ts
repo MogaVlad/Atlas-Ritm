@@ -2,7 +2,7 @@ import type { Category, Channel, Day, Transaction } from "@/lib/engine/types";
 import { NET_SALARY, PERSONA, PHONE, RENT, TRANSPORT_PASS, UTILITIES } from "./persona";
 
 /**
- * Andrei's synthetic 30-day month. Day 1 is payday. Merchants are fictional.
+ * Luca's synthetic 30-day month. Day 1 is payday. Merchants are fictional.
  * All amounts are illustrative, replace with sourced figure.
  *
  * The story the demo needs (spending money = 2120 lei):

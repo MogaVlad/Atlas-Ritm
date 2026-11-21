@@ -55,6 +55,12 @@
         "willPause": "Pauza va opri plata înainte să confirmi.",
         "speedBumpOff": "Pauza e oprită, așa că Ritm nu oprește plata asta. Pornește-o ca să pună pe pauză plățile mari online."
       }
+    },
+    "summaryPrompt": {
+      "title": "Prima lună cu Ritm s-a încheiat",
+      "body": "Ai fost în ritm {days} din {total} de zile. Vezi pe scurt cum a mers luna.",
+      "open": "Vezi rezumatul",
+      "later": "Mai târziu"
     }
   },
   "bank": {
@@ -114,7 +120,17 @@
       "simulatedNote": "Plățile în magazin nu pot fi puse pe pauză. Primești imediat o notificare cu ce ți-a rămas.",
       "tapToast": "Ai plătit {amount} la {merchant}. Azi mai poți cheltui liniștit {safe}.",
       "tapToastNoRitm": "Ai plătit {amount} la {merchant}.",
-      "insufficient": "Nu ai destui bani pentru {amount} la {merchant}. În contul curent ai {balance}."
+      "insufficient": "Nu ai destui bani pentru {amount} la {merchant}. În contul curent ai {balance}.",
+      "tapHintMany": "{count} plăți, între {min} și {max}",
+      "sheet": {
+        "title": "Alege o plată în magazin",
+        "close": "Închide",
+        "balance": "Sold curent:",
+        "paid": "Ai plătit {amount} la {merchant}.",
+        "balanceChange": "{before} → {after}",
+        "safe": "Azi mai poți cheltui liniștit {safe}.",
+        "hint": "Poți alege încă o plată sau închide fereastra."
+      }
     },
     "profile": {
       "title": "Profil",
@@ -343,7 +359,17 @@
         "goalAmount": "Suma de care ai nevoie (lei)",
         "goalInvalid": "Fiecare scop are nevoie de un nume, o sumă mai mare de 0 și un termen.",
         "pool": "Bani de cheltuit luna asta",
-        "poolHint": "Salariul, minus plățile fixe și suma pusă deoparte."
+        "quick": "Sume rapide",
+        "preview": "Rămân cam {perDay} pe zi. În ziua {day} primești înapoi {back}, cu dobânda estimată. Asta e {pct}% din {goal}.",
+        "previewNone": "Rămân cam {perDay} pe zi.",
+        "tight": "Rămân sub {min} pe zi. E strâns.",
+        "planTitle": "Planul tău pe luna asta",
+        "planSalary": "Salariu",
+        "planBills": "Plăți fixe",
+        "planLock": "Pus deoparte",
+        "planPerDay": "Adică cam {amount} pe zi.",
+        "goalMinus": "Scade {step} lei",
+        "goalPlus": "Adaugă {step} lei"
       }
     },
     "card": {
@@ -444,19 +470,11 @@
       "interest": "Până atunci, dobânda adaugă cam {amount}.",
       "interestNote": "Estimare: {rate}% pe an la economii, după impozitul de 10%. În demo, dobânda e simulată.",
       "waysOut": "Dacă ai nevoie de bani mai devreme",
-      "earlyTitle": "Deblochează mai devreme",
-      "earlyHint": "Primești toți banii după 24 de ore.",
-      "earlyExplain": "Ceri acum, iar {amount} ies din Lacăt mâine, în ziua {day}. Sunt bani care nu mai stau deoparte pentru {goal}.",
       "earlyConfirm": "Cer deblocarea",
       "requested": "Ai cerut deblocarea. {amount} ies din Lacăt mâine, în ziua {day}.",
-      "emergencyTitle": "Urgență: până la {max} acum",
-      "emergencyHint": "Banii vin pe loc. O dată pe lună.",
-      "emergencyExplain": "Banii intră imediat în contul curent, iar restul rămâne în Lacăt. Poți face asta o singură dată pe lună.",
       "emergencyAmount": "Cât îți trebuie (lei)",
-      "emergencyReason": "Pentru ce? Un cuvânt ajunge.",
       "emergencyConfirm": "Scot {amount} acum",
       "emergencyDone": "Gata. {amount} au intrat în contul curent.",
-      "emergencyUsed": "Ai folosit deja urgența luna asta. Deblocarea cu 24 de ore rămâne la îndemână.",
       "cancel": "Renunț",
       "error": {
         "overLimit": "Poți scoate cel mult {max}.",
@@ -471,24 +489,22 @@
       "setupTitle": "Pune bani deoparte",
       "setupCta": "Pune {amount} deoparte până în ziua {day}",
       "setupNoMoney": "Acum nu ai destui bani în contul curent ca să pui deoparte.",
-      "takeOutTitle": "Scoate bani mai devreme",
-      "takeOutHint": "Spune-i lui Ritm de ce. Banii tăi îi primești mereu; se schimbă doar momentul.",
-      "mirror": {
-        "title": "Înainte să-i scoți",
-        "goal": "{goal}: {before}% strânși acum, {after}% după.",
-        "count": "De câte ori ai scos bani din Lacăt luna asta: {n}."
-      },
-      "reasonTitle": "De ce ai nevoie de ei?",
-      "reasons": {
+      "mirrorIntro": "Banii nu sunt blocați. Îți arătăm doar ce se schimbă, înainte să decizi.",
+      "reasonLabel": "Pentru ce ai nevoie de ei?",
+      "reason": {
         "health": "Sănătate",
-        "bill": "O factură sau o reparație",
-        "unexpected": "Ceva neprevăzut",
+        "bill": "Factură sau reparație",
+        "unexpected": "Cheltuială neprevăzută",
         "want": "Ceva ce îmi doresc"
       },
-      "noteLabel": "Vrei să adaugi ceva? (opțional)",
-      "outcomeNow": "Îi primești imediat, până la {max}. Merge o dată pe lună.",
-      "outcomeWant": "Sunt banii tăi. Primești toți cei {amount} în ziua {day}, la 24 de ore după ce ceri.",
-      "outcomeUsed": "Ai folosit deja scoaterea imediată luna asta, așa că aștepți 24 de ore: toți cei {amount} în ziua {day}."
+      "mirror": "Deblochezi {amount}: {goal} trece de la {before}% la {after}%.",
+      "firstUnlock": "E prima deblocare luna asta.",
+      "nthUnlock": "E a {n}-a deblocare luna asta.",
+      "routeNow": "Banii intră pe loc în contul curent. Restul rămâne în Lacăt.",
+      "routeWait": "Peste {max}, toți banii ies după 24 de ore, în ziua {day}.",
+      "routeWant": "Toți banii ies după 24 de ore, în ziua {day}.",
+      "note": "O notă scurtă, dacă vrei",
+      "routeUsed": "Urgența e folosită luna asta, așa că toți banii ies după 24 de ore, în ziua {day}."
     },
     "unlock": {
       "title": "Ai ajuns la ziua {day} fără ei.",

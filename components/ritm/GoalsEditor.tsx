@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, X } from "lucide-react";
+import { Minus, Plus, X } from "lucide-react";
 import { useId } from "react";
 import { goalMonthly, goalsPlan, RULES, type Goal } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
@@ -15,6 +15,10 @@ export const fromDraft = (draft: GoalDraft): Goal => ({ name: draft.name.trim(),
 
 const INPUT =
   "min-h-11 w-full rounded-xl border border-atlas-line bg-white px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ritm";
+/** The amount's − / + buttons move it by this many lei. */
+const GOAL_STEP = 100;
+const STEP_BUTTON =
+  "flex size-11 shrink-0 items-center justify-center rounded-full border border-atlas-line bg-white text-ritm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm";
 
 /**
  * One or more savings goals, each with the time to reach it. Shows what they ask for each month
@@ -83,17 +87,37 @@ export function GoalsEditor({
                 <label htmlFor={`${id}-amount`} className="text-sm font-medium">
                   {t("ritm.onboarding.s3.goalAmount")}
                 </label>
-                <input
-                  id={`${id}-amount`}
-                  type="number"
-                  inputMode="decimal"
-                  min={1}
-                  value={goal.amount}
-                  // No minus sign: a goal is never negative.
-                  onChange={(e) => update(i, { amount: e.target.value.replace(/-/g, "") })}
-                  onKeyDown={(e) => ["-", "+", "e", "E"].includes(e.key) && e.preventDefault()}
-                  className={INPUT}
-                />
+                {/* − / + move the amount by 100 lei; typing any amount still works. */}
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => update(i, { amount: String(Math.max(GOAL_STEP, (Math.ceil(Number(goal.amount) / GOAL_STEP) || 1) * GOAL_STEP - GOAL_STEP)) })}
+                    aria-label={t("ritm.onboarding.s3.goalMinus", { step: GOAL_STEP })}
+                    className={STEP_BUTTON}
+                  >
+                    <Minus className="size-5" aria-hidden="true" />
+                  </button>
+                  <input
+                    id={`${id}-amount`}
+                    type="number"
+                    inputMode="decimal"
+                    min={1}
+                    step={GOAL_STEP}
+                    value={goal.amount}
+                    // No minus sign: a goal is never negative.
+                    onChange={(e) => update(i, { amount: e.target.value.replace(/-/g, "") })}
+                    onKeyDown={(e) => ["-", "+", "e", "E"].includes(e.key) && e.preventDefault()}
+                    className={cn(INPUT, "min-w-0 flex-1 text-center tabular-nums")}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => update(i, { amount: String((Math.floor(Number(goal.amount) / GOAL_STEP) || 0) * GOAL_STEP + GOAL_STEP) })}
+                    aria-label={t("ritm.onboarding.s3.goalPlus", { step: GOAL_STEP })}
+                    className={STEP_BUTTON}
+                  >
+                    <Plus className="size-5" aria-hidden="true" />
+                  </button>
+                </div>
               </div>
 
               <div className="flex flex-col gap-1.5">
