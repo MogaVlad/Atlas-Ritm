@@ -2,10 +2,15 @@
 
 import { create } from "zustand";
 import { createJSONStorage, persist, type StateStorage } from "zustand/middleware";
-import { DEFAULT_RITM_SETTINGS, ESSENTIAL_AMOUNTS, GOAL } from "@/lib/data/persona";
-import { SCENARIO } from "@/lib/data/scenario";
+import { DEFAULT_RITM_SETTINGS, ESSENTIAL_AMOUNTS, GOAL, NET_SALARY } from "@/lib/data/persona";
+import { historyFor, scenarioFor } from "@/lib/data/scenario";
 import {
   alertActions,
+  habitNote,
+  lockSuggestion,
+  planEdit,
+  requestUnlockWithReason,
+  usualDailySpend,
   checkPensionContribution,
   computePace,
   createLock,
@@ -56,7 +61,17 @@ export interface HeadsUpNotification {
   severity: Severity;
   reasons: Reason[];
   actions: AlertAction[];
+  /** "habit": the extra pace is mostly the user's habits and the money lasts: the soft note (section 11 F). */
+  variant?: "habit";
+  /** The habits behind a soft note, biggest first. */
+  habits?: string[];
 }
+
+/** Month 1 is the scripted first month; month 2 has month 1 as its history (habits, personal pace). */
+export type DemoMonth = 1 | 2;
+
+/** What editing the Lock did: applied now, or a lower Lock that needs a reason first (section 11 A). */
+export type LockEditResult = { kind: "applied" } | { kind: "needsReason"; decrease: number } | { kind: "notLocked" };
 
 /** A purchase the user plans this month (onboarding step 2), e.g. shoes for 280 lei. */
 export interface PlannedPurchase {
@@ -111,6 +126,10 @@ interface PersistedState {
   transfers: AccountTransfer[];
   /** Scripted payments declined because the current account couldn't cover them (never below 0). */
   declinedIds: string[];
+  /** Which scripted month the demo is in. */
+  month: DemoMonth;
+  /** Month 1's early exits from the Lock, for month 2's summary ("Last month you unlocked..."). */
+  lastMonthUnlocks: UnlockRecord[];
 }
 
 interface DerivedState {
@@ -125,6 +144,8 @@ interface DerivedState {
   pension: PensionSummary;
   /** The month so far, for the day-30 summary screen. */
   summary: DaySummary;
+  /** Month 2 only: last month's usual day and a Lock that fits real spending (the plan suggestion). */
+  lastMonth: { usualDaily: number; suggestedLock: number } | null;
 }
 
 interface Actions {
@@ -154,6 +175,18 @@ interface Actions {
   setEssentials: (categories: Category[]) => void;
   /** Move money to the Lock (creates it if needed). */
   lockMoney: (amount: number, unlockDay?: Day) => void;
+  /**
+   * Change the Lock (section 11 A). More money or a later day applies now (never more than the
+   * current account holds). A lower amount returns needsReason: it goes through unlockWithReason.
+   */
+  editLock: (amount: number, unlockDay: Day) => LockEditResult;
+  /**
+   * Take `amount` out of the Lock with a reason (the mirror). Health, bill or unexpected, up to 300
+   * lei, first time this month: released now. Otherwise released 24 h later; the rest stays locked.
+   */
+  unlockWithReason: (amount: number, reason: UnlockReason, note?: string) => "emergency" | "wait" | "notLocked";
+  /** Demo: switch to month 1 or 2. Starts that month on day 0; settings and goals stay. */
+  setMonth: (month: DemoMonth) => void;
   /** Early unlock of the whole Lock, released 24 h later. The reason is recorded. */
   requestUnlock: (reason?: UnlockReason, note?: string) => void;
   /** Up to 300 lei now, once a month (health, bill or unexpected cost). The reason is recorded. */
@@ -236,10 +269,10 @@ export function migrateSaved(persisted: unknown, version: number): unknown {
   return { ...saved, ritm };
 }
 
-function allTransactions(s: Pick<PersistedState, "added" | "plannedIds" | "declinedIds">): Transaction[] {
+function allTransactions(s: Pick<PersistedState, "added" | "plannedIds" | "declinedIds" | "month">): Transaction[] {
   const planned = new Set(s.plannedIds);
   const declined = new Set(s.declinedIds);
-  return [...SCENARIO, ...s.added]
+  return [...scenarioFor(s.month), ...s.added]
     .filter((t) => !declined.has(t.id))
     .map((t) => (planned.has(t.id) ? { ...t, planned: true } : t));
 }
@@ -259,7 +292,7 @@ function currentBalance(s: PersistedState, day: Day): number {
  */
 function settleDays(s: PersistedState, from: Day, to: Day): PersistedState {
   if (to <= from) return s;
-  const reached = SCENARIO.filter((t) => t.day > from && t.day <= to);
+  const reached = scenarioFor(s.month).filter((t) => t.day > from && t.day <= to);
   const reachedIds = new Set(reached.map((t) => t.id));
   let next: PersistedState = { ...s, declinedIds: s.declinedIds.filter((id) => !reachedIds.has(id)) };
   for (let day = from + 1; day <= to; day++) {
@@ -283,8 +316,9 @@ function engineSettings(s: Pick<PersistedState, "ritm" | "lock">): RitmSettings 
 function derive(s: PersistedState): DerivedState {
   const transactions = allTransactions(s);
   const declinedIds = new Set(s.declinedIds);
-  const declined = SCENARIO.filter((t) => declinedIds.has(t.id) && t.day <= s.demoDay);
-  const pace = computePace(transactions, engineSettings(s), s.demoDay);
+  const declined = scenarioFor(s.month).filter((t) => declinedIds.has(t.id) && t.day <= s.demoDay);
+  const history = historyFor(s.month);
+  const pace = computePace(transactions, engineSettings(s), s.demoDay, history);
   const flow = transactions.filter((t) => t.day <= s.demoDay).reduce((sum, t) => sum - t.amount, 0);
   const movedToSavings = s.savings - OPENING_SAVINGS;
   const balances = { current: OPENING_CURRENT + flow - movedToSavings, savings: s.savings };
@@ -296,11 +330,15 @@ function derive(s: PersistedState): DerivedState {
     balances,
     pension,
     summary: {
-      ...monthSummary(transactions, engineSettings(s), s.demoDay),
+      ...monthSummary(transactions, engineSettings(s), s.demoDay, history),
       keptSaved: balances.savings,
       pensionTotal: pension.total,
       currentBalance: balances.current,
     },
+    lastMonth:
+      history.length > 0
+        ? { usualDaily: usualDailySpend(history, s.ritm), suggestedLock: lockSuggestion(history, s.ritm, NET_SALARY) }
+        : null,
   };
 }
 
@@ -319,7 +357,14 @@ function evaluateDay(s: PersistedState): PersistedState {
       next.savings = next.savings + amount;
     }
   }
-  if (next.lock) next.lock = resolveLock(next.lock, next.demoDay);
+  if (next.lock) {
+    const before = next.lock;
+    next.lock = resolveLock(before, next.demoDay);
+    // A partial early unlock came through: that part goes back to the current account now.
+    if (before.status === "unlockRequested" && next.lock.status === "locked" && next.lock.amount < before.amount) {
+      next.savings = next.savings - (before.amount - next.lock.amount);
+    }
+  }
 
   // Payday again: the Speed bump switches off.
   if (next.demoDay === RULES.cycleLength && next.ritm.speedBump) {
@@ -334,8 +379,11 @@ function evaluateDay(s: PersistedState): PersistedState {
   }
 
   if (!next.ritm.enabled || !next.ritm.headsUp) return next;
-  const pace = computePace(allTransactions(next), engineSettings(next), next.demoDay);
+  const history = historyFor(next.month);
+  const transactions = allTransactions(next);
+  const pace = computePace(transactions, engineSettings(next), next.demoDay, history);
   if (shouldNotify(pace, next.alertMemory, next.demoDay)) {
+    const note = habitNote(pace, transactions, history, engineSettings(next), next.demoDay);
     next.notifications = [
       ...next.notifications,
       {
@@ -344,7 +392,9 @@ function evaluateDay(s: PersistedState): PersistedState {
         day: next.demoDay,
         severity: pace.severity,
         reasons: pace.reasons,
-        actions: alertActions(pace, next.alertMemory, next.lock?.unlockDay ?? next.ritm.lock.unlockDay),
+        // The soft note asks for nothing: it's the user's usual rhythm and the money lasts.
+        actions: note.soft ? [] : alertActions(pace, next.alertMemory, next.lock?.unlockDay ?? next.ritm.lock.unlockDay),
+        ...(note.soft ? { variant: "habit" as const, habits: note.merchants } : {}),
       },
     ];
     next.alertMemory = {
@@ -356,6 +406,9 @@ function evaluateDay(s: PersistedState): PersistedState {
   }
   return next;
 }
+
+/** Month 1 in the demo script ends with one unlock for "Something I want" (section 11 F). */
+const SCRIPTED_MONTH1_UNLOCKS: UnlockRecord[] = [{ day: 12, reason: "want", amount: 200, path: "wait" }];
 
 const INITIAL: PersistedState = {
   locale: "en",
@@ -377,6 +430,8 @@ const INITIAL: PersistedState = {
   unlockReasons: [],
   transfers: [],
   declinedIds: [],
+  month: 1,
+  lastMonthUnlocks: [],
 };
 
 /** localStorage that never throws (private windows, blocked storage, server render). */
@@ -424,6 +479,8 @@ const pick = (s: BankState): PersistedState => ({
   unlockReasons: s.unlockReasons,
   transfers: s.transfers,
   declinedIds: s.declinedIds,
+  month: s.month,
+  lastMonthUnlocks: s.lastMonthUnlocks,
 });
 
 /* ─── store ───────────────────────────────────────────────────────────────── */
@@ -535,6 +592,53 @@ export const useBank = create<BankState>()(
               ? { ...s.lock, amount: s.lock.amount + amount }
               : createLock(amount, unlockDay ?? s.ritm.lock.unlockDay);
             return { ...s, lock, savings: s.savings + amount, lockPromptSeen: s.lock ? s.lockPromptSeen : false };
+          }),
+
+        editLock: (amount, unlockDay) => {
+          const s = get();
+          if (!s.lock || s.lock.status !== "locked") return { kind: "notLocked" };
+          const old = { ...s.ritm, lock: { amount: s.lock.amount, unlockDay: s.lock.unlockDay } };
+          const next = { ...old, lock: { amount, unlockDay: Math.max(unlockDay, s.lock.unlockDay) } };
+          const result = planEdit(old, next, s.demoDay);
+          if (result.kind === "needsUnlock") return { kind: "needsReason", decrease: result.lockDecrease };
+          update((p) => {
+            if (!p.lock) return p;
+            // More money: never more than the current account holds.
+            const more = Math.min(Math.max(0, amount - p.lock.amount), Math.max(0, currentBalance(p, p.demoDay)));
+            const lock = { ...p.lock, amount: p.lock.amount + more, unlockDay: result.settings.lock.unlockDay };
+            return { ...p, lock, savings: p.savings + more, ritm: { ...p.ritm, lock: { amount: lock.amount, unlockDay: lock.unlockDay } } };
+          });
+          return { kind: "applied" };
+        },
+
+        unlockWithReason: (amount, reason, note) => {
+          const s = get();
+          if (!s.lock) return "notLocked";
+          const decision = requestUnlockWithReason(s.lock, s.demoDay, { amount, reason, note });
+          if (!decision.ok) return "notLocked";
+          update((p) => ({
+            ...p,
+            lock: decision.lock,
+            savings: decision.path === "emergency" ? p.savings - decision.released : p.savings,
+            unlockReasons: [...p.unlockReasons, decision.record],
+          }));
+          return decision.path;
+        },
+
+        setMonth: (month) =>
+          update((s) => {
+            if (s.month === month) return s;
+            // Month 2 remembers month 1's Lock exits; with none, the scripted "Something I want" one.
+            const lastMonthUnlocks: UnlockRecord[] =
+              month === 2 ? (s.unlockReasons.length > 0 ? s.unlockReasons : SCRIPTED_MONTH1_UNLOCKS) : [];
+            return {
+              ...INITIAL,
+              locale: s.locale,
+              ritm: s.ritm,
+              raiseCommitment: s.raiseCommitment,
+              month,
+              lastMonthUnlocks,
+            };
           }),
 
         requestUnlock: (reason, note) =>

@@ -5,7 +5,7 @@ import { useHydrated } from "@/components/ritm/useHydrated";
 import { raiseSavingPlan, type PacePoint } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
 import { useHtmlLang, useLocale, useT } from "@/lib/i18n";
-import { useBank } from "@/lib/store/useBank";
+import { useBank, type UnlockRecord } from "@/lib/store/useBank";
 
 /** Example raise for the commitment card (illustrative). */
 const EXAMPLE_RAISE = 500;
@@ -19,6 +19,10 @@ export default function SummaryScreen() {
   const summary = useBank((s) => s.summary);
   const commitment = useBank((s) => s.raiseCommitment);
   const setCommitment = useBank((s) => s.setRaiseCommitment);
+  const unlocks = useBank((s) => s.unlockReasons);
+  const lastUnlocks = useBank((s) => s.lastMonthUnlocks);
+  const lastMonth = useBank((s) => s.lastMonth);
+  const lockAmount = useBank((s) => s.lock?.amount ?? s.ritm.lock.amount);
 
   if (!hydrated) return null;
   const lei = (n: number) => formatLei(n, locale);
@@ -49,6 +53,31 @@ export default function SummaryScreen() {
           {summary.pensionTotal > 0 && <Row label={t("ritm.summary.pension")} value={lei(summary.pensionTotal)} />}
           <Row label={t("ritm.summary.spent")} value={lei(summary.spent)} />
         </dl>
+
+        {/* Section 11 C: the mirror comes back. Facts and the user's own reasons, never blame. */}
+        {unlocks.length > 0 && (
+          <section aria-labelledby="sum-unlocks" className="flex flex-col gap-3">
+            <h2 id="sum-unlocks" className="font-display text-lg font-semibold">
+              {t("ritm.summary.unlocksTitle")}
+            </h2>
+            <UnlockList records={unlocks} lei={lei} t={t} />
+            <WantLine records={unlocks} lockAmount={lockAmount} lei={lei} t={t} when="this" />
+          </section>
+        )}
+
+        {/* Section 11 F: from the 2nd month Ritm knows the user's real rhythm. */}
+        {lastMonth && (
+          <section aria-labelledby="sum-last" className="flex flex-col gap-3 rounded-3xl bg-white p-5 ring-1 ring-atlas-line">
+            <h2 id="sum-last" className="font-display text-lg font-semibold">
+              {t("ritm.summary.lastTitle")}
+            </h2>
+            <p className="text-sm">{t("ritm.summary.lastUsual", { usual: lei(lastMonth.usualDaily) })}</p>
+            {lastMonth.suggestedLock > 0 && (
+              <p className="text-sm">{t("ritm.summary.lastLock", { lock: lei(lastMonth.suggestedLock) })}</p>
+            )}
+            {lastUnlocks.length > 0 && <WantLine records={lastUnlocks} lockAmount={lockAmount} lei={lei} t={t} when="last" />}
+          </section>
+        )}
 
         <section aria-labelledby="sum-pace" className="flex flex-col gap-3">
           <h2 id="sum-pace" className="font-display text-lg font-semibold">
@@ -100,6 +129,54 @@ export default function SummaryScreen() {
         </section>
       </main>
     </>
+  );
+}
+
+type T = (key: string, values?: Record<string, string | number>) => string;
+
+function UnlockList({ records, lei, t }: { records: UnlockRecord[]; lei: (n: number) => string; t: T }) {
+  return (
+    <ul className="divide-y divide-atlas-line rounded-2xl border border-atlas-line bg-white px-4 text-sm">
+      {records.map((r, i) => (
+        <li key={i} className="flex min-h-12 items-center justify-between gap-3 py-2">
+          <span>
+            {t("ritm.summary.unlockItem", { day: r.day, reason: t(`ritm.lock.reason.${r.reason}`) })}
+            {r.note && <span className="block text-atlas-muted">“{r.note}”</span>}
+          </span>
+          <span className="text-right tabular-nums">
+            {lei(r.amount)}
+            <span className="block text-xs text-atlas-muted">{t(`ritm.summary.path.${r.path}`)}</span>
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** "You unlocked once for 'Something I want'. Keep the Lock at 500, or try 400?" Only facts and a question. */
+function WantLine({
+  records,
+  lockAmount,
+  lei,
+  t,
+  when,
+}: {
+  records: UnlockRecord[];
+  lockAmount: number;
+  lei: (n: number) => string;
+  t: T;
+  when: "this" | "last";
+}) {
+  const wants = records.filter((r) => r.reason === "want").length;
+  if (wants === 0 || lockAmount <= 0) return null;
+  return (
+    <p className="rounded-xl bg-ritm-tint px-4 py-3 text-sm">
+      {t(`ritm.summary.want.${when}${wants === 1 ? "One" : "Many"}`, {
+        n: wants,
+        lock: lei(lockAmount),
+        lower: lei(Math.max(50, lockAmount - 100)),
+      })}
+    </p>
   );
 }
 

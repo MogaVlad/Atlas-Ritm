@@ -6,13 +6,18 @@ import type { Day, MonthSummary, PacePoint, RitmSettings, Transaction } from "./
  * Day-30 summary: what was left on payday and how the pace went through the month.
  * Pure: the store adds the balances (kept saved, pension) next to it.
  */
-export function monthSummary(transactions: readonly Transaction[], settings: RitmSettings, day: Day): MonthSummary {
+export function monthSummary(
+  transactions: readonly Transaction[],
+  settings: RitmSettings,
+  day: Day,
+  history?: readonly Transaction[],
+): MonthSummary {
   const last = Math.min(RULES.cycleLength, Math.max(1, Math.round(day)));
   const points: PacePoint[] = [];
   let peak: MonthSummary["peak"] = null;
 
   for (let d = 1; d <= last; d++) {
-    const pace = computePace(transactions, settings, d);
+    const pace = computePace(transactions, settings, d, history);
     points.push({ day: d, pctSpent: pace.pctSpent, pctMonthPassed: pace.pctMonthPassed, severity: pace.severity });
     const judged = pace.pctSpent >= RULES.pace.minPctSpent;
     if (judged && (peak === null || pace.paceRatio > peak.paceRatio)) {
@@ -20,7 +25,7 @@ export function monthSummary(transactions: readonly Transaction[], settings: Rit
     }
   }
 
-  const today = computePace(transactions, settings, last);
+  const today = computePace(transactions, settings, last, history);
   return {
     day: last,
     reachedPayday: last === RULES.cycleLength,

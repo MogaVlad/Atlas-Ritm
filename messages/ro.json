@@ -54,7 +54,9 @@
         "underThreshold": "Sub {threshold}, deci fără Pauză.",
         "willPause": "Pauza va opri plata înainte să confirmi.",
         "speedBumpOff": "Pauza e oprită, așa că Ritm nu oprește plata asta. Pornește-o ca să pună pe pauză plățile mari online."
-      }
+      },
+      "month": "Luna {n}",
+      "monthLabel": "Luna din demo"
     },
     "summaryPrompt": {
       "title": "Prima lună cu Ritm s-a încheiat",
@@ -456,6 +458,11 @@
         "none": "Alege cel puțin o plată",
         "confirm": "Marchează ca planificate ({count})",
         "back": "Înapoi"
+      },
+      "habit": {
+        "title": "Ritmul tău obișnuit",
+        "body": "Mare parte sunt obiceiurile tale: {habits}. În ziua ta obișnuită, banii ajung până la salariu.",
+        "ok": "Am înțeles"
       }
     },
     "speedBump": {
@@ -475,7 +482,15 @@
       "lockedDone": "Gata. {amount} stau în Lacăt până în ziua {day}.",
       "backToShop": "Înapoi la magazin",
       "backToAtlas": "Înapoi la Atlas",
-      "holdHint": "Ține apăsat {seconds} secunde ca să plătești."
+      "holdHint": "Ține apăsat {seconds} secunde ca să plătești.",
+      "notNowHint": "Azi poți cheltui în continuare {safe}.",
+      "moveToLockNumber": "+~{interest} dobândă până în ziua {day}, apoi îi ai înapoi.",
+      "pensionNumber": "Până la {tax} impozit în minus. Blocați până la pensie.",
+      "detailsTitle": "De unde vin cifrele",
+      "detailsSafe": "Cât poți cheltui azi: ce ți-a rămas, împărțit pe zilele până la salariu, minus ce ai cheltuit azi.",
+      "detailsLock": "Dobânda: o estimare cu {rate}% pe an la economii, după impozitul de 10%, până în ziua {day}.",
+      "detailsPension": "Pilonul III: ce pui se scade din venitul impozabil, până la {limit} pe an, deci impozitul economisit e 10% din sumă. Nu se promite niciun randament.",
+      "notNowHintUsed": "Dacă renunți, restul lunii rămâne pe drumul bun."
     },
     "tab": {
       "title": "Ritm",
@@ -508,7 +523,11 @@
         "noConsent": "Bifează mai întâi că ai înțeles.",
         "invalidAmount": "Scrie o sumă mai mare de 0.",
         "notEnoughMoney": "Nu ai destui bani pentru suma asta."
-      }
+      },
+      "step": "Pasul {step} din {total}",
+      "getBig": "Până la {tax} impozit în minus",
+      "next": "Mai departe",
+      "back": "Înapoi"
     },
     "lock": {
       "title": "Lacătul tău",
@@ -552,7 +571,14 @@
       "routeWait": "Peste {max}, toți banii ies după 24 de ore, în ziua {day}.",
       "routeWant": "Toți banii ies după 24 de ore, în ziua {day}.",
       "note": "O notă scurtă, dacă vrei",
-      "routeUsed": "Urgența e folosită luna asta, așa că toți banii ies după 24 de ore, în ziua {day}."
+      "routeUsed": "Urgența e folosită luna asta, așa că toți banii ies după 24 de ore, în ziua {day}.",
+      "changeTitle": "Schimbă Lacătul",
+      "changeHint": "Mai mulți bani sau o zi mai târzie se aplică imediat. Mai puțin trece printr-un motiv, ca la scoaterea banilor.",
+      "changeRule": "Mai mult sau o zi mai târzie: imediat. Mai puțin: ești întrebat de ce și poate dura 24 de ore.",
+      "changeSave": "Salvează",
+      "changeSaved": "Salvat: {amount} până în ziua {day}.",
+      "lowerExplain": "Dacă micșorezi Lacătul, scoți {amount}, deci funcționează ca scoaterea banilor: spune-i lui Ritm de ce.",
+      "lowerConfirm": "Scoate {amount}"
     },
     "unlock": {
       "title": "Ai ajuns la ziua {day} fără ei.",
@@ -602,6 +628,14 @@
           "tradeoff": "Plătești mai puțin impozit acum, dar banii stau blocați până la pensie.",
           "note": "Atlas Pensii e fondul Atlas. Poți compara fondurile pe site-ul ASF."
         }
+      },
+      "others": "Alte variante",
+      "featured": {
+        "today": "Azi, la {age} de ani",
+        "retirement": "La pensie",
+        "taxLabel": "Pentru {amount}, impozitul scade cu",
+        "taxValue": "până la {tax}",
+        "taxNote": "Deducerea merge până la {limit} pe an (400 EUR), împărțită cu asigurarea privată de sănătate."
       }
     },
     "summary": {
@@ -622,7 +656,22 @@
       "raiseTitle": "La următoarea mărire de salariu, pui jumătate deoparte automat?",
       "raiseExample": "De exemplu, la o mărire de {raise}: {saved} merg în economii, iar {kept} rămân la tine.",
       "raiseOn": "Pornit. Îl poți opri oricând.",
-      "raiseOff": "Oprit. Nimic nu se mută fără acordul tău."
+      "raiseOff": "Oprit. Nimic nu se mută fără acordul tău.",
+      "unlocksTitle": "Bani scoși din Lacăt luna asta",
+      "unlockItem": "Ziua {day} · {reason}",
+      "path": {
+        "emergency": "imediat",
+        "wait": "după 24 de ore"
+      },
+      "want": {
+        "thisOne": "Ai scos bani o dată pentru „Ceva ce îmi doresc”. Luna viitoare: păstrezi Lacătul la {lock} sau încerci {lower}?",
+        "thisMany": "Ai scos bani de {n} ori pentru „Ceva ce îmi doresc”. Luna viitoare: păstrezi Lacătul la {lock} sau încerci {lower}?",
+        "lastOne": "Luna trecută ai scos bani o dată pentru „Ceva ce îmi doresc”. Păstrezi Lacătul la {lock} sau încerci {lower}?",
+        "lastMany": "Luna trecută ai scos bani de {n} ori pentru „Ceva ce îmi doresc”. Păstrezi Lacătul la {lock} sau încerci {lower}?"
+      },
+      "lastTitle": "Față de luna trecută",
+      "lastUsual": "Luna trecută, ziua ta obișnuită a fost cam {usual}. Acum Ritm îți compară ritmul cu asta, nu cu o împărțire egală.",
+      "lastLock": "Un Lacăt potrivit cu cheltuielile tale reale: {lock} pe lună."
     },
     "goals": {
       "label": "Scopul {n}",
@@ -640,7 +689,9 @@
       "totalValue": "{amount} pe lună · {pct}% din salariu",
       "editLink": "Schimbă-ți scopurile",
       "editTitle": "Scopurile tale",
-      "save": "Salvează scopurile"
+      "save": "Salvează scopurile",
+      "lockCovers": "Lacătul tău ({lock} pe lună) acoperă scopul la timp.",
+      "lockReach": "Cu Lacătul tău ({lock} pe lună) ajungi acolo în {months} luni, pe la {date}."
     },
     "features": {
       "on": "Pornit",
