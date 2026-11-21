@@ -8,6 +8,7 @@ import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
 import { useBank } from "@/lib/store/useBank";
 import { cn } from "@/lib/utils";
+import { useFocusTrap } from "./useFocusTrap";
 
 /** Same limits as CHAT_LIMITS in lib/chat/askRitm.ts (not imported: that file pulls the SDK into the browser). */
 const MAX_CHARS = 500;
@@ -48,6 +49,9 @@ export function AskRitmSheet({
   const titleId = useId();
   const inputId = useId();
   const heading = useRef<HTMLHeadingElement>(null);
+  const dialog = useRef<HTMLElement>(null);
+  // Before the effect that focuses the heading, so the trap remembers the "Ask Ritm" button.
+  useFocusTrap(dialog);
   const end = useRef<HTMLDivElement>(null);
   const inFlight = useRef<AbortController | null>(null);
 
@@ -130,6 +134,7 @@ export function AskRitmSheet({
   return (
     <div className="absolute inset-0 z-50 flex flex-col justify-end bg-atlas-ink/40" onClick={close}>
       <motion.section
+        ref={dialog}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
