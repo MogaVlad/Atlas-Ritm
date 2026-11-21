@@ -2,13 +2,25 @@
 
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
 import { useBank, type HeadsUpNotification } from "@/lib/store/useBank";
 import { HeadsUpSheet } from "./HeadsUpSheet";
+import { MonthSummaryDialog, PaydayWindow } from "./MonthSummaryDialog";
 import { PaceBar } from "./PaceBar";
 import { SafeToSpend } from "./SafeToSpend";
+
+/**
+ * The payday window was already shown since the demo reached day 30. Module-level, so going to
+ * another page and back doesn't open it again; leaving day 30 resets it.
+ */
+let paydayShown = false;
+
+const isPayday = () => {
+  const s = useBank.getState();
+  return s.demoDay === s.pace.cycleLength;
+};
 
 /** Ritm on the Atlas Home screen: what's safe today, the month's pace, level and Lock. */
 export function RitmCard() {
@@ -19,8 +31,33 @@ export function RitmCard() {
   const lock = useBank((s) => s.lock);
   const latest = useBank((s) => s.notifications.at(-1));
   const [sheet, setSheet] = useState<HeadsUpNotification | null>(null);
+  const [summaryOpen, setSummaryOpen] = useState(false);
+  // Already on day 30 when Home opens (e.g. back from another page) → show it if not seen yet.
+  const [paydayOpen, setPaydayOpen] = useState(() => isPayday() && !paydayShown);
   // Next keeps hidden routes alive (<Activity>): don't come back to a sheet left open.
-  useLayoutEffect(() => () => setSheet(null), []);
+  useLayoutEffect(
+    () => () => {
+      setSheet(null);
+      setSummaryOpen(false);
+      setPaydayOpen(false);
+    },
+    [],
+  );
+
+  // Arriving on payday (day 30) opens the "see how the month went" window once.
+  useEffect(
+    () =>
+      useBank.subscribe((s, prev) => {
+        if (s.demoDay === prev.demoDay) return;
+        if (s.demoDay === s.pace.cycleLength) {
+          if (!paydayShown) setPaydayOpen(true);
+        } else {
+          paydayShown = false;
+          setPaydayOpen(false);
+        }
+      }),
+    [],
+  );
 
   return (
     <section aria-labelledby="ritm-card-title" className="flex flex-col gap-5 rounded-3xl bg-white p-5 ring-1 ring-atlas-line">
@@ -55,12 +92,13 @@ export function RitmCard() {
       )}
 
       {pace.dayOfCycle === pace.cycleLength && (
-        <Link
-          href="/ritm/summary"
+        <button
+          type="button"
+          onClick={() => setSummaryOpen(true)}
           className="flex min-h-12 items-center justify-center rounded-full border border-atlas-line px-5 font-medium text-ritm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm"
         >
           {t("ritm.card.summaryCta")}
-        </Link>
+        </button>
       )}
 
       {latest && (
@@ -74,6 +112,20 @@ export function RitmCard() {
       )}
 
       {sheet && <HeadsUpSheet notification={sheet} onClose={() => setSheet(null)} />}
+      {paydayOpen && !summaryOpen && (
+        <PaydayWindow
+          onOpenSummary={() => {
+            paydayShown = true;
+            setPaydayOpen(false);
+            setSummaryOpen(true);
+          }}
+          onClose={() => {
+            paydayShown = true;
+            setPaydayOpen(false);
+          }}
+        />
+      )}
+      {summaryOpen && <MonthSummaryDialog onClose={() => setSummaryOpen(false)} />}
     </section>
   );
 }

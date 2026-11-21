@@ -494,6 +494,12 @@
       }
     },
     "summary": {
+      "window": {
+        "body": "Ți-au rămas {left} din banii de cheltuit. Uită-te cum a mers luna ta.",
+        "bodyOver": "Luna asta ai cheltuit peste plan. Uită-te cum a mers, fără grabă.",
+        "later": "Mai târziu",
+        "close": "Închide rezumatul"
+      },
       "titlePayday": "Ai ajuns la salariu.",
       "titleSoFar": "Luna ta, până în ziua {day}",
       "leftLabel": "Ți-au rămas din banii de cheltuit",

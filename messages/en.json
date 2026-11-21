@@ -494,6 +494,12 @@
       }
     },
     "summary": {
+      "window": {
+        "body": "You have {left} of your spending money left. See how your month went.",
+        "bodyOver": "You spent more than planned this month. Take a look at how it went.",
+        "later": "Later",
+        "close": "Close the summary"
+      },
       "titlePayday": "You made it to payday.",
       "titleSoFar": "Your month, up to day {day}",
       "leftLabel": "Left of your spending money",
