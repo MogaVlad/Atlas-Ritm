@@ -191,6 +191,42 @@
         "pool": "Bani de cheltuit luna asta",
         "poolHint": "Salariul, minus plățile fixe și suma pusă deoparte."
       }
+    },
+    "card": {
+      "title": "Ritm",
+      "lock": "{amount} puși deoparte, se deblochează în ziua {day}.",
+      "headsUpCta": "Vezi de ce te-a atenționat Ritm"
+    },
+    "reason": {
+      "pctSpent": "Ziua {day}: ai folosit deja {pct}% din banii de cheltuit.",
+      "runOut": "În ritmul ăsta, banii se termină în ziua {day}, cu {daysBefore} zile înainte de salariu.",
+      "burst": "{pct}% din banii de cheltuit s-au dus în ultimele 2 zile."
+    },
+    "headsUp": {
+      "tag": "Atenționare · ziua {day}",
+      "title": {
+        "ok": "Ești în ritm",
+        "watch": "Cheltui puțin mai repede decât trece luna",
+        "spike": "Banii se duc mai repede decât zilele"
+      },
+      "intro": "Poți face ceva acum, dintr-o atingere. Sau nimic, tu decizi.",
+      "actions": {
+        "moveToLock": "Mută {amount} în Lacăt",
+        "enableSpeedBump": "Pornește Pauza până la salariu",
+        "markPlanned": "{merchant}, {amount}, era planificată"
+      },
+      "hint": {
+        "moveToLock": "Banii stau deoparte și se deblochează singuri în ziua {day}.",
+        "enableSpeedBump": "Înainte de plățile online mari îți arătăm cifrele și confirmi după 5 secunde.",
+        "markPlanned": "Nu mai intră în calculul ritmului."
+      },
+      "done": {
+        "moveToLock": "Gata. Am mutat {amount} în Lacăt, până în ziua {day}.",
+        "enableSpeedBump": "Gata. Pauza e pornită până la salariu.",
+        "markPlanned": "Gata. {merchant} nu mai intră în ritm."
+      },
+      "later": "Nu acum",
+      "close": "Închide"
     }
   }
 }
