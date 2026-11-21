@@ -538,6 +538,12 @@
       "consent": "Înțeleg că banii aceștia sunt pentru pensie și nu îi pot folosi înainte.",
       "contribute": "Contribui cu {amount}",
       "notNow": "Nu acum",
+      "donePopup": {
+        "title": "Gata! {amount} au ajuns în Atlas Pensii",
+        "tax": "Impozitul tău scade cu până la {tax}",
+        "note": "Banii rămân investiți pentru pensie. Atlas Pensii e fondul Atlas; poți compara toate fondurile pe site-ul ASF.",
+        "ok": "Am înțeles"
+      },
       "done": "Gata. {amount} au mers la Atlas Pensii. Impozitul tău scade cu până la {tax}.",
       "error": {
         "noConsent": "Bifează mai întâi că ai înțeles.",

@@ -175,6 +175,10 @@ test("after the money goes to Pillar III, Back to Atlas leads home and back does
   await page.getByRole("checkbox", { name: m.ritm.pension.consent }).check();
   await page.getByRole("button", { name: starts(fill(m.ritm.pension.contribute, { amount: "" })) }).click();
 
+  // The "Done" popup confirms the contribution; closing it shows the Speed bump again.
+  const done = page.getByRole("dialog", { name: starts(m.ritm.pension.donePopup.title.split("{")[0]) });
+  await expect(done).toBeVisible();
+  await done.getByRole("button", { name: m.ritm.pension.donePopup.ok }).click();
   await speedBump.getByRole("button", { name: m.ritm.speedBump.backToAtlas }).click();
   await expect(page).toHaveURL(/localhost:3000\/(\?.*)?$/);
   await page.goBack();

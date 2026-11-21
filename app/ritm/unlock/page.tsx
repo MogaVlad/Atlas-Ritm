@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLayoutEffect, useState, type ReactNode } from "react";
+import { PensionDoneDialog } from "@/components/ritm/PensionDoneDialog";
 import { PensionExplainer } from "@/components/ritm/PensionExplainer";
 import { RitmBack } from "@/components/ritm/RitmBack";
 import { useHydrated } from "@/components/ritm/useHydrated";
@@ -28,18 +29,23 @@ export default function UnlockScreen() {
   const [keep, setKeep] = useState<number | null>(null);
   const [pensionOpen, setPensionOpen] = useState(false);
   const [pensioned, setPensioned] = useState<{ amount: number; taxSavedUpTo: number } | null>(null);
+  /** The "Done" popup right after the pension contribution is confirmed. */
+  const [doneOpen, setDoneOpen] = useState(false);
   // Next keeps this page alive while hidden: come back to the default.
   useLayoutEffect(
     () => () => {
       setKeep(null);
       setPensionOpen(false);
       setPensioned(null);
+      setDoneOpen(false);
     },
     [],
   );
 
   if (!hydrated) return null;
   const lei = (n: number) => formatLei(n, locale);
+  // All of the Lock may have gone to the pension, so every branch below shows the popup.
+  const donePopup = doneOpen && pensioned && <PensionDoneDialog result={pensioned} onClose={() => setDoneOpen(false)} />;
 
   if (!lock || lock.amount <= 0) {
     return (
@@ -51,6 +57,7 @@ export default function UnlockScreen() {
         ) : (
           <p className="text-atlas-muted">{t("ritm.unlock.empty")}</p>
         )}
+        {donePopup}
       </Screen>
     );
   }
@@ -150,9 +157,11 @@ export default function UnlockScreen() {
           onDone={(result) => {
             setPensionOpen(false);
             setPensioned(result);
+            setDoneOpen(true);
           }}
         />
       )}
+      {donePopup}
     </Screen>
   );
 }
