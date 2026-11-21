@@ -2,7 +2,7 @@
 
 import { X } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
-import { isCounted, type AlertAction } from "@/lib/engine";
+import { isCounted, RULES, type AlertAction } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
 import { useBank, type HeadsUpNotification } from "@/lib/store/useBank";
@@ -52,7 +52,7 @@ export function HeadsUpSheet({ notification, onClose }: Props) {
 
   const values = (a: AlertAction): Record<string, string | number> =>
     a.kind === "moveToLock"
-      ? { amount: formatLei(a.amount ?? 0, locale), day: unlockDay }
+      ? { amount: formatLei(a.amount ?? 0, locale), day: unlockDay, days: RULES.cycleLength - unlockDay + 1 }
       : a.kind === "markPlanned" && target
         ? { merchant: target.merchant, amount: formatLei(target.amount, locale) }
         : {};

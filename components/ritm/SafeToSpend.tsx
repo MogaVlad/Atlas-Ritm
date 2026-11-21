@@ -3,6 +3,16 @@
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
 
+/**
+ * The sentence under the number. 0 lei with money still left for the month means today's share
+ * is used up, not that the month is in trouble: say that, or "0 lei" next to "you'll reach payday
+ * comfortably" reads as a contradiction.
+ */
+export function safeLineKey(pace: { safeToSpendToday: number; remaining: number; severity: "ok" | "watch" | "spike" }): string {
+  if (pace.safeToSpendToday <= 0 && pace.remaining > 0 && pace.severity === "ok") return "ritm.safe.usedToday";
+  return `ritm.safe.line.${pace.severity}`;
+}
+
 type Props = {
   amount: number;
   /** One short sentence under the number, already translated. */
