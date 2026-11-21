@@ -36,6 +36,12 @@
           "body": "Ziua 30, cei 500 lei păstrați. Gata pentru rezumat."
         }
       }
+    },
+    "summaryPrompt": {
+      "title": "Prima lună cu Ritm s-a încheiat",
+      "body": "Ai fost în ritm {days} din {total} de zile. Vezi pe scurt cum a mers luna.",
+      "open": "Vezi rezumatul",
+      "later": "Mai târziu"
     }
   },
   "bank": {
@@ -327,7 +333,9 @@
         "planSalary": "Salariu",
         "planBills": "Plăți fixe",
         "planLock": "Pus deoparte",
-        "planPerDay": "Adică cam {amount} pe zi."
+        "planPerDay": "Adică cam {amount} pe zi.",
+        "goalMinus": "Scade {step} lei",
+        "goalPlus": "Adaugă {step} lei"
       }
     },
     "card": {

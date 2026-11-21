@@ -36,6 +36,12 @@
           "body": "Day 30, the 500 lei kept saved. Ready for the summary."
         }
       }
+    },
+    "summaryPrompt": {
+      "title": "Your first month with Ritm is done",
+      "body": "You were on pace {days} of {total} days. See how the month went.",
+      "open": "See the summary",
+      "later": "Later"
     }
   },
   "bank": {
@@ -327,7 +333,9 @@
         "planSalary": "Salary",
         "planBills": "Fixed bills",
         "planLock": "Put aside",
-        "planPerDay": "That's about {amount} a day."
+        "planPerDay": "That's about {amount} a day.",
+        "goalMinus": "{step} lei less",
+        "goalPlus": "{step} lei more"
       }
     },
     "card": {

@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, X } from "lucide-react";
+import { Minus, Plus, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   useEffect,
@@ -39,6 +39,11 @@ const LOCK_QUICK = [300, 500, 800];
 
 // shortcut: the store has no place for future planned purchases yet; they show here but aren't saved. Ask Cosma for addPlannedPurchase.
 type PlannedPurchase = { name: string; amount: number };
+
+/** The goal amount's − / + buttons move it by this many lei. */
+const GOAL_STEP = 100;
+const STEP_BUTTON =
+  "flex size-11 shrink-0 items-center justify-center rounded-full border border-atlas-line bg-white text-ritm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm";
 
 const INPUT =
   "min-h-11 w-full rounded-xl border border-atlas-line bg-white px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ritm";
@@ -443,15 +448,35 @@ export default function RitmOnboarding() {
                 id="goal-amount"
                 label={t("ritm.onboarding.s3.goalAmount")}
               >
-                <input
-                  id="goal-amount"
-                  type="number"
-                  inputMode="decimal"
-                  min={1}
-                  value={goalAmount}
-                  onChange={(e) => setGoalAmount(e.target.value)}
-                  className={INPUT}
-                />
+                {/* − / + move the goal by 100 lei; typing any amount still works. */}
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setGoalAmount(String(Math.max(GOAL_STEP, (Math.ceil(Number(goalAmount) / GOAL_STEP) || 1) * GOAL_STEP - GOAL_STEP)))}
+                    aria-label={t("ritm.onboarding.s3.goalMinus", { step: GOAL_STEP })}
+                    className={STEP_BUTTON}
+                  >
+                    <Minus className="size-5" aria-hidden="true" />
+                  </button>
+                  <input
+                    id="goal-amount"
+                    type="number"
+                    inputMode="decimal"
+                    min={1}
+                    step={GOAL_STEP}
+                    value={goalAmount}
+                    onChange={(e) => setGoalAmount(e.target.value)}
+                    className={cn(INPUT, "min-w-0 flex-1 text-center tabular-nums")}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setGoalAmount(String((Math.floor(Number(goalAmount) / GOAL_STEP) || 0) * GOAL_STEP + GOAL_STEP))}
+                    aria-label={t("ritm.onboarding.s3.goalPlus", { step: GOAL_STEP })}
+                    className={STEP_BUTTON}
+                  >
+                    <Plus className="size-5" aria-hidden="true" />
+                  </button>
+                </div>
               </Field>
               {goalError && (
                 <p role="alert" className="text-sm text-ritm-spike">
