@@ -69,7 +69,7 @@ describe("useBank", () => {
     const paid = store().addTransaction(jacket);
     store().clearNotifications();
     expect(store().notifications).toEqual([]);
-    expect(store().alertMemory.ignoredCount).toBe(1);
+    expect(store().alertMemory.ignoredCount).toBe(0); // clearing is not ignoring (#59)
     expect(store().clearedActivityIds).toContain(paid.id);
     expect(store().clearedActivityIds.some((id) => store().transactions.find((t) => t.id === id)?.category === "salary")).toBe(true);
 
@@ -77,6 +77,10 @@ describe("useBank", () => {
     store().setDemoDay(7);
     const later = store().addTransaction(jacket);
     expect(store().clearedActivityIds).not.toContain(later.id);
+
+    // A new Heads-up after clearing still arrives (48h after the last one).
+    store().setDemoDay(8);
+    expect(store().notifications).toHaveLength(1);
   });
 
   it("adding the jacket lowers safe to spend", () => {
