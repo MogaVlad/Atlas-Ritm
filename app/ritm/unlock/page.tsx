@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useLayoutEffect, useState, type ReactNode } from "react";
 import { PensionExplainer } from "@/components/ritm/PensionExplainer";
 import { RitmBack } from "@/components/ritm/RitmBack";
@@ -21,17 +22,16 @@ export default function UnlockScreen() {
   const lock = useBank((s) => s.lock);
   const day = useBank((s) => s.demoDay);
   const keepSaved = useBank((s) => s.keepSaved);
+  const router = useRouter();
 
   // null = the default, keep 100%.
   const [keep, setKeep] = useState<number | null>(null);
-  const [done, setDone] = useState<{ keep: number; back: number } | null>(null);
   const [pensionOpen, setPensionOpen] = useState(false);
   const [pensioned, setPensioned] = useState<{ amount: number; taxSavedUpTo: number } | null>(null);
   // Next keeps this page alive while hidden: come back to the default.
   useLayoutEffect(
     () => () => {
       setKeep(null);
-      setDone(null);
       setPensionOpen(false);
       setPensioned(null);
     },
@@ -69,9 +69,12 @@ export default function UnlockScreen() {
   const total = lock.amount;
   const kept = keep ?? total;
   const back = total - kept;
+  // The choice is made: close the screen and go Home, where the balances show it. Replace, so
+  // Back doesn't reopen the choice.
   const confirm = () => {
     keepSaved(kept);
-    setDone({ keep: kept, back });
+    const demo = new URLSearchParams(window.location.search).has("demo");
+    router.replace(demo ? "/?demo=1" : "/");
   };
 
   return (
@@ -80,38 +83,32 @@ export default function UnlockScreen() {
         <h1 className="font-display text-[1.7rem] leading-tight font-semibold tracking-[-0.02em]">
           {t("ritm.unlock.title", { day: Math.min(day, lock.unlockDay) })}
         </h1>
-        {!done && <p>{t("ritm.unlock.intro", { amount: lei(total) })}</p>}
+        <p>{t("ritm.unlock.intro", { amount: lei(total) })}</p>
       </div>
 
-      {done ? (
-        <p role="status" className="rounded-2xl bg-ritm-tint p-4">
-          {t("ritm.unlock.done", { keep: lei(done.keep), back: lei(done.back) })}
+      <section className="flex flex-col gap-4 rounded-3xl bg-white p-5 ring-1 ring-atlas-line">
+        <label htmlFor="keep" className="text-sm font-medium">
+          {t("ritm.unlock.keepLabel")}
+        </label>
+        <p className="font-display text-4xl leading-none font-semibold tabular-nums" aria-hidden="true">
+          {lei(kept)}
         </p>
-      ) : (
-        <section className="flex flex-col gap-4 rounded-3xl bg-white p-5 ring-1 ring-atlas-line">
-          <label htmlFor="keep" className="text-sm font-medium">
-            {t("ritm.unlock.keepLabel")}
-          </label>
-          <p className="font-display text-4xl leading-none font-semibold tabular-nums" aria-hidden="true">
-            {lei(kept)}
-          </p>
-          <input
-            id="keep"
-            type="range"
-            min={0}
-            max={total}
-            step={10}
-            value={kept}
-            aria-valuetext={t("ritm.unlock.keepValue", { keep: lei(kept), back: lei(back) })}
-            onChange={(e) => setKeep(Number(e.target.value))}
-            className="h-11 w-full accent-ritm"
-          />
-          <p className="text-sm text-atlas-muted">{t("ritm.unlock.keepValue", { keep: lei(kept), back: lei(back) })}</p>
-          <button type="button" onClick={confirm} className={PRIMARY}>
-            {kept > 0 ? t("ritm.unlock.confirmKeep", { amount: lei(kept) }) : t("ritm.unlock.confirmNone")}
-          </button>
-        </section>
-      )}
+        <input
+          id="keep"
+          type="range"
+          min={0}
+          max={total}
+          step={10}
+          value={kept}
+          aria-valuetext={t("ritm.unlock.keepValue", { keep: lei(kept), back: lei(back) })}
+          onChange={(e) => setKeep(Number(e.target.value))}
+          className="h-11 w-full accent-ritm"
+        />
+        <p className="text-sm text-atlas-muted">{t("ritm.unlock.keepValue", { keep: lei(kept), back: lei(back) })}</p>
+        <button type="button" onClick={confirm} className={PRIMARY}>
+          {kept > 0 ? t("ritm.unlock.confirmKeep", { amount: lei(kept) }) : t("ritm.unlock.confirmNone")}
+        </button>
+      </section>
 
       <section aria-labelledby="where" className="flex flex-col gap-3">
         <h2 id="where" className="font-display text-lg font-semibold">
