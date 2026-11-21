@@ -388,6 +388,27 @@
       "settingsLink": "Alte setări Ritm, în Profil",
       "lockOpen": "S-a deschis: {amount} liberi"
     },
+    "pension": {
+      "title": "Cum funcționează Pilonul III",
+      "whatTitle": "Ce este",
+      "what": "O pensie privată, pe care o alegi tu. Banii se investesc într-un fond până ieși la pensie.",
+      "getTitle": "Ce primești",
+      "get": "Ce pui se scade din venitul impozabil, până la {limit} pe an (400 EUR, împărțiți cu asigurarea privată de sănătate). Pentru {amount}, impozitul tău scade cu până la {tax}.",
+      "catchTitle": "Ce trebuie să știi",
+      "catch": "Banii nu pot fi scoși înainte de pensie. Valoarea fondului urcă și coboară odată cu piețele, așa că nu promitem randamente.",
+      "fund": "Atlas Pensii e fondul Atlas, nu singurul. Toate fondurile se pot compara pe",
+      "asfLink": "site-ul ASF",
+      "amount": "Suma (lei)",
+      "consent": "Înțeleg că banii aceștia sunt pentru pensie și nu îi pot folosi înainte.",
+      "contribute": "Contribui cu {amount}",
+      "notNow": "Nu acum",
+      "done": "Gata. {amount} au mers la Atlas Pensii. Impozitul tău scade cu până la {tax}.",
+      "error": {
+        "noConsent": "Bifează mai întâi că ai înțeles.",
+        "invalidAmount": "Scrie o sumă mai mare de 0.",
+        "notEnoughMoney": "Nu ai destui bani pentru suma asta."
+      }
+    },
     "lock": {
       "title": "Lacătul tău",
       "amountLabel": "Pus deoparte",
@@ -433,6 +454,7 @@
       "empty": "Nu ai nimic de deblocat.",
       "compareTitle": "Unde pot sta banii păstrați",
       "compareIntro": "Le comparăm după cât de repede ajungi la bani, risc și cât timp stau. Nu promitem randamente.",
+      "pensionCta": "Află cum funcționează",
       "access": "Acces",
       "risk": "Risc",
       "horizon": "Durată",
