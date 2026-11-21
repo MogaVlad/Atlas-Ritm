@@ -154,7 +154,7 @@ export function AskRitmSheet({
           </button>
         </header>
 
-        <div className="flex-1 overflow-y-auto px-6 py-4 [scrollbar-width:none]">
+        <div className="flex-1 overflow-y-auto overscroll-y-contain px-6 py-4 [scrollbar-width:none]">
           <p className="max-w-[85%] rounded-2xl rounded-tl-md bg-ritm-tint px-4 py-3 leading-snug">{t("bank.askRitm.intro")}</p>
 
           <div role="log" aria-live="polite" aria-label={t("bank.askRitm.title")} className="mt-3 flex flex-col gap-3">

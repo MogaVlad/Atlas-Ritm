@@ -5,5 +5,5 @@ import type { ReactNode } from "react";
  * Used for the shop checkout and the payment approval step, which are not tabs of the app.
  */
 export function FullScreen({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <div className={`absolute inset-0 z-30 flex flex-col overflow-y-auto [scrollbar-width:none] ${className}`}>{children}</div>;
+  return <div className={`absolute inset-0 z-30 flex flex-col overflow-y-auto overscroll-y-contain [scrollbar-width:none] ${className}`}>{children}</div>;
 }
