@@ -3,7 +3,7 @@ name: pull-request
 description: Opens a GitHub pull request from the current branch (or the branch the user names) into main, with a description written in very simple Romanian using em dashes. Use whenever the user asks for a pull request or PR in this repo, e.g. "fă un pull request", "deschide un PR", "fă PR cu branch-ul horia/onboarding", "create a PR". In this repo use this skill instead of any generic PR skill.
 ---
 
-# Pull request (Busola · Ritm)
+# Pull request (Atlas · Ritm)
 
 Opens a PR into `main` and writes a description that anyone on the team, including the Pitcher, understands in one read.
 
