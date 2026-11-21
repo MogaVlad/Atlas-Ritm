@@ -10,6 +10,7 @@ import { dayLabel } from "@/components/bank/dates";
 import { useActivity, type ActivityItem } from "@/components/bank/notifications";
 import { Toast } from "@/components/bank/Toast";
 import { HeadsUpSheet } from "@/components/ritm/HeadsUpSheet";
+import { headsUpLine, headsUpTitleKey } from "@/components/ritm/headsUpText";
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
 import { useBank, type HeadsUpNotification } from "@/lib/store/useBank";
@@ -73,7 +74,7 @@ export default function NotificationsPage() {
           </h2>
           <ul className="mt-1 divide-y divide-atlas-line">
             {[...headsUps].reverse().map((n) => {
-              const reason = n.reasons[0];
+              const reason = headsUpLine(n);
               return (
                 <li key={n.id}>
                   <button type="button" onClick={() => setSheet(n)} className={ROW}>
@@ -88,7 +89,7 @@ export default function NotificationsPage() {
                         <span>{t("bank.notifications.ritm")}</span>
                         <span>{dayLabel(n.day, today, locale, t)}</span>
                       </span>
-                      <span className="mt-0.5 block font-medium">{t(`ritm.headsUp.title.${n.severity}`)}</span>
+                      <span className="mt-0.5 block font-medium">{t(headsUpTitleKey(n))}</span>
                       {reason && <span className="mt-0.5 block text-sm leading-snug text-atlas-muted">{t(reason.key, reason.values)}</span>}
                     </span>
                     <span className="mt-1 size-2.5 shrink-0 rounded-full bg-ritm-spike" aria-hidden="true" />

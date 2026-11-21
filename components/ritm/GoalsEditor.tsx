@@ -2,7 +2,8 @@
 
 import { Minus, Plus, X } from "lucide-react";
 import { useId } from "react";
-import { goalMonthly, goalsPlan, RULES, type Goal } from "@/lib/engine";
+import { DEMO_MONTH } from "@/components/bank/bankData";
+import { goalMonthly, goalPlan, goalsPlan, RULES, type Goal } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -30,16 +31,24 @@ export function GoalsEditor({
   onChange,
   netSalary,
   invalid,
+  monthlyLock = 0,
 }: {
   goals: GoalDraft[];
   onChange: (goals: GoalDraft[]) => void;
   netSalary: number;
   invalid: boolean;
+  /** The Lock put aside each payday. With one, the main goal shows whether it covers it, or the date it gets you there. */
+  monthlyLock?: number;
 }) {
   const t = useT();
   const locale = useLocale((s) => s.locale);
   const baseId = useId();
   const lei = (amount: number) => formatLei(amount, locale);
+  // "June 2028": the month a goal is reached, counted from the demo month.
+  const monthYear = (months: number) =>
+    new Intl.DateTimeFormat(locale === "ro" ? "ro-RO" : "en-GB", { month: "long", year: "numeric" }).format(
+      new Date(DEMO_MONTH.getFullYear(), DEMO_MONTH.getMonth() + months, 1),
+    );
 
   const parsed = goals.map(fromDraft);
   // Goals still being typed count as 0 lei, so the total never jumps to NaN.
@@ -140,6 +149,21 @@ export function GoalsEditor({
                 {monthly !== null && (
                   <p className="text-sm text-atlas-muted">{t("ritm.goals.monthly", { amount: lei(monthly) })}</p>
                 )}
+                {/* Section 11 A: with a Lock, the main goal says whether the Lock covers it, or when it gets there. */}
+                {i === 0 && monthlyLock > 0 && parsed[0].amount > 0 && (() => {
+                  const plan = goalPlan({ amount: parsed[0].amount, saved: 0, monthsLeft: parsed[0].months }, monthlyLock);
+                  return (
+                    <p className="rounded-xl bg-ritm-tint px-3 py-2 text-sm">
+                      {plan.fitsLock
+                        ? t("ritm.goals.lockCovers", { lock: lei(monthlyLock) })
+                        : t("ritm.goals.lockReach", {
+                            lock: lei(monthlyLock),
+                            months: plan.monthsWithLock ?? 0,
+                            date: monthYear(plan.monthsWithLock ?? 0),
+                          })}
+                    </p>
+                  );
+                })()}
               </div>
             </li>
           );

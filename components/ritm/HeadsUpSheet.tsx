@@ -7,6 +7,7 @@ import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
 import { useBank, type HeadsUpNotification } from "@/lib/store/useBank";
 import { cn } from "@/lib/utils";
+import { headsUpLine, headsUpTitleKey } from "./headsUpText";
 
 type Props = {
   /** A snapshot: the sheet keeps showing its confirmation after the store drops the notification. */
@@ -42,6 +43,8 @@ export function HeadsUpSheet({ notification, onClose }: Props) {
   const unlockDay = lock?.unlockDay ?? ritm.lock.unlockDay;
   const lockChosen = (lock !== null && lock.status !== "unlocked") || ritm.lock.amount > 0;
 
+  const soft = notification.variant === "habit";
+  const softLine = soft ? headsUpLine(notification) : null;
   const actions = notification.actions.filter(
     (a) =>
       (a.kind !== "markPlanned" || target) &&
@@ -82,7 +85,7 @@ export function HeadsUpSheet({ notification, onClose }: Props) {
       >
         <div aria-hidden className="mx-auto mb-3 h-1 w-10 rounded-full bg-atlas-line" />
         <div className="flex items-start justify-between gap-3">
-          <p className={cn("rounded-full px-3 py-1 text-sm font-medium", TAG[notification.severity])}>
+          <p className={cn("rounded-full px-3 py-1 text-sm font-medium", TAG[soft ? "ok" : notification.severity])}>
             {t("ritm.headsUp.tag", { day: notification.day })}
           </p>
           <button
@@ -96,8 +99,10 @@ export function HeadsUpSheet({ notification, onClose }: Props) {
         </div>
 
         <h2 id={titleId} ref={heading} tabIndex={-1} className="mt-3 font-display text-2xl leading-tight font-semibold outline-none">
-          {t(`ritm.headsUp.title.${notification.severity}`)}
+          {t(headsUpTitleKey(notification))}
         </h2>
+        {/* The soft note: the habits behind the extra pace, and that the money lasts. */}
+        {soft && softLine && <p className="mt-3 leading-snug">{t(softLine.key, softLine.values)}</p>}
         <ul className="mt-3 flex flex-col gap-2">
           {notification.reasons.map((r) => (
             <li key={r.key} className="leading-snug">
@@ -117,7 +122,7 @@ export function HeadsUpSheet({ notification, onClose }: Props) {
           </div>
         ) : (
           <div className="mt-6 flex flex-col gap-3">
-            <p className="text-sm text-atlas-muted">{t("ritm.headsUp.intro")}</p>
+            {actions.length > 0 && <p className="text-sm text-atlas-muted">{t("ritm.headsUp.intro")}</p>}
             {actions.map((a) => (
               <button
                 key={a.kind}
@@ -130,7 +135,7 @@ export function HeadsUpSheet({ notification, onClose }: Props) {
               </button>
             ))}
             <button type="button" onClick={close} className={SECONDARY}>
-              {t("ritm.headsUp.later")}
+              {t(soft ? "ritm.headsUp.habit.ok" : "ritm.headsUp.later")}
             </button>
           </div>
         )}

@@ -10,6 +10,7 @@ import {
   RULES,
   UNLOCK_REASONS,
   unlockMirror,
+  type LockState,
   type UnlockReason,
 } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
@@ -203,10 +204,13 @@ export default function LockScreen() {
         </p>
       )}
 
+      {lock.status === "locked" && <ChangeLock lock={lock} current={current} />}
+
       {lock.status === "unlockRequested" ? (
         <p role="status" className="rounded-2xl bg-ritm-tint p-4">
           {t("ritm.lock.requested", {
-            amount: lei(lock.amount),
+            // A lower Lock asks for part of it; the rest stays locked.
+            amount: lei(lock.requestedAmount ?? lock.amount),
             day: releaseDay,
           })}
         </p>
@@ -340,6 +344,145 @@ export default function LockScreen() {
         </section>
       )}
     </Screen>
+  );
+}
+
+/**
+ * Change the Lock (section 11 A, the edit rule). More money or a later day applies now, never more
+ * than the current account holds. Less money goes through the same reason buttons as taking money
+ * out: there is no back door around the Lock.
+ */
+function ChangeLock({ lock, current }: { lock: LockState; current: number }) {
+  const t = useT();
+  const locale = useLocale((s) => s.locale);
+  const editLock = useBank((s) => s.editLock);
+  const unlockWithReason = useBank((s) => s.unlockWithReason);
+  const [open, setOpen] = useState(false);
+  const [amount, setAmount] = useState(lock.amount);
+  const [unlockDay, setUnlockDay] = useState(lock.unlockDay);
+  const [decrease, setDecrease] = useState<number | null>(null);
+  const [reason, setReason] = useState<UnlockReason | null>(null);
+  const [note, setNote] = useState("");
+  const [message, setMessage] = useState<string | null>(null);
+  const lei = (n: number) => formatLei(n, locale);
+  const max = Math.min(LOCK_MAX, lock.amount + Math.floor(Math.max(0, current) / 50) * 50);
+
+  const reset = () => {
+    setOpen(false);
+    setDecrease(null);
+    setReason(null);
+    setNote("");
+  };
+
+  const save = () => {
+    const result = editLock(amount, unlockDay);
+    if (result.kind === "needsReason") return setDecrease(result.decrease);
+    reset();
+    if (result.kind === "applied") setMessage(t("ritm.lock.changeSaved", { amount: lei(Math.min(amount, max)), day: unlockDay }));
+  };
+
+  const confirmLower = () => {
+    if (decrease === null || !reason) return;
+    const path = unlockWithReason(decrease, reason, note.trim() || undefined);
+    reset();
+    if (path === "emergency") setMessage(t("ritm.lock.emergencyDone", { amount: lei(decrease) }));
+  };
+
+  if (!open) {
+    return (
+      <div className="flex flex-col gap-3">
+        {message && (
+          <p role="status" className="rounded-2xl bg-ritm-tint p-4">
+            {message}
+          </p>
+        )}
+        <button
+          type="button"
+          onClick={() => {
+            setOpen(true);
+            setMessage(null);
+            setAmount(lock.amount);
+            setUnlockDay(lock.unlockDay);
+          }}
+          className="flex min-h-16 flex-col items-start gap-0.5 rounded-2xl border border-atlas-line bg-white px-4 py-3 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm"
+        >
+          <span className="font-medium text-ritm">{t("ritm.lock.changeTitle")}</span>
+          <span className="text-sm text-atlas-muted">{t("ritm.lock.changeHint")}</span>
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <section aria-labelledby="lock-change" className="flex flex-col gap-4 rounded-2xl border border-ritm/30 bg-white p-4">
+      <h2 id="lock-change" className="font-display text-lg font-semibold">
+        {t("ritm.lock.changeTitle")}
+      </h2>
+      {decrease === null ? (
+        <>
+          <Range
+            label={t("ritm.onboarding.s3.lockAmount")}
+            value={amount}
+            valueText={lei(amount)}
+            min={50}
+            max={Math.max(max, lock.amount)}
+            step={50}
+            onChange={setAmount}
+          />
+          <Range
+            label={t("ritm.onboarding.s3.lockDay")}
+            value={unlockDay}
+            valueText={t("ritm.onboarding.s3.dayValue", { day: unlockDay })}
+            min={lock.unlockDay}
+            max={RULES.cycleLength - 1}
+            step={1}
+            onChange={setUnlockDay}
+          />
+          <p className="text-sm text-atlas-muted">{t("ritm.lock.changeRule")}</p>
+          <div className="flex gap-3">
+            <button type="button" onClick={reset} className={SECONDARY}>
+              {t("ritm.lock.cancel")}
+            </button>
+            <button type="button" onClick={save} className={`${PRIMARY} flex-1`}>
+              {t("ritm.lock.changeSave")}
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          <p className="rounded-xl bg-ritm-tint p-3">{t("ritm.lock.lowerExplain", { amount: lei(decrease) })}</p>
+          <div role="radiogroup" aria-label={t("ritm.lock.reasonLabel")} className="flex flex-wrap gap-2">
+            {UNLOCK_REASONS.map((r) => (
+              <button
+                key={r}
+                type="button"
+                role="radio"
+                aria-checked={reason === r}
+                onClick={() => setReason(r)}
+                className={cn(
+                  "min-h-11 rounded-full border border-atlas-line bg-white px-4 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm",
+                  reason === r && "border-ritm bg-ritm text-white",
+                )}
+              >
+                {t(`ritm.lock.reason.${r}`)}
+              </button>
+            ))}
+          </div>
+          <label className="flex flex-col gap-1.5 text-sm font-medium">
+            {t("ritm.lock.note")}
+            <input type="text" maxLength={80} value={note} onChange={(e) => setNote(e.target.value)} className={INPUT} />
+          </label>
+          <div className="flex gap-3">
+            <button type="button" onClick={reset} className={SECONDARY}>
+              {t("ritm.lock.cancel")}
+            </button>
+            <button type="button" onClick={confirmLower} disabled={!reason} className={`${PRIMARY} flex-1 disabled:opacity-40`}>
+              {t("ritm.lock.lowerConfirm", { amount: lei(decrease) })}
+            </button>
+          </div>
+        </>
+      )}
+    </section>
   );
 }
 
