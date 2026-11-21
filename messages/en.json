@@ -132,7 +132,10 @@
       "essentialsHint": "What’s on here doesn’t count towards your pace: it’s taken out of your spending money first.",
       "perMonth": "{amount} a month",
       "essentialsTotal": "Essentials per month",
-      "spendingMoney": "Spending money this month"
+      "spendingMoney": "Spending money this month",
+      "appTitle": "App",
+      "languageTitle": "Language",
+      "languageHint": "The texts in the app and in Ritm."
     },
     "channels": {
       "card_in_store": "Card, in store",
