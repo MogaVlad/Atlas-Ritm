@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useId, useRef } from "react";
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
+import { buildProofPdf, downloadBlob } from "./pensionProof";
 
 /**
  * Shown right after a Pillar III contribution is confirmed (Speed bump or Lock unlock):
@@ -24,6 +25,22 @@ export function PensionDoneDialog({
   const ok = useRef<HTMLButtonElement>(null);
 
   useEffect(() => ok.current?.focus(), []);
+
+  // The deduction isn't automatic: the employer applies it with this proof (section "Tone and ethics").
+  const sendProof = () => {
+    const p = (key: string, values?: Record<string, string>) => t(`ritm.pension.proof.${key}`, values);
+    const pdf = buildProofPdf(p("title"), [
+      p("demo"),
+      "",
+      p("member"),
+      p("fund"),
+      p("amount", { amount: formatLei(result.amount, locale) }),
+      p("date", { date: new Date().toLocaleDateString(locale === "ro" ? "ro-RO" : "en-GB") }),
+      "",
+      p("forEmployer"),
+    ]);
+    downloadBlob(pdf, `${p("file")}.pdf`);
+  };
 
   return (
     <div className="absolute inset-0 z-[60] flex items-center justify-center bg-atlas-ink/40 p-5" onClick={onClose}>
@@ -57,10 +74,21 @@ export function PensionDoneDialog({
         )}
         <p className="mt-3 text-sm leading-snug text-atlas-muted">{t("ritm.pension.donePopup.note")}</p>
         <button
+          type="button"
+          onClick={sendProof}
+          aria-describedby="proof-hint"
+          className="mt-5 min-h-12 w-full rounded-full border border-ritm px-5 font-medium text-ritm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm"
+        >
+          {t("ritm.pension.donePopup.proof")}
+        </button>
+        <p id="proof-hint" className="mt-1.5 text-xs text-atlas-muted">
+          {t("ritm.pension.donePopup.proofHint")}
+        </p>
+        <button
           ref={ok}
           type="button"
           onClick={onClose}
-          className="mt-6 min-h-12 w-full rounded-full bg-ritm px-5 font-medium text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm"
+          className="mt-4 min-h-12 w-full rounded-full bg-ritm px-5 font-medium text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ritm"
         >
           {t("ritm.pension.donePopup.ok")}
         </button>
