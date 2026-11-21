@@ -287,8 +287,8 @@ test("the Speed bump shows one number per choice; lowering the Lock asks why", a
   await page.getByRole("switch", { name: m.ritm.levels.lock.name }).click();
   await page.getByRole("button", { name: m.ritm.onboarding.finish }).click();
 
-  // Speed bump: each option says what it gives, in RON.
-  await page.getByRole("link", { name: exact(m.bank.nav.payments) }).click();
+  // Speed bump: each option says what it gives, in RON. Payments is no longer in the bottom nav.
+  await page.goto("/payments");
   await payForJacket(page);
   const speedBump = page.getByRole("dialog", { name: m.ritm.speedBump.title });
   // Day 1: today's share is already used, so "Not now" says it keeps the month on track.
