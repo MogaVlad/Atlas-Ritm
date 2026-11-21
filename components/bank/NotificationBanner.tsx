@@ -7,7 +7,7 @@ import { HeadsUpSheet } from "@/components/ritm/HeadsUpSheet";
 import { headsUpLine, headsUpTitleKey } from "@/components/ritm/headsUpText";
 import { useT } from "@/lib/i18n";
 import { useBank, type HeadsUpNotification } from "@/lib/store/useBank";
-import { AtlasGlobe } from "./AtlasMark";
+import { AtlasTile } from "./AtlasMark";
 import { markBannered, nextUnbannered } from "./notifications";
 
 const SHOW_MS = 7000;
@@ -78,9 +78,7 @@ export function NotificationBanner() {
               }}
               className="flex min-w-0 flex-1 items-start gap-3 rounded-[18px] p-2.5 text-left focus-visible:outline-2 focus-visible:outline-atlas-pine"
             >
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-atlas-pine text-white" aria-hidden="true">
-                <AtlasGlobe className="size-6" />
-              </span>
+              <AtlasTile className="size-9" />
               <span className="min-w-0 flex-1">
                 <span className="flex items-baseline justify-between gap-2 text-xs text-atlas-muted">
                   <span>{t("bank.notifications.app")}</span>
