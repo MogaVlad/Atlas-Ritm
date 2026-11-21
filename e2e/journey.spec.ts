@@ -168,16 +168,28 @@ test("after the money goes to Pillar III, Back to Atlas leads home and back does
   await payForJacket(page);
   const speedBump = page.getByRole("dialog", { name: m.ritm.speedBump.title });
   await speedBump.getByRole("button", { name: starts(m.ritm.speedBump.pension) }).click();
-  // The explainer is 3 short steps: what it is → what you get → the catch (with the checkbox).
+  // The explainer: what it is → what you get → what to know (fees) → join (first time) → the payment.
   await page.getByRole("button", { name: m.ritm.pension.next, exact: true }).click();
   await expect(page.getByText(fill(m.ritm.pension.getBig, { tax: "30,00 RON" }), { exact: true })).toBeVisible();
   await page.getByRole("button", { name: m.ritm.pension.next, exact: true }).click();
+  await expect(page.getByText(m.ritm.pension.fees)).toBeVisible();
+  await page.getByRole("button", { name: m.ritm.pension.next, exact: true }).click();
+  // Not a member yet: the adhesion act is signed only after ticking that the summary was read.
+  const sign = page.getByRole("button", { name: m.ritm.pension.join.sign });
+  await expect(sign).toBeDisabled();
+  await page.getByRole("checkbox", { name: m.ritm.pension.join.read }).check();
+  await sign.click();
+  await expect(page.getByText(m.ritm.pension.join.signed)).toBeVisible();
   await page.getByRole("checkbox", { name: m.ritm.pension.consent }).check();
   await page.getByRole("button", { name: starts(fill(m.ritm.pension.contribute, { amount: "" })) }).click();
 
   // The "Done" popup confirms the contribution; closing it shows the Speed bump again.
   const done = page.getByRole("dialog", { name: starts(m.ritm.pension.donePopup.title.split("{")[0]) });
   await expect(done).toBeVisible();
+  // The tax deduction goes through the employer: the popup hands over the payment proof as a PDF.
+  const download = page.waitForEvent("download");
+  await done.getByRole("button", { name: m.ritm.pension.donePopup.proof }).click();
+  expect((await download).suggestedFilename()).toBe(`${m.ritm.pension.proof.file}.pdf`);
   await done.getByRole("button", { name: m.ritm.pension.donePopup.ok }).click();
   await speedBump.getByRole("button", { name: m.ritm.speedBump.backToAtlas }).click();
   await expect(page).toHaveURL(/localhost:3000\/(\?.*)?$/);

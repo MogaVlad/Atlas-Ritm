@@ -282,14 +282,14 @@
     "askRitm": {
       "title": "Întreabă Ritm",
       "close": "Închide",
-      "intro": "Îți explic pauza, cifrele de pe ecran și opțiunile tale. Nu-ți spun ce să cumperi: alegerea rămâne a ta.",
+      "intro": "Ritm e un asistent AI. Răspunsurile pot greși, așa că verifică cifrele de pe ecran. Îți explic pauza, cifrele de pe ecran și opțiunile tale. Nu-ți spun ce să cumperi: alegerea rămâne a ta.",
       "suggestions": {
         "pillar": "Ce este Pilonul III?",
         "pause": "De ce a apărut pauza?",
         "today": "Cât pot cheltui azi?",
         "goal": "Cum ajung la obiectiv?"
       },
-      "introHome": "Îți explic ritmul lunii, cifrele de pe ecran și opțiunile tale. Nu-ți spun ce să cumperi: alegerea rămâne a ta.",
+      "introHome": "Ritm e un asistent AI. Răspunsurile pot greși, așa că verifică cifrele de pe ecran. Îți explic ritmul lunii, cifrele de pe ecran și opțiunile tale. Nu-ți spun ce să cumperi: alegerea rămâne a ta.",
       "inputLabel": "Întrebarea ta",
       "placeholder": "Scrie o întrebare…",
       "send": "Trimite",
@@ -384,7 +384,8 @@
         "salaryLabel": "Salariu primit azi",
         "l1": "Ritm urmărește cât de repede se duc banii de la salariu încoace.",
         "l2": "Te anunță din timp dacă o iei prea repede, nu după ce s-au dus.",
-        "l3": "Tu alegi cât de strict să fie. Îl poți opri oricând."
+        "l3": "Tu alegi cât de strict să fie. Îl poți opri oricând.",
+        "data": "Ritm folosește tranzacțiile pe care Atlas le are deja. Nu comentează niciodată cumpărăturile de sănătate."
       },
       "s2": {
         "title": "Plățile care oricum trebuie făcute",
@@ -429,7 +430,17 @@
         "planLock": "Pus deoparte",
         "planPerDay": "Adică cam {amount} pe zi.",
         "goalMinus": "Scade {step} RON",
-        "goalPlus": "Adaugă {step} RON"
+        "goalPlus": "Adaugă {step} RON",
+        "lockTerms": {
+          "title": "Contul de economii Lock: condițiile",
+          "t1": "Lock e un cont de economii separat, cu dobândă.",
+          "t2": "Banii se întorc singuri în ziua {day}.",
+          "t3": "Îi poți cere mai devreme oricând: îi primești după {hours} de ore.",
+          "t4": "Până la {emergency} pentru o urgență, imediat, o dată pe lună.",
+          "t5": "Oprirea Ritm intră în vigoare după {hours} de ore.",
+          "t6": "Protejat de FGDB până la 100.000 EUR de persoană.",
+          "accept": "Dacă pornești Ritm cu Lock, deschizi acest cont în aceste condiții."
+        }
       }
     },
     "card": {
@@ -505,7 +516,7 @@
       "holdHint": "Ține apăsat {seconds} secunde ca să plătești.",
       "notNowHint": "Azi poți cheltui în continuare {safe}.",
       "moveToLockNumber": "+~{interest} dobândă până în ziua {day}, apoi îi ai înapoi.",
-      "pensionNumber": "Până la {tax} impozit în minus. Blocați până la pensie.",
+      "pensionNumber": "Poți plăti cu până la {tax} mai puțin impozit. Banii rămân în fond până la 60 de ani.",
       "detailsTitle": "De unde vin cifrele",
       "detailsSafe": "Cât poți cheltui azi: ce ți-a rămas, împărțit pe zilele până la salariu, minus ce ai cheltuit azi.",
       "detailsLock": "Dobânda: o estimare cu {rate}% pe an la economii, după impozitul de 10%, până în ziua {day}.",
@@ -529,31 +540,59 @@
       "whatTitle": "Ce este",
       "what": "O pensie privată, pe care o alegi tu. Banii se investesc într-un fond până ieși la pensie.",
       "getTitle": "Ce primești",
-      "get": "Ce pui se scade din venitul impozabil, până la {limit} pe an (400 EUR, împărțiți cu asigurarea privată de sănătate). Pentru {amount}, impozitul tău scade cu până la {tax}.",
+      "get": "Ce pui se scade din venitul impozabil, până la {limit} pe an (400 EUR, împărțiți cu asigurarea privată de sănătate). Pentru {amount}, îți poți scădea impozitul cu până la {tax}. Angajatorul îl aplică pe statul de plată: îi dai dovada de plată pe care ți-o trimitem.",
       "catchTitle": "Ce trebuie să știi",
-      "catch": "Banii nu pot fi scoși înainte de pensie. Valoarea fondului urcă și coboară odată cu piețele, așa că nu promitem randamente.",
+      "catch": "Banii rămân în fond până la 60 de ani, după cel puțin 90 de plăți lunare. Valoarea fondului urcă și coboară odată cu piețele, așa că nu promitem randamente.",
+      "fees": "Costuri: până la 5% din fiecare plată și un mic comision lunar din sold. Detaliile sunt în prospectul fondului.",
       "fund": "Atlas Pensii e fondul Atlas, nu singurul. Toate fondurile se pot compara pe",
       "asfLink": "site-ul ASF",
       "amount": "Suma (RON)",
-      "consent": "Înțeleg că banii aceștia sunt pentru pensie și nu îi pot folosi înainte.",
+      "consent": "Înțeleg că banii aceștia rămân în fond până la 60 de ani și nu îi pot folosi înainte.",
       "contribute": "Contribui cu {amount}",
       "notNow": "Nu acum",
       "donePopup": {
         "title": "Gata! {amount} au ajuns în Atlas Pensii",
-        "tax": "Impozitul tău scade cu până la {tax}",
-        "note": "Banii rămân investiți pentru pensie. Atlas Pensii e fondul Atlas; poți compara toate fondurile pe site-ul ASF.",
-        "ok": "Am înțeles"
+        "tax": "Poți plăti cu până la {tax} mai puțin impozit",
+        "note": "Dă-i angajatorului dovada de plată: el aplică deducerea pe statul de plată. Banii rămân în fond până la 60 de ani, după cel puțin 90 de plăți lunare.",
+        "ok": "Am înțeles",
+        "proof": "Trimite dovada angajatorului",
+        "proofHint": "Descarcă un PDF pe care îl poți trimite angajatorului."
       },
-      "done": "Gata. {amount} au mers la Atlas Pensii. Impozitul tău scade cu până la {tax}.",
+      "done": "Gata. {amount} au mers la Atlas Pensii. Dă-i angajatorului dovada de plată pe care ți-am trimis-o și plătești cu până la {tax} mai puțin impozit.",
       "error": {
         "noConsent": "Bifează mai întâi că ai înțeles.",
         "invalidAmount": "Scrie o sumă mai mare de 0.",
         "notEnoughMoney": "Nu ai destui bani pentru suma asta."
       },
       "step": "Pasul {step} din {total}",
-      "getBig": "Până la {tax} impozit în minus",
+      "getBig": "Poți plăti cu până la {tax} mai puțin impozit",
       "next": "Mai departe",
-      "back": "Înapoi"
+      "back": "Înapoi",
+      "proof": {
+        "file": "atlas-pensii-dovada-plata",
+        "title": "Atlas Pensii: dovada de plata",
+        "demo": "DEMO: Atlas este o banca fictiva. Documentul nu este valabil.",
+        "member": "Participant: client demo Atlas",
+        "fund": "Fond: Atlas Pensii (Pilonul III, pensie facultativa)",
+        "amount": "Suma platita: {amount}",
+        "date": "Data: {date}",
+        "forEmployer": "Pentru angajator: va rugam sa deduceti aceasta contributie din venitul impozabil pe statul de plata, pana la echivalentul a 400 EUR pe an (impreuna cu asigurarea privata de sanatate)."
+      },
+      "join": {
+        "title": "Intră în Atlas Pensii",
+        "intro": "Ca să pui bani într-un fond de pensii, mai întâi intri în el semnând un act de aderare. Durează cam 2 minute.",
+        "agent": "Atlas e înregistrat la ASF ca agent de marketing pentru Atlas Pensii, fondul de pensii al grupului Atlas.",
+        "summaryTitle": "Rezumatul prospectului",
+        "s1": "Administrator: Atlas Pensii SAFPP (fictiv).",
+        "s2": "Investiții: mai ales titluri de stat, plus câteva acțiuni. Risc: mediu.",
+        "s3": "Costuri: până la 5% din fiecare plată și un mic comision lunar din sold.",
+        "s4": "Plata: de la 60 de ani, după cel puțin 90 de plăți lunare. Cu mai puține, primești o sumă unică în loc de pensie.",
+        "s5": "Poți opri plățile oricând și te poți muta la alt fond.",
+        "read": "Am citit rezumatul prospectului și vreau să semnez actul de aderare.",
+        "sign": "Semnează actul de aderare",
+        "signed": "Act de aderare semnat. Acum ești membru Atlas Pensii."
+      },
+      "contributeTitle": "Plata ta"
     },
     "lock": {
       "title": "Lacătul tău",
@@ -651,7 +690,7 @@
         },
         "pillar3": {
           "name": "Pilonul III (Atlas Pensii)",
-          "tradeoff": "Plătești mai puțin impozit acum, dar banii stau blocați până la pensie.",
+          "tradeoff": "Poți plăti mai puțin impozit acum, dar banii rămân în fond până la 60 de ani.",
           "note": "Atlas Pensii e fondul Atlas. Poți compara fondurile pe site-ul ASF."
         }
       },
@@ -659,7 +698,7 @@
       "featured": {
         "today": "Azi, la {age} de ani",
         "retirement": "La pensie",
-        "taxLabel": "Pentru {amount}, impozitul scade cu",
+        "taxLabel": "Pentru {amount}, îți poți scădea impozitul cu",
         "taxValue": "până la {tax}",
         "taxNote": "Deducerea merge până la {limit} pe an (400 EUR), împărțită cu asigurarea privată de sănătate."
       }
