@@ -415,6 +415,7 @@ export default function RitmOnboarding() {
               }}
               netSalary={NET_SALARY}
               invalid={goalError}
+              monthlyLock={settings.lock.amount}
             />
 
             <section

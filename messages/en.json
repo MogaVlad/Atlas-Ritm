@@ -54,7 +54,9 @@
         "underThreshold": "Under {threshold}, so no Speed bump.",
         "willPause": "The Speed bump will pause this payment before you confirm.",
         "speedBumpOff": "The Speed bump is off, so Ritm won't pause this payment. Turn it on to pause big online payments."
-      }
+      },
+      "month": "Month {n}",
+      "monthLabel": "Demo month"
     },
     "summaryPrompt": {
       "title": "Your first month with Ritm is done",
@@ -419,7 +421,12 @@
         "markPlanned": "Done. {merchant} no longer counts towards your pace."
       },
       "later": "Not now",
-      "close": "Close"
+      "close": "Close",
+      "habit": {
+        "title": "Your usual rhythm",
+        "body": "Most of this is your usual {habits}. At your usual day, the money lasts until payday.",
+        "ok": "Got it"
+      }
     },
     "speedBump": {
       "tag": "Speed bump · day {day}",
@@ -438,7 +445,15 @@
       "lockedDone": "Done. {amount} stays in the Lock until day {day}.",
       "backToShop": "Back to the shop",
       "backToAtlas": "Back to Atlas",
-      "holdHint": "Hold for {seconds} seconds to pay."
+      "holdHint": "Hold for {seconds} seconds to pay.",
+      "notNowHint": "Your safe-to-spend stays at {safe} today.",
+      "moveToLockNumber": "+~{interest} interest by day {day}, then it's yours again.",
+      "pensionNumber": "Up to {tax} less tax. Locked until retirement.",
+      "detailsTitle": "How we got these numbers",
+      "detailsSafe": "Safe to spend today: what's left, split over the days to payday, minus what you spent today.",
+      "detailsLock": "Interest: an estimate at {rate}% a year on savings, after 10% tax, until day {day}.",
+      "detailsPension": "Pillar III: what you put in comes off your taxable income, up to {limit} a year, so the tax saved is 10% of it. No return is promised.",
+      "notNowHintUsed": "Skipping it keeps the rest of the month on track."
     },
     "tab": {
       "title": "Ritm",
@@ -471,7 +486,11 @@
         "noConsent": "First tick that you understand.",
         "invalidAmount": "Enter an amount above 0.",
         "notEnoughMoney": "You don't have enough money for this amount."
-      }
+      },
+      "step": "Step {step} of {total}",
+      "getBig": "Up to {tax} less tax",
+      "next": "Next",
+      "back": "Back"
     },
     "lock": {
       "title": "Your Lock",
@@ -515,7 +534,14 @@
       "routeWait": "Over {max}, all the money leaves after 24 hours, on day {day}.",
       "routeWant": "All the money leaves after 24 hours, on day {day}.",
       "note": "A short note, if you like",
-      "routeUsed": "The emergency release is used this month, so all the money leaves after 24 hours, on day {day}."
+      "routeUsed": "The emergency release is used this month, so all the money leaves after 24 hours, on day {day}.",
+      "changeTitle": "Change the Lock",
+      "changeHint": "More money or a later day applies now. Less goes through a reason, like taking money out.",
+      "changeRule": "More, or a later day: right away. Less: you'll be asked why, and it may wait 24 hours.",
+      "changeSave": "Save",
+      "changeSaved": "Saved: {amount} until day {day}.",
+      "lowerExplain": "Lowering the Lock takes {amount} out, so it works like taking money out: tell Ritm why.",
+      "lowerConfirm": "Take out {amount}"
     },
     "unlock": {
       "title": "You made it to day {day} without it.",
@@ -585,7 +611,22 @@
       "raiseTitle": "Next raise: put half of it aside automatically?",
       "raiseExample": "For example, with a {raise} raise: {saved} goes to savings and {kept} stays with you.",
       "raiseOn": "On. You can turn it off anytime.",
-      "raiseOff": "Off. Nothing moves without your OK."
+      "raiseOff": "Off. Nothing moves without your OK.",
+      "unlocksTitle": "Money out of the Lock this month",
+      "unlockItem": "Day {day} · {reason}",
+      "path": {
+        "emergency": "right away",
+        "wait": "after 24 hours"
+      },
+      "want": {
+        "thisOne": "You took money out once for “Something I want”. Next month: keep the Lock at {lock}, or try {lower}?",
+        "thisMany": "You took money out {n} times for “Something I want”. Next month: keep the Lock at {lock}, or try {lower}?",
+        "lastOne": "Last month you took money out once for “Something I want”. Keep the Lock at {lock}, or try {lower}?",
+        "lastMany": "Last month you took money out {n} times for “Something I want”. Keep the Lock at {lock}, or try {lower}?"
+      },
+      "lastTitle": "Compared with last month",
+      "lastUsual": "Last month your usual day came to about {usual}. Ritm now measures your pace against that, not an even split.",
+      "lastLock": "A Lock that fits your real spending: {lock} a month."
     },
     "goals": {
       "label": "Goal {n}",
@@ -603,7 +644,9 @@
       "totalValue": "{amount} a month · {pct}% of salary",
       "editLink": "Edit your goals",
       "editTitle": "Your goals",
-      "save": "Save goals"
+      "save": "Save goals",
+      "lockCovers": "Your Lock ({lock} a month) covers this goal in time.",
+      "lockReach": "With your Lock ({lock} a month) you get there in {months} months, around {date}."
     },
     "features": {
       "on": "On",

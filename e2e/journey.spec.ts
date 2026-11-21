@@ -168,6 +168,10 @@ test("after the money goes to Pillar III, Back to Atlas leads home and back does
   await payForJacket(page);
   const speedBump = page.getByRole("dialog", { name: m.ritm.speedBump.title });
   await speedBump.getByRole("button", { name: starts(m.ritm.speedBump.pension) }).click();
+  // The explainer is 3 short steps: what it is → what you get → the catch (with the checkbox).
+  await page.getByRole("button", { name: m.ritm.pension.next, exact: true }).click();
+  await expect(page.getByText(fill(m.ritm.pension.getBig, { tax: "30,00 RON" }), { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: m.ritm.pension.next, exact: true }).click();
   await page.getByRole("checkbox", { name: m.ritm.pension.consent }).check();
   await page.getByRole("button", { name: starts(fill(m.ritm.pension.contribute, { amount: "" })) }).click();
 
@@ -241,4 +245,67 @@ test("the Lock opening pops up once and leads to the choice; Reset demo goes bac
   await panel.getByRole("button", { name: m.common.demo.reset }).click();
   await expect(page).toHaveURL(/localhost:3000\/(\?.*)?$/);
   await expect(clock.getByText(fill(m.common.demo.day, { day: 0 }), { exact: true })).toBeVisible();
+});
+
+test("month 2: Ritm knows the habits, day 6 brings the soft note, the summary remembers last month", async ({ page }) => {
+  const clock = page.getByRole("group", { name: m.common.demo.title });
+  await page.goto("/?demo=1");
+  await jumpToDay(page, 1, 0);
+
+  // Start Ritm with the Lock on, then switch the demo to month 2 (back to day 0).
+  await page.getByRole("link", { name: exact(m.bank.nav.ritm) }).click();
+  await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
+  await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
+  await page.getByRole("switch", { name: m.ritm.levels.lock.name }).click();
+  await page.getByRole("button", { name: m.ritm.onboarding.finish }).click();
+  await clock.getByRole("button", { name: fill(m.common.demo.day, { day: 1 }) }).click();
+  await page.getByRole("button", { name: fill(m.common.demo.month, { n: 2 }) }).click();
+  await expect(clock.getByText(fill(m.common.demo.day, { day: 0 }), { exact: true })).toBeVisible();
+
+  // Day 6: his habits came more often, but the money lasts: the soft note, no push.
+  await jumpToDay(page, 6, 0);
+  await page.getByRole("button", { name: m.ritm.card.headsUpCta }).click();
+  const sheet = page.getByRole("dialog");
+  await expect(sheet.getByText(m.ritm.headsUp.habit.title)).toBeVisible();
+  await expect(sheet.getByText(starts(m.ritm.headsUp.habit.body.split("{")[0]))).toBeVisible();
+  await expect(sheet.getByText(m.ritm.headsUp.intro)).toHaveCount(0);
+  await sheet.getByRole("button", { name: m.ritm.headsUp.habit.ok }).click();
+
+  // The summary compares with last month and brings back last month's "Something I want".
+  await page.goto("/ritm/summary?demo=1");
+  await expect(page.getByText(m.ritm.summary.lastTitle)).toBeVisible();
+  await expect(page.getByText(starts(m.ritm.summary.want.lastOne.split("{")[0].split("“")[0]))).toBeVisible();
+});
+
+test("the Speed bump shows one number per choice; lowering the Lock asks why", async ({ page }) => {
+  await page.goto("/?demo=1");
+  await jumpToDay(page, 1, 0);
+  await page.getByRole("link", { name: exact(m.bank.nav.ritm) }).click();
+  await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
+  await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
+  await page.getByRole("switch", { name: m.ritm.levels.speedbump.name }).click();
+  await page.getByRole("switch", { name: m.ritm.levels.lock.name }).click();
+  await page.getByRole("button", { name: m.ritm.onboarding.finish }).click();
+
+  // Speed bump: each option says what it gives, in RON.
+  await page.getByRole("link", { name: exact(m.bank.nav.payments) }).click();
+  await payForJacket(page);
+  const speedBump = page.getByRole("dialog", { name: m.ritm.speedBump.title });
+  // Day 1: today's share is already used, so "Not now" says it keeps the month on track.
+  await expect(speedBump.getByText(m.ritm.speedBump.notNowHintUsed)).toBeVisible();
+  await expect(speedBump.getByText(starts(m.ritm.speedBump.pensionNumber.split("{")[0]))).toBeVisible();
+  await speedBump.getByRole("button", { name: m.ritm.speedBump.notNow }).click();
+
+  // Lock screen: a lower Lock goes through the reason buttons.
+  await page.goto("/ritm/lock?demo=1");
+  await page.getByRole("button", { name: starts(m.ritm.lock.changeTitle) }).click();
+  const amount = page.getByRole("slider", { name: m.ritm.onboarding.s3.lockAmount });
+  await amount.focus();
+  for (let i = 0; i < 4; i++) await amount.press("ArrowLeft"); // 500 → 300
+  await page.getByRole("button", { name: m.ritm.lock.changeSave }).click();
+  await expect(page.getByText(fill(m.ritm.lock.lowerExplain, { amount: "200,00 RON" }))).toBeVisible();
+  const change = page.getByRole("region", { name: m.ritm.lock.changeTitle });
+  await change.getByRole("radio", { name: m.ritm.lock.reason.want }).click();
+  await page.getByRole("button", { name: fill(m.ritm.lock.lowerConfirm, { amount: "200,00 RON" }) }).click();
+  await expect(page.getByText(fill(m.ritm.lock.requested, { amount: "200,00 RON", day: 2 }))).toBeVisible();
 });
