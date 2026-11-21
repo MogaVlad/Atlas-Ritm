@@ -6,10 +6,13 @@ import { DEFAULT_RITM_SETTINGS } from "@/lib/data/persona";
 import { SCENARIO } from "@/lib/data/scenario";
 import {
   alertActions,
+  checkPensionContribution,
   computePace,
   createLock,
   emergencyRelease as releaseFromLock,
   INITIAL_ALERT_MEMORY,
+  monthSummary,
+  pensionSummary,
   requestUnlock as requestEarlyUnlock,
   resolveLock,
   RULES,
@@ -19,7 +22,12 @@ import {
   type Day,
   type EmergencyResult,
   type LockState,
+  type MonthSummary,
   type PaceState,
+  type PensionContribution,
+  type PensionResult,
+  type PensionSource,
+  type PensionSummary,
   type Reason,
   type RitmLevel,
   type RitmSettings,
@@ -48,6 +56,14 @@ export interface PlannedPurchase {
   amount: number;
 }
 
+/** The day-30 summary: the engine's month summary plus where the money is now. */
+export interface DaySummary extends MonthSummary {
+  /** Savings account now (money kept in the Lock included). */
+  keptSaved: number;
+  pensionTotal: number;
+  currentBalance: number;
+}
+
 export interface Balances {
   current: number;
   savings: number;
@@ -65,6 +81,10 @@ interface PersistedState {
   ritm: RitmSettings;
   lock: LockState | null;
   savings: number;
+  /** Pillar III contributions (Atlas Pensii). Each one is also a transfer in the transactions. */
+  pensionContributions: PensionContribution[];
+  /** Commitment card on day 30: "Next raise: save half of it automatically?" Off until the user turns it on. */
+  raiseCommitment: boolean;
   notifications: HeadsUpNotification[];
   alertMemory: AlertMemory;
 }
@@ -75,6 +95,10 @@ interface DerivedState {
   /** Engine output for demoDay. Recomputed after every change; read it, never set it. */
   pace: PaceState;
   balances: Balances;
+  /** Totals for the pension explainer (no return estimates). */
+  pension: PensionSummary;
+  /** The month so far, for the day-30 summary screen. */
+  summary: DaySummary;
 }
 
 interface Actions {
@@ -91,6 +115,13 @@ interface Actions {
   emergencyRelease: (amount: number) => EmergencyResult;
   /** At unlock: keep `amount` in savings, the rest goes back to the current account. */
   keepSaved: (amount: number) => void;
+  /**
+   * Pillar III contribution to Atlas Pensii. Never a default: `consent` must be true, which the
+   * explainer sets only after its checkbox AND explicit button. "currentAccount" = the purchase
+   * not made (Speed bump); "savings" = money kept at unlock (not money still in the Lock).
+   */
+  contributeToPension: (input: { amount: number; source: PensionSource; consent: boolean }) => PensionResult;
+  setRaiseCommitment: (on: boolean) => void;
   /** Close a notification. `acted: false` counts it as ignored. */
   dismissNotification: (id: string, acted?: boolean) => void;
   resetDemo: () => void;
@@ -117,10 +148,19 @@ function derive(s: PersistedState): DerivedState {
   const pace = computePace(transactions, engineSettings(s), s.demoDay);
   const flow = transactions.filter((t) => t.day <= s.demoDay).reduce((sum, t) => sum - t.amount, 0);
   const movedToSavings = s.savings - OPENING_SAVINGS;
+  const balances = { current: OPENING_CURRENT + flow - movedToSavings, savings: s.savings };
+  const pension = pensionSummary(s.pensionContributions);
   return {
     transactions,
     pace,
-    balances: { current: OPENING_CURRENT + flow - movedToSavings, savings: s.savings },
+    balances,
+    pension,
+    summary: {
+      ...monthSummary(transactions, engineSettings(s), s.demoDay),
+      keptSaved: balances.savings,
+      pensionTotal: pension.total,
+      currentBalance: balances.current,
+    },
   };
 }
 
@@ -162,6 +202,8 @@ const INITIAL: PersistedState = {
   ritm: DEFAULT_RITM_SETTINGS,
   lock: null,
   savings: OPENING_SAVINGS,
+  pensionContributions: [],
+  raiseCommitment: false,
   notifications: [],
   alertMemory: INITIAL_ALERT_MEMORY,
 };
@@ -200,6 +242,8 @@ const pick = (s: BankState): PersistedState => ({
   ritm: s.ritm,
   lock: s.lock,
   savings: s.savings,
+  pensionContributions: s.pensionContributions,
+  raiseCommitment: s.raiseCommitment,
   notifications: s.notifications,
   alertMemory: s.alertMemory,
 });
@@ -276,6 +320,53 @@ export const useBank = create<BankState>()(
             const back = s.lock.amount - kept;
             return { ...s, lock: { ...s.lock, status: "unlocked", amount: kept }, savings: s.savings - back };
           }),
+
+        contributeToPension: ({ amount, source, consent }) => {
+          const s = get();
+          const stillLocked = s.lock && s.lock.status !== "unlocked" ? s.lock.amount : 0;
+          const available = source === "currentAccount" ? s.balances.current : s.savings - stillLocked;
+          const check = checkPensionContribution({
+            amount,
+            consent,
+            available,
+            alreadyThisYear: s.pension.total,
+          });
+          if (!check.ok) return check;
+
+          const contribution: PensionContribution = {
+            id: `pension-${s.pensionContributions.length + 1}-${Date.now()}`,
+            day: s.demoDay,
+            amount: check.amount,
+            source,
+          };
+          // One transfer out of the current account. From savings, the money first comes back
+          // to the current account (savings goes down), so the current balance stays the same.
+          const transfer: Transaction = {
+            id: contribution.id,
+            day: s.demoDay,
+            amount: check.amount,
+            merchant: "Atlas Pensii",
+            category: "pension",
+            channel: "transfer",
+          };
+          update((p) => {
+            const next: PersistedState = {
+              ...p,
+              added: [...p.added, transfer],
+              pensionContributions: [...p.pensionContributions, contribution],
+            };
+            if (source === "savings") {
+              next.savings = p.savings - check.amount;
+              if (p.lock?.status === "unlocked") {
+                next.lock = { ...p.lock, amount: Math.max(0, p.lock.amount - check.amount) };
+              }
+            }
+            return next;
+          });
+          return { ok: true, contribution, deductible: check.deductible, taxSavedUpTo: check.taxSavedUpTo };
+        },
+
+        setRaiseCommitment: (on) => update((s) => ({ ...s, raiseCommitment: on })),
 
         dismissNotification: (id, acted = false) =>
           update((s) => ({
