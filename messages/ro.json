@@ -281,6 +281,13 @@
       "disclaimer": "Ritm explică; nu decide în locul tău.",
       "you": "Tu",
       "ritm": "Ritm"
+    },
+    "pensionDone": {
+      "title": "{amount} au plecat spre pensie",
+      "body": "Impozitul tău scade cu până la {tax}. Banii rămân în Atlas Pensii până ieși la pensie.",
+      "redirect": "Te ducem la pagina principală în {seconds} s.",
+      "goNow": "Mergi acum",
+      "stay": "Rămâi aici"
     }
   },
   "ritm": {

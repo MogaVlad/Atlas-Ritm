@@ -6,6 +6,7 @@ import { interestEstimate, pensionDeductibleLimit, pensionTaxBenefit, RULES, typ
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
 import { useBank } from "@/lib/store/useBank";
+import { PensionDone } from "@/components/bank/PensionDone";
 import { PensionExplainer } from "./PensionExplainer";
 
 export interface SpeedBumpSheetProps {
@@ -32,6 +33,8 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAt
   const [locked, setLocked] = useState(false);
   const [pensionOpen, setPensionOpen] = useState(false);
   const [pensioned, setPensioned] = useState<{ amount: number; taxSavedUpTo: number } | null>(null);
+  // The success screen with the timer to Home; "Stay here" closes it and leaves the done text below.
+  const [celebrate, setCelebrate] = useState(false);
 
   // The main goal (the first one).
   const goal = useBank((s) => s.ritm.goals[0]);
@@ -47,6 +50,7 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAt
       setLocked(false);
       setPensionOpen(false);
       setPensioned(null);
+      setCelebrate(false);
     },
     [],
   );
@@ -170,8 +174,12 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAt
           onDone={(result) => {
             setPensionOpen(false);
             setPensioned(result);
+            setCelebrate(true);
           }}
         />
+      )}
+      {celebrate && pensioned && (
+        <PensionDone amount={pensioned.amount} taxSavedUpTo={pensioned.taxSavedUpTo} onStay={() => setCelebrate(false)} />
       )}
     </div>
   );

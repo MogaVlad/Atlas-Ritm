@@ -152,7 +152,7 @@ test("goals: several, each with a time; above 20% of the salary Ritm explains, t
   await expect(page.getByText(fill(g.totalValue, { amount: "750,00 RON", pct: 16 }))).toBeVisible();
 });
 
-test("after the money goes to Pillar III, Back to Atlas leads home and back doesn't reopen the payment", async ({ page }) => {
+test("after the money goes to Pillar III, the done screen counts down to Home and back doesn't reopen the payment", async ({ page }) => {
   await page.goto("/?demo=1");
   await jumpToDay(page, 1, 0);
 
@@ -175,8 +175,11 @@ test("after the money goes to Pillar III, Back to Atlas leads home and back does
   await page.getByRole("checkbox", { name: m.ritm.pension.consent }).check();
   await page.getByRole("button", { name: starts(fill(m.ritm.pension.contribute, { amount: "" })) }).click();
 
-  await speedBump.getByRole("button", { name: m.ritm.speedBump.backToAtlas }).click();
-  await expect(page).toHaveURL(/localhost:3000\/(\?.*)?$/);
+  // The done screen confirms the transfer, counts down, and takes you Home by itself.
+  const done = page.getByRole("dialog", { name: fill(m.bank.pensionDone.title, { amount: "300,00 RON" }) });
+  await expect(done).toBeVisible();
+  await expect(done.getByRole("button", { name: m.bank.pensionDone.stay })).toBeVisible();
+  await expect(page).toHaveURL(/localhost:3000\/(\?.*)?$/, { timeout: 8_000 });
   await page.goBack();
   await expect(page).not.toHaveURL(/\/payments\/confirm/);
 });

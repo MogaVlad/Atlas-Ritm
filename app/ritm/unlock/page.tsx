@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useLayoutEffect, useState, type ReactNode } from "react";
+import { PensionDone } from "@/components/bank/PensionDone";
 import { PensionExplainer } from "@/components/ritm/PensionExplainer";
 import { RitmBack } from "@/components/ritm/RitmBack";
 import { useHydrated } from "@/components/ritm/useHydrated";
@@ -27,6 +28,8 @@ export default function UnlockScreen() {
   const [done, setDone] = useState<{ keep: number; back: number } | null>(null);
   const [pensionOpen, setPensionOpen] = useState(false);
   const [pensioned, setPensioned] = useState<{ amount: number; taxSavedUpTo: number } | null>(null);
+  // The success screen with the timer to Home; "Stay here" closes it and leaves the done text.
+  const [celebrate, setCelebrate] = useState(false);
   // Next keeps this page alive while hidden: come back to the default.
   useLayoutEffect(
     () => () => {
@@ -34,16 +37,23 @@ export default function UnlockScreen() {
       setDone(null);
       setPensionOpen(false);
       setPensioned(null);
+      setCelebrate(false);
     },
     [],
   );
 
   if (!hydrated) return null;
   const lei = (n: number) => formatLei(n, locale);
+  // Shown on both branches below: putting all of it in Pillar III empties the Lock (first branch).
+  const pensionDone =
+    celebrate && pensioned ? (
+      <PensionDone amount={pensioned.amount} taxSavedUpTo={pensioned.taxSavedUpTo} onStay={() => setCelebrate(false)} />
+    ) : null;
 
   if (!lock || lock.amount <= 0) {
     return (
       <Screen>
+        {pensionDone}
         {pensioned ? (
           <p role="status" className="rounded-2xl bg-ritm-tint p-4">
             {t("ritm.pension.done", { amount: lei(pensioned.amount), tax: lei(pensioned.taxSavedUpTo) })}
@@ -153,9 +163,11 @@ export default function UnlockScreen() {
           onDone={(result) => {
             setPensionOpen(false);
             setPensioned(result);
+            setCelebrate(true);
           }}
         />
       )}
+      {pensionDone}
     </Screen>
   );
 }

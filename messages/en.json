@@ -281,6 +281,13 @@
       "disclaimer": "Ritm explains; it doesn’t decide for you.",
       "you": "You",
       "ritm": "Ritm"
+    },
+    "pensionDone": {
+      "title": "{amount} is on its way to your pension",
+      "body": "Your income tax goes down by up to {tax}. The money stays in Atlas Pensii until you retire.",
+      "redirect": "Taking you to the home screen in {seconds} s.",
+      "goNow": "Go now",
+      "stay": "Stay here"
     }
   },
   "ritm": {
