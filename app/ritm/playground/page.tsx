@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { LocaleToggle } from "@/components/bank/LocaleToggle";
 import { FeatureSwitches } from "@/components/ritm/FeatureSwitches";
 import { PaceBar, type PaceSeverity } from "@/components/ritm/PaceBar";
 import { SafeToSpend } from "@/components/ritm/SafeToSpend";
@@ -25,7 +24,6 @@ export default function RitmPlayground() {
     <>
       <header className="flex items-center justify-between px-5 pt-6">
         <h1 className="text-lg font-semibold">{t("ritm.playground.title")}</h1>
-        <LocaleToggle />
       </header>
 
       <main className="flex flex-col gap-8 px-5 py-8">
