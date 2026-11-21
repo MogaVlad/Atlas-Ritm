@@ -1,0 +1,15 @@
+{
+  "common": {
+    "appName": "Busola",
+    "language": "Limba",
+    "switchTo": "Schimbă limba în engleză"
+  },
+  "bank": {
+    "home": {
+      "greeting": "Bună, {name}!",
+      "balanceLabel": "Cont curent",
+      "comingSoon": "Aplicația e în lucru."
+    }
+  },
+  "ritm": {}
+}
