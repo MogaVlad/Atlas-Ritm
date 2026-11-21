@@ -3,7 +3,7 @@
 import { ChevronRight, PiggyBank } from "lucide-react";
 import Link from "next/link";
 import { BalancePanel } from "@/components/bank/BalancePanel";
-import { CARD_LAST4, currentBalance, savingsBalance, visibleTransactions } from "@/components/bank/bankData";
+import { CARD_LAST4, useBalances, useVisibleTransactions } from "@/components/bank/bankData";
 import { RitmSlot } from "@/components/bank/RitmSlot";
 import { TransactionRow } from "@/components/bank/TransactionRow";
 import { PERSONA } from "@/lib/data/persona";
@@ -13,7 +13,8 @@ import { useLocale, useT } from "@/lib/i18n";
 export default function HomePage() {
   const t = useT();
   const locale = useLocale((s) => s.locale);
-  const recent = visibleTransactions().slice(0, 5);
+  const recent = useVisibleTransactions().slice(0, 5);
+  const balances = useBalances();
 
   return (
     <div className="flex flex-col gap-5">
@@ -21,7 +22,7 @@ export default function HomePage() {
         {t("bank.home.greeting", { name: PERSONA.name })}
       </h1>
 
-      <BalancePanel balance={currentBalance()} cardLast4={CARD_LAST4} href="/accounts/current" />
+      <BalancePanel balance={balances.current} cardLast4={CARD_LAST4} href="/accounts/current" />
 
       <Link
         href="/accounts/savings"
@@ -29,7 +30,7 @@ export default function HomePage() {
       >
         <PiggyBank className="size-5 text-atlas-pine" aria-hidden="true" />
         <span className="flex-1 text-sm text-atlas-muted">{t("bank.home.savingsLabel")}</span>
-        <span className="font-medium tabular-nums">{formatLei(savingsBalance(), locale)}</span>
+        <span className="font-medium tabular-nums">{formatLei(balances.savings, locale)}</span>
         <ChevronRight className="size-4 text-atlas-muted" aria-hidden="true" />
       </Link>
 
