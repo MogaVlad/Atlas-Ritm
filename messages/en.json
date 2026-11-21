@@ -166,6 +166,26 @@
       "body": "Ritm watches how fast you spend your salary and tells you early, not after the money is gone. You choose how strict it is.",
       "cta": "Turn on Ritm",
       "note": "3 steps. No money moves without your OK."
+    },
+    "askRitm": {
+      "title": "Ask Ritm",
+      "close": "Close",
+      "intro": "I can explain the pause, the numbers on your screen and your options. I won’t tell you what to buy: the choice stays yours.",
+      "suggestions": {
+        "pillar": "What is Pillar III?",
+        "pause": "Why the pause?"
+      },
+      "inputLabel": "Your question",
+      "placeholder": "Type a question…",
+      "send": "Send",
+      "counter": "{count}/{max}",
+      "typing": "Ritm is typing…",
+      "error": "I couldn’t answer right now. Check your connection and try again.",
+      "retry": "Try again",
+      "fallback": "Pre-written answer",
+      "disclaimer": "Ritm explains; it doesn’t decide for you.",
+      "you": "You",
+      "ritm": "Ritm"
     }
   },
   "ritm": {
