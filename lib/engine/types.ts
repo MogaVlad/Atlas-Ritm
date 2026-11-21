@@ -89,6 +89,8 @@ export interface LockState {
   unlockDay: Day;
   /** Set when the user asks for an early unlock; money is released 24h (1 demo day) later. */
   requestedAtDay?: Day;
+  /** Lei asked for in that request; missing = the whole Lock. Less than `amount` = the rest stays locked. */
+  requestedAmount?: number;
   /** Emergency release used this cycle (max once). */
   emergencyUsed: boolean;
 }
@@ -182,3 +184,87 @@ export type PensionResult =
 export type EmergencyResult =
   | { ok: true; lock: LockState; released: number }
   | { ok: false; reason: "alreadyUsed" | "overLimit" | "notLocked" };
+
+/* ─── Section 11: plan, Lock preview, the mirror ─────────────────────────── */
+
+/** What onboarding step 2 ("My month plan") and the Lock slider work from. */
+export interface MonthPlan {
+  netSalary: number;
+  essentialsTotal: number;
+  goal: { name: string; amount: number };
+  /** Already saved towards the goal (lei). */
+  saved: number;
+  unlockDay: Day;
+}
+
+export interface LockPreview {
+  lockAmount: number;
+  /** Net salary − essentials − Lock. */
+  spendingMoney: number;
+  /** Spending money ÷ days left including today, rounded down to whole lei. */
+  perDay: number;
+  /** Interest estimate (after tax) from today to the unlock day. Labelled as an estimate in the UI. */
+  interest: number;
+  /** Lock + interest, back on the unlock day. */
+  backOnUnlockDay: number;
+  /** 0–1: (saved + Lock) ÷ goal amount. */
+  goalPct: number;
+  /** Under RULES.plan.tightPerDayLei a day. */
+  tight: boolean;
+}
+
+export interface GoalPlanInput {
+  amount: number;
+  saved: number;
+  /** Months until the date the user picked (UI turns the date into months). */
+  monthsLeft: number;
+}
+
+export interface GoalPlan {
+  /** Lei a month needed to reach the goal by the date. */
+  neededPerMonth: number;
+  /** The chosen monthly Lock covers it. */
+  fitsLock: boolean;
+  /** Months to reach the goal with the chosen Lock; null if the Lock is 0. UI turns this into a date. */
+  monthsWithLock: number | null;
+}
+
+export type UnlockReason = "health" | "bill" | "unexpected" | "want";
+
+export interface UnlockRequest {
+  amount: number;
+  reason: UnlockReason;
+  note?: string;
+}
+
+/** Stored for the month summary ("Last month you unlocked once for 'Something I want'"). */
+export interface UnlockRecord {
+  day: Day;
+  amount: number;
+  reason: UnlockReason;
+  note?: string;
+  path: "emergency" | "wait";
+}
+
+export type UnlockDecision =
+  | { ok: true; path: "emergency"; lock: LockState; released: number; record: UnlockRecord }
+  | { ok: true; path: "wait"; lock: LockState; releaseDay: Day; record: UnlockRecord }
+  | { ok: false; reason: "notLocked" | "invalidAmount" };
+
+/** The mirror: facts only, shown before the reason buttons. */
+export interface UnlockFacts {
+  goalPctBefore: number;
+  goalPctAfter: number;
+  /** 1 = first unlock this month. */
+  unlockNumber: number;
+}
+
+export type PlanEditResult =
+  | { kind: "applied"; settings: RitmSettings }
+  | {
+      /** The safe parts are applied; the lower Lock waits for the reason screen + 24h (requestUnlockWithReason). */
+      kind: "needsUnlock";
+      settings: RitmSettings;
+      lockDecrease: number;
+      requestedUnlockDay: Day;
+    };
