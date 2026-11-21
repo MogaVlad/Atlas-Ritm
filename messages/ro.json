@@ -67,7 +67,14 @@
     },
     "payments": {
       "title": "Plăți",
-      "comingSoon": "Aici vei putea plăti online și în magazin. Vine în curând."
+      "intro": "Plătește online sau cu cardul în magazin. În demo, plățile sunt simulate.",
+      "online": "Cumpără online",
+      "onlineHint": "{merchant}: o geacă, {amount}",
+      "tap": "Simulează o plată cu cardul în magazin",
+      "tapHint": "{merchant}, {amount}",
+      "simulatedNote": "Plățile în magazin nu pot fi puse pe pauză. Primești imediat o notificare cu ce ți-a rămas.",
+      "tapToast": "Ai plătit {amount} la {merchant}. Azi mai poți cheltui liniștit {safe}.",
+      "tapToastNoRitm": "Ai plătit {amount} la {merchant}."
     },
     "profile": {
       "title": "Profil",
@@ -103,6 +110,38 @@
         "essential": "E o cheltuială esențială; e scoasă deja din banii de cheltuit.",
         "notCounted": "Banii rămân la tine, între conturile tale sau puși deoparte."
       }
+    },
+    "toast": {
+      "close": "Închide notificarea"
+    },
+    "checkout": {
+      "back": "Înapoi la Atlas",
+      "address": "modahub · magazin online fictiv",
+      "cart": "Coșul tău",
+      "item": "Geacă de toamnă",
+      "itemDetail": "Bleumarin, mărimea M",
+      "shipping": "Livrare",
+      "free": "Gratuită",
+      "total": "Total",
+      "payWithAtlas": "Plătește cu Atlas"
+    },
+    "confirm": {
+      "secure": "Plată securizată",
+      "title": "Confirmă plata",
+      "intro": "Un magazin online îți cere această plată.",
+      "merchant": "Comerciant",
+      "confirm": "Confirmă plata",
+      "cancel": "Anulează",
+      "paidTitle": "Plată aprobată",
+      "paidBody": "Ai plătit {amount} la {merchant}.",
+      "backHome": "Înapoi la Atlas"
+    },
+    "speedBump": {
+      "title": "O pauză scurtă",
+      "body": "Ești pe cale să plătești {amount} la {merchant}. Azi mai poți cheltui liniștit {safe}. Alegerea e a ta.",
+      "notNow": "Nu acum",
+      "confirm": "Plătesc oricum",
+      "confirmIn": "Plătesc oricum ({seconds} s)"
     }
   },
   "ritm": {

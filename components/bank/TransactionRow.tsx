@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { DEFAULT_RITM_SETTINGS } from "@/lib/data/persona";
+import { useBank } from "@/lib/store/useBank";
 import type { Transaction } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
@@ -16,7 +16,7 @@ export function TransactionRow({ tx }: { tx: Transaction }) {
   const t = useT();
   const locale = useLocale((s) => s.locale);
   const incoming = tx.amount < 0;
-  const essential = DEFAULT_RITM_SETTINGS.essentialCategories.includes(tx.category);
+  const essential = useBank((s) => s.ritm.essentialCategories.includes(tx.category));
 
   return (
     <li>
