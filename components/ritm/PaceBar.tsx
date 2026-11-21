@@ -24,6 +24,8 @@ type Props = {
   severity: PaceSeverity;
   dayOfCycle: number;
   cycleLength: number;
+  /** False when the status is shown elsewhere (the Home card shows it in its header). */
+  showStatus?: boolean;
 };
 
 const pct = (x: number) => Math.round(Math.min(Math.max(x, 0), 1) * 100);
@@ -32,7 +34,17 @@ const pct = (x: number) => Math.round(Math.min(Math.max(x, 0), 1) * 100);
  * One bar = this month's spending money. Solid fill = spent within the month's pace;
  * hatched fill = spent ahead of the calendar. The dark tick is today.
  */
-export function PaceBar({ pctSpent, pctMonthPassed, severity, dayOfCycle, cycleLength }: Props) {
+/** The pace in words, as a coloured pill: "You're on pace", "A little ahead of pace"… */
+export function PaceStatus({ severity }: { severity: PaceSeverity }) {
+  const t = useT();
+  return (
+    <p className={cn("self-start rounded-full px-3 py-1 text-sm font-semibold", TEXT[severity])}>
+      {t(`ritm.pace.status.${severity}`)}
+    </p>
+  );
+}
+
+export function PaceBar({ pctSpent, pctMonthPassed, severity, dayOfCycle, cycleLength, showStatus = true }: Props) {
   const t = useT();
   const spent = pct(pctSpent);
   const month = pct(pctMonthPassed);
@@ -92,9 +104,7 @@ export function PaceBar({ pctSpent, pctMonthPassed, severity, dayOfCycle, cycleL
         </p>
       )}
 
-      <p className={cn("self-start rounded-full px-3 py-1 text-sm font-medium", TEXT[severity])}>
-        {t(`ritm.pace.status.${severity}`)}
-      </p>
+      {showStatus && <PaceStatus severity={severity} />}
     </figure>
   );
 }

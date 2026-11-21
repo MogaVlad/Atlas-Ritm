@@ -504,7 +504,10 @@
       "headsUpCta": "Vezi de ce te-a atenționat Ritm",
       "lockOpen": "Lacătul s-a deschis: {amount} sunt liberi.",
       "summaryCta": "Vezi cum a fost luna",
-      "askCta": "Întreabă Ritm"
+      "askCta": "Întreabă Ritm",
+      "sentence": "Ai folosit {spent}% din banii de cheltuit, iar din lună a trecut {month}%.",
+      "openCta": "Deschide Ritm",
+      "activeLine": "Pornit: {list}"
     },
     "reason": {
       "pctSpent": "Ziua {day}: ai folosit deja {pct}% din banii de cheltuit.",
@@ -590,7 +593,9 @@
       "essentials": "Plăți fixe pe lună",
       "settingsLink": "Alte setări Ritm, în Profil",
       "lockOpen": "S-a deschis: {amount} liberi",
-      "summaryLink": "Rezumatul lunii"
+      "summaryLink": "Rezumatul lunii",
+      "dayPill": "Ziua {day} din {total}",
+      "paceTitle": "Ritmul tău"
     },
     "pension": {
       "title": "Cum funcționează Pilonul III",

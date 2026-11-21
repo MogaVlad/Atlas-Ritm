@@ -32,7 +32,7 @@ export function BottomNav() {
                 aria-current={active ? "page" : undefined}
                 className="group flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl text-[0.72rem] font-medium text-atlas-muted transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-atlas-pine aria-[current=page]:text-atlas-ink"
               >
-                <span className="flex h-7 w-12 items-center justify-center rounded-full transition-colors group-aria-[current=page]:bg-atlas-sea">
+                <span className="flex h-7 w-14 items-center justify-center rounded-full transition-colors group-aria-[current=page]:bg-atlas-sea group-aria-[current=page]:text-atlas-pine">
                   <Icon className="size-5" strokeWidth={active ? 2.25 : 1.75} aria-hidden="true" />
                 </span>
                 {t(`bank.nav.${key}`)}

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useT } from "@/lib/i18n";
 import { useWelcome } from "./welcomeGuide";
 
-const ICON = "flex size-12 items-center justify-center rounded-full bg-white text-atlas-pine ring-1 ring-atlas-line transition-colors group-hover:bg-atlas-sea motion-reduce:transition-none";
+const ICON = "flex size-[3.25rem] items-center justify-center rounded-[18px] bg-white text-atlas-ink ring-1 ring-atlas-line transition-colors group-hover:bg-atlas-sea motion-reduce:transition-none";
 const ITEM =
   "group flex min-h-[4.75rem] flex-col items-center justify-start gap-1.5 rounded-2xl pt-1 text-xs font-medium text-atlas-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-atlas-pine";
 
