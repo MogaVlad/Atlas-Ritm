@@ -209,3 +209,34 @@ test("Lock: shown as on, and taking money out asks why with buttons (Health = no
   await page.getByRole("button", { name: lock.earlyConfirm }).click();
   await expect(page.getByText(fill(lock.requested, { amount: "200,00 RON", day: 2 }))).toBeVisible();
 });
+
+test("the Lock opening pops up once and leads to the choice; Reset demo goes back Home", async ({ page }) => {
+  await page.goto("/?demo=1");
+  await jumpToDay(page, 1, 0);
+
+  // Start Ritm with the Lock on (500 lei until day 20).
+  await page.getByRole("link", { name: exact(m.bank.nav.ritm) }).click();
+  await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
+  await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
+  await page.getByRole("switch", { name: m.ritm.levels.lock.name }).click();
+  await page.getByRole("button", { name: m.ritm.onboarding.finish }).click();
+
+  // Day 20: the popup says the Lock is open and leads to the unlock screen.
+  const clock = page.getByRole("group", { name: m.common.demo.title });
+  await clock.getByRole("button", { name: fill(m.common.demo.day, { day: 1 }) }).click();
+  const panel = page.getByRole("region", { name: m.common.demo.buy.button });
+  await panel.getByRole("button", { name: fill(m.common.demo.jumpTo, { day: 18 }) }).click();
+  await panel.getByRole("button", { name: m.common.demo.buy.close }).click();
+  await jumpToDay(page, 20, 18);
+  const popup = page.getByRole("dialog", { name: m.common.lockPrompt.title });
+  await expect(popup).toBeVisible();
+  await popup.getByRole("button", { name: m.common.lockPrompt.open }).click();
+  await expect(page).toHaveURL(/\/ritm\/unlock/);
+  await expect(page.getByRole("dialog", { name: m.common.lockPrompt.title })).toHaveCount(0);
+
+  // Reset demo from any screen lands on Home, day 0.
+  await clock.getByRole("button", { name: fill(m.common.demo.day, { day: 20 }) }).click();
+  await panel.getByRole("button", { name: m.common.demo.reset }).click();
+  await expect(page).toHaveURL(/localhost:3000\/(\?.*)?$/);
+  await expect(clock.getByText(fill(m.common.demo.day, { day: 0 }), { exact: true })).toBeVisible();
+});

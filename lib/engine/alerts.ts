@@ -19,17 +19,31 @@ export function shouldNotify(state: PaceState, memory: AlertMemory, day: Day): b
   return day - memory.lastNotifiedDay >= RULES.alerts.minDaysBetween;
 }
 
-/** Lei to suggest moving to the Lock: 200, but never more than what's left. */
-const MOVE_TO_LOCK_LEI = 200;
+/**
+ * Lei to suggest moving to the Lock: what the days after it opens need at a pace that lasts.
+ * Money left ÷ days left (today included) = the lasting pace a day; times the days from the
+ * unlock day to payday. Rounded down to 10 lei, never more than what's left; 0 (no suggestion)
+ * once the Lock's day has come. Day 6, 954 lei left, Lock until 20: 38,16 × 11 days → 410 lei.
+ */
+export function moveToLockAmount(state: PaceState, unlockDay: Day): number {
+  if (unlockDay <= state.dayOfCycle || state.remaining <= 0) return 0;
+  const perDay = state.remaining / (state.cycleLength - state.dayOfCycle + 1);
+  const daysAfterUnlock = state.cycleLength - unlockDay + 1;
+  return Math.min(Math.floor((perDay * daysAfterUnlock) / 10) * 10, Math.floor(state.remaining));
+}
 
 /**
  * The one-tap actions offered in the Heads-up sheet.
  * After 2 ignored alerts, the Speed bump is suggested first.
  */
-export function alertActions(state: PaceState, memory: AlertMemory): AlertAction[] {
+export function alertActions(
+  state: PaceState,
+  memory: AlertMemory,
+  unlockDay: Day = RULES.lock.defaultUnlockDay,
+): AlertAction[] {
   if (state.severity === "ok") return [];
 
-  const moveAmount = Math.max(0, Math.min(MOVE_TO_LOCK_LEI, Math.floor(state.remaining)));
+  const moveAmount = moveToLockAmount(state, unlockDay);
   const moveToLock: AlertAction = { kind: "moveToLock", labelKey: "ritm.headsUp.actions.moveToLock", amount: moveAmount };
   const speedBump: AlertAction = { kind: "enableSpeedBump", labelKey: "ritm.headsUp.actions.enableSpeedBump" };
   const planned: AlertAction = { kind: "markPlanned", labelKey: "ritm.headsUp.actions.markPlanned" };
