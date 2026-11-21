@@ -26,7 +26,7 @@ Rules:
 - If the question is outside these topics, say you can only help with Ritm and the money
   in this app.
 FACTS: Pillar III is a voluntary private pension; money stays invested until retirement;
-contributions are deductible up to the lei equivalent of 400 EUR a year (shared with
+contributions are deductible up to the RON equivalent of 400 EUR a year (shared with
 private health insurance). Interest on bank savings is taxed at 10%.
 CONTEXT: {context}`;
 
@@ -61,7 +61,7 @@ export function buildSystemPrompt(context: ChatContext): string {
   const p = context.pctSpent;
   const pct = p === undefined ? "unknown" : `${Math.round(p > 1.5 ? p : p * 100)}%`;
   const line = [
-    `safeToSpendToday=${show(context.safeToSpendToday)} lei`,
+    `safeToSpendToday=${show(context.safeToSpendToday)} RON`,
     `pctSpent=${pct}`,
     `dayOfCycle=${show(context.dayOfCycle)} of 30`,
     `goal=${show(context.goal)}`,

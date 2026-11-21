@@ -22,7 +22,7 @@ Vitest, Playwright. Deployed on Vercel from `main`.
 - Every visible text uses useT('namespace.key') from lib/i18n.ts. Add each key to BOTH
   messages/ro.json and messages/en.json. Namespaces: common.*, bank.*, ritm.*. No hardcoded text.
 - Money: formatLei(amount, locale) from lib/format.ts. Same format in both languages
-  (team decision): 1.234,56 lei.
+  (team decision): 1.234,56 RON.
 - Mobile first: design at 390×844; touch targets at least 44px; visible focus states;
   respect prefers-reduced-motion.
 - Fictional merchants and brands only. Never use real bank names, logos or brand colours.
