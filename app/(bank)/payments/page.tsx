@@ -3,7 +3,7 @@
 import { ChevronRight, Globe, Nfc } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useState } from "react";
-import { CAFE_TAP, MODAHUB_JACKET } from "@/components/bank/purchases";
+import { CAFE_TAP, canAfford, MODAHUB_JACKET } from "@/components/bank/purchases";
 import { Toast } from "@/components/bank/Toast";
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
@@ -20,10 +20,14 @@ export default function PaymentsPage() {
   const closeToast = useCallback(() => setToast(null), []);
 
   function tapInStore() {
+    const values = { amount: formatLei(CAFE_TAP.amount, locale), merchant: CAFE_TAP.merchant };
+    if (!canAfford(CAFE_TAP.amount)) {
+      const balance = formatLei(useBank.getState().balances.current, locale);
+      return setToast(t("bank.payments.insufficient", { ...values, balance }));
+    }
     addTransaction(CAFE_TAP);
     // The store recomputes the pace synchronously, so this is the number after the tap.
     const { pace, ritm } = useBank.getState();
-    const values = { amount: formatLei(CAFE_TAP.amount, locale), merchant: CAFE_TAP.merchant };
     setToast(
       ritm.enabled
         ? t("bank.payments.tapToast", { ...values, safe: formatLei(pace.safeToSpendToday, locale) })

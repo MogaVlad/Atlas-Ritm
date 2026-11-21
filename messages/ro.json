@@ -35,6 +35,25 @@
           "title": "Din nou salariu",
           "body": "Ziua 30, cei 500 lei păstrați. Gata pentru rezumat."
         }
+      },
+      "jumpTo": "Mergi la ziua {day}",
+      "buy": {
+        "button": "Simulează o plată",
+        "title": "Simulează o plată",
+        "close": "Închide instrumentele de demo",
+        "shop": "Magazin",
+        "amount": "Sumă (lei)",
+        "channel": "Cum plătești",
+        "online": "Online",
+        "inStore": "În magazin",
+        "pay": "Plătește {amount}",
+        "invalid": "Scrie o sumă mai mare de 0.",
+        "inStoreNote": "Plățile în magazin nu se pun pe pauză. Ritm îți arată imediat ce ți-a rămas.",
+        "ritmOff": "Ritm e oprit, așa că plata trece direct.",
+        "headsUpOnly": "Ritm e pe Atenționare: te avertizează, dar nu oprește plățile. Pauza apare doar pe nivelul Pauză sau Lacăt.",
+        "enableSpeedBump": "Treci pe Pauză",
+        "underThreshold": "Sub {threshold}, deci fără Pauză.",
+        "willPause": "Pauza va opri plata înainte să confirmi."
       }
     }
   },
@@ -92,7 +111,8 @@
       "tapHint": "{merchant}, {amount}",
       "simulatedNote": "Plățile în magazin nu pot fi puse pe pauză. Primești imediat o notificare cu ce ți-a rămas.",
       "tapToast": "Ai plătit {amount} la {merchant}. Azi mai poți cheltui liniștit {safe}.",
-      "tapToastNoRitm": "Ai plătit {amount} la {merchant}."
+      "tapToastNoRitm": "Ai plătit {amount} la {merchant}.",
+      "insufficient": "Nu ai destui bani pentru {amount} la {merchant}. În contul curent ai {balance}."
     },
     "profile": {
       "title": "Profil",
@@ -172,7 +192,8 @@
       "cancel": "Anulează",
       "paidTitle": "Plată aprobată",
       "paidBody": "Ai plătit {amount} la {merchant}.",
-      "backHome": "Înapoi la Atlas"
+      "backHome": "Înapoi la Atlas",
+      "insufficient": "Nu ai destui bani în contul curent. Ai {balance}."
     },
     "speedBump": {
       "title": "O pauză scurtă",

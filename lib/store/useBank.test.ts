@@ -11,9 +11,9 @@ beforeEach(() => {
 });
 
 describe("useBank", () => {
-  it("starts on day 1, Romanian, Ritm off, no notifications", () => {
+  it("starts on day 1, English, Ritm off, no notifications", () => {
     expect(store().demoDay).toBe(1);
-    expect(store().locale).toBe("ro");
+    expect(store().locale).toBe("en");
     expect(store().ritm.enabled).toBe(false);
     expect(store().notifications).toEqual([]);
   });
@@ -239,12 +239,12 @@ describe("useBank", () => {
 
   it("Reset demo goes back to day 1 with nothing added", () => {
     store().enableRitm(DEFAULT_RITM_SETTINGS);
-    store().setLocale("en");
+    store().setLocale("ro");
     store().setDemoDay(6);
     store().addTransaction(jacket);
     store().resetDemo();
     expect(store().demoDay).toBe(1);
-    expect(store().locale).toBe("ro");
+    expect(store().locale).toBe("en");
     expect(store().added).toEqual([]);
     expect(store().notifications).toEqual([]);
     expect(store().lock).toBeNull();

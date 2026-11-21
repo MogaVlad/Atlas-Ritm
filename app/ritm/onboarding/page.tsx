@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { LocaleToggle } from "@/components/bank/LocaleToggle";
 import { LevelChips } from "@/components/ritm/LevelChips";
-import { RitmBack } from "@/components/ritm/RitmBack";
+import { leaveRitm, RitmBack } from "@/components/ritm/RitmBack";
 import { useBank } from "@/lib/store/useBank";
 import { ESSENTIAL_CATEGORIES, NET_SALARY } from "@/lib/data/persona";
 import { SCENARIO, transactionsUntil } from "@/lib/data/scenario";
@@ -84,7 +84,8 @@ export default function RitmOnboarding() {
   const finish = () => {
     if (!settings.goal.name || !(settings.goal.amount > 0)) return setGoalError(true);
     enableRitm(settings);
-    router.push("/");
+    // Back where onboarding was opened from (Home, Payments, Profile...), not always Home.
+    leaveRitm(router);
   };
 
   return (
