@@ -13,8 +13,8 @@ const ANSWERS: Record<Topic, Record<ChatLocale, string>> = {
     en: "Ritm watches how fast you spend your spending money since payday. At the level you choose, it gives you a Heads-up, adds a short pause to online payments (Speed bump) or locks part of your salary in savings (Lock). You can turn it off any time in settings.",
   },
   pause: {
-    ro: "Pauza apare la plățile online de peste 100 RON când cheltui mai repede decât de obicei. Îți arată ce înseamnă plata pentru obiectivul tău și cât poți cheltui azi; după 5 secunde poți confirma. Decizia rămâne a ta.",
-    en: "The pause shows up on online payments over 100 RON when you spend faster than usual. It shows what the payment means for your goal and how much is safe to spend today; after 5 seconds you can confirm. The choice is yours.",
+    ro: "Pauza apare la plățile online de peste 100 RON când cheltui mai repede decât de obicei. Îți arată ce înseamnă plata pentru obiectivul tău și cât poți cheltui azi; dacă vrei să plătești, ții apăsat butonul 3 secunde. Decizia rămâne a ta.",
+    en: "The pause shows up on online payments over 100 RON when you spend faster than usual. It shows what the payment means for your goal and how much is safe to spend today; to pay, you hold the button for 3 seconds. The choice is yours.",
   },
   pension: {
     ro: "Pilonul III e o pensie privată facultativă: banii rămân investiți până la pensie, iar contribuțiile sunt deductibile până la echivalentul a 400 EUR pe an. Atlas Pensii este fondul propriu al Atlas; poți compara toate fondurile pe site-ul ASF.",
