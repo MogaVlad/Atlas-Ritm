@@ -1,13 +1,11 @@
-import { PERSONA } from "@/lib/data/persona";
-import { SCENARIO, transactionsUntil } from "@/lib/data/scenario";
-import type { Day, Transaction } from "@/lib/engine";
+"use client";
 
-/**
- * Bank-side view of the synthetic data in lib/data. Read-only helpers for the Atlas screens.
- * TEMPORARY: the demo day is fixed until the useBank store + demo clock land (C5);
- * then screens read the day and transactions from the store instead.
- */
-export const DEMO_DAY: Day = 6;
+import { useMemo } from "react";
+import { PERSONA } from "@/lib/data/persona";
+import type { Day, Transaction } from "@/lib/engine";
+import { useBank } from "@/lib/store/useBank";
+
+/** Bank-side read helpers over the useBank store (demo day, transactions, balances). */
 
 export type AccountId = "current" | "savings";
 
@@ -25,23 +23,30 @@ export const CARD_LAST4 = PERSONA.cardLast4;
  */
 export const DEMO_MONTH = new Date(2026, 10, 1);
 
-/** Up to `day`, newest first (same day: latest entry first). */
-export function visibleTransactions(day: Day = DEMO_DAY): Transaction[] {
-  return transactionsUntil(day).sort((a, b) => b.day - a.day || b.id.localeCompare(a.id));
+/**
+ * Transactions up to the demo day, newest first. Same day: the later entry first, using the
+ * store's order (scenario, then live purchases), so a payment made just now is on top.
+ */
+export function useVisibleTransactions(): Transaction[] {
+  const transactions = useBank((s) => s.transactions);
+  const day = useBank((s) => s.demoDay);
+  return useMemo(
+    () =>
+      transactions
+        .map((t, order) => ({ t, order }))
+        .filter(({ t }) => t.day <= day)
+        .sort((a, b) => b.t.day - a.t.day || b.order - a.order)
+        .map(({ t }) => t),
+    [transactions, day],
+  );
 }
 
-/** Current account balance: money in minus money out (amounts are positive when money leaves). */
-export function currentBalance(day: Day = DEMO_DAY): number {
-  return -transactionsUntil(day).reduce((s, t) => s + t.amount, 0);
+export function useDemoDay(): Day {
+  return useBank((s) => s.demoDay);
 }
 
-/** Savings start empty; the Lock moves money here once Ritm is on (store, C5). */
-export function savingsBalance(): number {
-  return 0;
-}
-
-export function findTransaction(id: string): Transaction | undefined {
-  return SCENARIO.find((t) => t.id === id);
+export function useBalances() {
+  return useBank((s) => s.balances);
 }
 
 /** Groups an already sorted list by day, keeping the order. */
