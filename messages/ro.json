@@ -565,6 +565,14 @@
           "tradeoff": "Plătești mai puțin impozit acum, dar banii stau blocați până la pensie.",
           "note": "Atlas Pensii e fondul Atlas. Poți compara fondurile pe site-ul ASF."
         }
+      },
+      "others": "Alte variante",
+      "featured": {
+        "today": "Azi, la {age} de ani",
+        "retirement": "La pensie",
+        "taxLabel": "Pentru {amount}, impozitul scade cu",
+        "taxValue": "până la {tax}",
+        "taxNote": "Deducerea merge până la {limit} pe an (400 EUR), împărțită cu asigurarea privată de sănătate."
       }
     },
     "summary": {

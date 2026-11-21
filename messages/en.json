@@ -565,6 +565,14 @@
           "tradeoff": "You pay less tax now, but the money stays locked until retirement.",
           "note": "Atlas Pensii is Atlas's own fund. You can compare funds on the ASF website."
         }
+      },
+      "others": "Other options",
+      "featured": {
+        "today": "Today, age {age}",
+        "retirement": "At retirement",
+        "taxLabel": "For {amount}, your tax goes down by",
+        "taxValue": "up to {tax}",
+        "taxNote": "The deduction is capped at {limit} a year (400 EUR), shared with private health insurance."
       }
     },
     "summary": {
