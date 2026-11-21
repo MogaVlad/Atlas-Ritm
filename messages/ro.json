@@ -11,5 +11,44 @@
       "comingSoon": "Aplicația e în lucru."
     }
   },
-  "ritm": {}
+  "ritm": {
+    "pace": {
+      "aria": "Ai folosit {spent}% din banii de cheltuit, iar luna a trecut {month}%. {status}",
+      "spent": "folosit",
+      "today": "ziua {day} din {total} ·",
+      "status": {
+        "ok": "Ești în ritm",
+        "watch": "Puțin peste ritm",
+        "spike": "Mult peste ritm"
+      }
+    },
+    "safe": {
+      "label": "Poți cheltui azi",
+      "line": {
+        "ok": "Așa ajungi liniștit până la salariu.",
+        "watch": "Cheltui puțin mai repede decât trece luna.",
+        "spike": "Banii se duc mai repede decât zilele. Azi, mai cu grijă."
+      }
+    },
+    "levels": {
+      "label": "Cât de strict să fie Ritm",
+      "headsup": {
+        "name": "Atenționare",
+        "description": "Îți spune când cheltui mai repede decât trece luna. Nu oprește nimic."
+      },
+      "speedbump": {
+        "name": "Pauză",
+        "description": "Înainte de o plată online mare, îți arată cifrele și te lasă să confirmi după 5 secunde."
+      },
+      "lock": {
+        "name": "Lacăt",
+        "description": "Pune deoparte o sumă în ziua salariului și o deblochează în ziua aleasă de tine."
+      }
+    },
+    "playground": {
+      "title": "Ritm · componente",
+      "pickDay": "Alege ziua din lună",
+      "day": "Ziua {day}"
+    }
+  }
 }
