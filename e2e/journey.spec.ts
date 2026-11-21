@@ -186,10 +186,6 @@ test("after the money goes to Pillar III, Back to Atlas leads home and back does
   // The "Done" popup confirms the contribution; closing it shows the Speed bump again.
   const done = page.getByRole("dialog", { name: starts(m.ritm.pension.donePopup.title.split("{")[0]) });
   await expect(done).toBeVisible();
-  // The tax deduction goes through the employer: the popup hands over the payment proof as a PDF.
-  const download = page.waitForEvent("download");
-  await done.getByRole("button", { name: m.ritm.pension.donePopup.proof }).click();
-  expect((await download).suggestedFilename()).toBe(`${m.ritm.pension.proof.file}.pdf`);
   await done.getByRole("button", { name: m.ritm.pension.donePopup.ok }).click();
   await speedBump.getByRole("button", { name: m.ritm.speedBump.backToAtlas }).click();
   await expect(page).toHaveURL(/localhost:3000\/(\?.*)?$/);

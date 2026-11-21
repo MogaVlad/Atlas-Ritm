@@ -516,7 +516,7 @@
       "holdHint": "Ține apăsat {seconds} secunde ca să plătești.",
       "notNowHint": "Azi poți cheltui în continuare {safe}.",
       "moveToLockNumber": "+~{interest} dobândă până în ziua {day}, apoi îi ai înapoi.",
-      "pensionNumber": "Poți plăti cu până la {tax} mai puțin impozit. Banii rămân în fond până la 60 de ani.",
+      "pensionNumber": "Până la {tax} impozit în minus. Banii rămân în fond până la 60 de ani.",
       "detailsTitle": "De unde vin cifrele",
       "detailsSafe": "Cât poți cheltui azi: ce ți-a rămas, împărțit pe zilele până la salariu, minus ce ai cheltuit azi.",
       "detailsLock": "Dobânda: o estimare cu {rate}% pe an la economii, după impozitul de 10%, până în ziua {day}.",
@@ -540,7 +540,7 @@
       "whatTitle": "Ce este",
       "what": "O pensie privată, pe care o alegi tu. Banii se investesc într-un fond până ieși la pensie.",
       "getTitle": "Ce primești",
-      "get": "Ce pui se scade din venitul impozabil, până la {limit} pe an (400 EUR, împărțiți cu asigurarea privată de sănătate). Pentru {amount}, îți poți scădea impozitul cu până la {tax}. Angajatorul îl aplică pe statul de plată: îi dai dovada de plată pe care ți-o trimitem.",
+      "get": "Ce pui se scade din venitul impozabil, până la {limit} pe an (400 EUR, împărțiți cu asigurarea privată de sănătate). Pentru {amount}, impozitul tău scade cu până la {tax}.",
       "catchTitle": "Ce trebuie să știi",
       "catch": "Banii rămân în fond până la 60 de ani, după cel puțin 90 de plăți lunare. Valoarea fondului urcă și coboară odată cu piețele, așa că nu promitem randamente.",
       "fees": "Costuri: până la 5% din fiecare plată și un mic comision lunar din sold. Detaliile sunt în prospectul fondului.",
@@ -552,32 +552,20 @@
       "notNow": "Nu acum",
       "donePopup": {
         "title": "Gata! {amount} au ajuns în Atlas Pensii",
-        "tax": "Poți plăti cu până la {tax} mai puțin impozit",
-        "note": "Dă-i angajatorului dovada de plată: el aplică deducerea pe statul de plată. Banii rămân în fond până la 60 de ani, după cel puțin 90 de plăți lunare.",
-        "ok": "Am înțeles",
-        "proof": "Trimite dovada angajatorului",
-        "proofHint": "Descarcă un PDF pe care îl poți trimite angajatorului."
+        "tax": "Impozitul tău scade cu până la {tax}",
+        "note": "Banii rămân în fond până la 60 de ani, după cel puțin 90 de plăți lunare. Atlas Pensii e fondul Atlas; poți compara toate fondurile pe site-ul ASF.",
+        "ok": "Am înțeles"
       },
-      "done": "Gata. {amount} au mers la Atlas Pensii. Dă-i angajatorului dovada de plată pe care ți-am trimis-o și plătești cu până la {tax} mai puțin impozit.",
+      "done": "Gata. {amount} au mers la Atlas Pensii. Impozitul tău scade cu până la {tax}.",
       "error": {
         "noConsent": "Bifează mai întâi că ai înțeles.",
         "invalidAmount": "Scrie o sumă mai mare de 0.",
         "notEnoughMoney": "Nu ai destui bani pentru suma asta."
       },
       "step": "Pasul {step} din {total}",
-      "getBig": "Poți plăti cu până la {tax} mai puțin impozit",
+      "getBig": "Până la {tax} impozit în minus",
       "next": "Mai departe",
       "back": "Înapoi",
-      "proof": {
-        "file": "atlas-pensii-dovada-plata",
-        "title": "Atlas Pensii: dovada de plata",
-        "demo": "DEMO: Atlas este o banca fictiva. Documentul nu este valabil.",
-        "member": "Participant: client demo Atlas",
-        "fund": "Fond: Atlas Pensii (Pilonul III, pensie facultativa)",
-        "amount": "Suma platita: {amount}",
-        "date": "Data: {date}",
-        "forEmployer": "Pentru angajator: va rugam sa deduceti aceasta contributie din venitul impozabil pe statul de plata, pana la echivalentul a 400 EUR pe an (impreuna cu asigurarea privata de sanatate)."
-      },
       "join": {
         "title": "Intră în Atlas Pensii",
         "intro": "Ca să pui bani într-un fond de pensii, mai întâi intri în el semnând un act de aderare. Durează cam 2 minute.",
@@ -690,7 +678,7 @@
         },
         "pillar3": {
           "name": "Pilonul III (Atlas Pensii)",
-          "tradeoff": "Poți plăti mai puțin impozit acum, dar banii rămân în fond până la 60 de ani.",
+          "tradeoff": "Plătești mai puțin impozit acum, dar banii rămân în fond până la 60 de ani.",
           "note": "Atlas Pensii e fondul Atlas. Poți compara fondurile pe site-ul ASF."
         }
       },
@@ -698,7 +686,7 @@
       "featured": {
         "today": "Azi, la {age} de ani",
         "retirement": "La pensie",
-        "taxLabel": "Pentru {amount}, îți poți scădea impozitul cu",
+        "taxLabel": "Pentru {amount}, impozitul scade cu",
         "taxValue": "până la {tax}",
         "taxNote": "Deducerea merge până la {limit} pe an (400 EUR), împărțită cu asigurarea privată de sănătate."
       }
