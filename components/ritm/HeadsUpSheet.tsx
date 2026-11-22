@@ -2,6 +2,7 @@
 
 import { Check, X } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { isCounted, RULES, type AlertAction } from "@/lib/engine";
 import { formatLei } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n";
@@ -93,7 +94,11 @@ export function HeadsUpSheet({ notification, onClose }: Props) {
     onClose();
   };
 
-  return (
+  // Opened from the Ritm card on Home, the sheet sits inside the card's positioned wrapper: portal it to the
+  // phone screen so it covers the whole phone, not just the card.
+  const screen = typeof document === "undefined" ? null : document.querySelector("[data-phone-screen]");
+
+  const sheet = (
     <div className="absolute inset-0 z-40 flex flex-col justify-end bg-atlas-ink/40 motion-safe:animate-in motion-safe:fade-in" onClick={close}>
       <div
         role="dialog"
@@ -101,7 +106,7 @@ export function HeadsUpSheet({ notification, onClose }: Props) {
         aria-labelledby={titleId}
         onClick={(e) => e.stopPropagation()}
         onKeyDown={(e) => e.key === "Escape" && close()}
-        className="max-h-[88%] overflow-y-auto rounded-t-3xl bg-white px-5 pt-3 pb-6 shadow-2xl motion-safe:animate-in motion-safe:slide-in-from-bottom-10 motion-safe:duration-300"
+        className="max-h-[88%] overflow-y-auto overscroll-y-contain [scrollbar-width:none] rounded-t-3xl bg-white px-5 pt-3 pb-6 shadow-2xl motion-safe:animate-in motion-safe:slide-in-from-bottom-10 motion-safe:duration-300"
       >
         <div aria-hidden className="mx-auto mb-3 h-1 w-10 rounded-full bg-atlas-line" />
         <div className="flex items-start justify-between gap-3">
@@ -212,6 +217,7 @@ export function HeadsUpSheet({ notification, onClose }: Props) {
       </div>
     </div>
   );
+  return screen ? createPortal(sheet, screen) : sheet;
 }
 
 const SECONDARY =
