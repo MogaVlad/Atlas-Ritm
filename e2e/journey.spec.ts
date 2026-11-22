@@ -38,7 +38,7 @@ test("payday → onboarding → day 6 Heads-up → Speed bump on the jacket", as
   await jumpToDay(page, 1, 0);
   await expect(page.getByText("4.690,00 RON")).toBeVisible();
 
-  // Onboarding: Heads-up is on by default; switch the Lock on (500 lei until day 20). Goal Islanda 2027.
+  // Onboarding: Heads-up is on by default; switch the Lock on (500 lei until day 20). Goal: a laptop.
   await page.goto("/ritm?demo=1");
   await expect(page).toHaveURL(/\/ritm\/onboarding/);
   await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
@@ -126,14 +126,14 @@ test("goals: several, each with a time; above 20% of the salary Ritm explains, t
   await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
   await page.getByRole("button", { name: m.ritm.onboarding.next }).click();
 
-  // Islanda 2027: 9.000 lei in 18 months = 500 lei a month, 10% of the 4.800 lei salary.
-  await expect(page.getByText(fill(g.total, { amount: "500,00 RON", pct: 10 }))).toBeVisible();
+  // Laptop: 3.600 lei in 18 months = 200 lei a month, 4% of the 4.800 lei salary.
+  await expect(page.getByText(fill(g.total, { amount: "200,00 RON", pct: 4 }))).toBeVisible();
   await expect(page.getByText(g.within)).toBeVisible();
 
-  // A laptop for 6.000 lei in 12 months adds 500 lei a month: 1.000 lei is 21%, above the guideline.
+  // A trip for 9.600 lei in 12 months adds 800 lei a month: 1.000 lei is 21%, above the guideline.
   await page.getByRole("button", { name: g.add }).click();
-  await page.getByLabel(s3.goalName).nth(1).fill("Laptop");
-  await page.getByLabel(s3.goalAmount).nth(1).fill("6000");
+  await page.getByLabel(s3.goalName).nth(1).fill("Islanda 2027");
+  await page.getByLabel(s3.goalAmount).nth(1).fill("9600");
   await expect(page.getByText(fill(g.total, { amount: "1.000,00 RON", pct: 21 }))).toBeVisible();
   await expect(page.getByText(fill(g.over, { guideline: "960,00 RON" }))).toBeVisible();
 
@@ -142,12 +142,12 @@ test("goals: several, each with a time; above 20% of the salary Ritm explains, t
   await page.getByRole("link", { name: exact(m.bank.nav.ritm) }).click();
   await expect(page.getByText(fill(g.totalValue, { amount: "1.000,00 RON", pct: 21 }))).toBeVisible();
 
-  // Later: give the laptop 24 months and it fits in the 20% again.
+  // Later: give the trip 24 months and it fits in the 20% again.
   await page.getByRole("link", { name: g.editLink }).click();
   await page.getByLabel(g.reachIn).nth(1).fill("24");
   await expect(page.getByText(g.within)).toBeVisible();
   await page.getByRole("button", { name: g.save }).click();
-  await expect(page.getByText(fill(g.totalValue, { amount: "750,00 RON", pct: 16 }))).toBeVisible();
+  await expect(page.getByText(fill(g.totalValue, { amount: "600,00 RON", pct: 13 }))).toBeVisible();
 });
 
 test("after the money goes to Pillar III, Back to Atlas leads home and back doesn't reopen the payment", async ({ page }) => {
