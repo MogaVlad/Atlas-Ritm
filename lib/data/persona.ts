@@ -20,8 +20,8 @@ export const LOCK_UNLOCK_DAY = RULES.lock.defaultUnlockDay; // 20
 /** Money Luca can spend this month: salary − essentials − Lock = 2120 lei. */
 export const SPENDING_POOL = NET_SALARY - ESSENTIALS_TOTAL - LOCK_AMOUNT;
 
-/** 9000 lei in 18 months = 500 lei a month, about 10% of the salary. */
-export const GOAL: Goal = { name: "Islanda 2027", amount: 9000, months: 18 }; // illustrative, replace with sourced figure
+/** A laptop: 3600 lei in 18 months = 200 lei a month, about 4% of the salary. "Laptop" reads the same in RO and EN. */
+export const GOAL: Goal = { name: "Laptop", amount: 3600, months: 18 }; // illustrative, replace with sourced figure
 
 export const ESSENTIAL_CATEGORIES: Category[] = ["rent", "utilities", "phone", "transport"];
 
