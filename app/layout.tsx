@@ -18,9 +18,17 @@ const geistMono = Geist_Mono({
   subsets: ["latin", "latin-ext"],
 });
 
+const title = "Ritm by Atlas · First-salary spending coach";
+const description =
+  "Hackathon prototype from Bank/Rupt by Stripe x FoundersHive. Try it on your phone: it runs on made-up data, with no real bank connected.";
+
 export const metadata: Metadata = {
-  title: "Atlas",
-  description: "Atlas · Ritm — hackathon prototype (fictional bank)",
+  // Absolute base for the link-preview image, so LinkedIn and others always get the public URL.
+  metadataBase: new URL("https://atlas-ritm.vercel.app"),
+  title,
+  description,
+  openGraph: { title, description, url: "/", siteName: "Ritm by Atlas", type: "website" },
+  twitter: { card: "summary_large_image", title, description },
 };
 
 export const viewport: Viewport = {
