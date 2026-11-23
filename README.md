@@ -1,6 +1,6 @@
 # Atlas · Ritm
 
-**Try it live: [artificial-inflation-2026.vercel.app](https://artificial-inflation-2026.vercel.app/)**. It's best on a phone; on a laptop it opens inside a phone frame.
+**Try it live: [atlas-ritm.vercel.app](https://atlas-ritm.vercel.app/)**. It's best on a phone; on a laptop it opens inside a phone frame.
 
 A hackathon prototype. Ritm is an opt-in feature inside Atlas, a fictional Romanian banking app, that protects a first salary from being spent too fast after payday.
 
