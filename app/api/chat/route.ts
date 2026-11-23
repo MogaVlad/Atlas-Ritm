@@ -1,7 +1,7 @@
 import { askRitm, validateChatRequest } from "@/lib/chat/askRitm";
 
 /**
- * "Ask Ritm" (task C6). POST { messages, context } → { reply, source }.
+ * "Ask Ritm". POST { messages, context } → { reply, source }.
  * Keys and models come from server env only and never reach the browser:
  * GEMINI_API_KEY (+ optional GEMINI_MODEL, default a free-tier Flash-Lite) is used first,
  * then ANTHROPIC_API_KEY (+ ANTHROPIC_MODEL).

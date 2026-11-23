@@ -5,7 +5,7 @@
 
 import { RULES } from "@/lib/engine/config";
 
-/** What the chat sheet sends with each question (task I4). Every field is optional. */
+/** What the chat sheet sends with each question. Every field is optional. */
 export type ChatContext = {
   safeToSpendToday?: number;
   pctSpent?: number;

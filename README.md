@@ -4,6 +4,8 @@
 
 A hackathon prototype. Ritm is an opt-in feature inside Atlas, a fictional Romanian banking app, that protects a first salary from being spent too fast after payday.
 
+!(ritm-features.png)
+
 ## Demo video
 
 https://github.com/user-attachments/assets/d134387c-5526-47c1-80bd-b7886e4c701b
@@ -49,7 +51,7 @@ You can also open the demo clock directly with [`?demo=1`](https://artificial-in
 
 ## Run it locally
 
-Requires Node.js 20 or newer.
+Requires Node.js 20.9 to 24 (24 recommended). With [nvm](https://github.com/nvm-sh/nvm), `nvm use` picks the right version from `.nvmrc`.
 
 ```bash
 npm install
@@ -58,7 +60,7 @@ npm test        # unit tests (Vitest)
 npm run build
 ```
 
-"Ask Ritm" uses Gemini when `GEMINI_API_KEY` is set, otherwise Claude when `ANTHROPIC_API_KEY` is set, otherwise built-in answers. The rest of the app needs no keys.
+"Ask Ritm" uses Gemini when `GEMINI_API_KEY` is set, otherwise Claude when `ANTHROPIC_API_KEY` is set, otherwise built-in answers. To add a key, copy `.env.example` to `.env.local` and fill it in. The rest of the app needs no keys.
 
 **Stack:** Next.js (App Router) + TypeScript, Tailwind CSS, shadcn/ui, Zustand, Motion, Vitest, Playwright.
 

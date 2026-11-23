@@ -1,5 +1,5 @@
 /**
- * Domain types for Ritm. This is the CONTRACT the whole team builds against (task C2):
+ * Domain types for Ritm. This is the CONTRACT the whole team builds against:
  * screens import these types and the functions in lib/engine; only Cosma changes them.
  * Ask in chat before renaming anything here.
  */
