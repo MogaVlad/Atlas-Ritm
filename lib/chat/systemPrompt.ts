@@ -1,5 +1,5 @@
 /**
- * The instructions for "Ask Ritm" (roadmap section 2).
+ * The instructions for "Ask Ritm".
  * The screen numbers are filled into CONTEXT on every request, server side.
  */
 

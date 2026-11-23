@@ -59,7 +59,7 @@ export function interestEstimate(amount: number, days: number, annualRate: numbe
 const EMERGENCY_REASONS: readonly UnlockReason[] = ["health", "bill", "unexpected"];
 
 /**
- * Unlocking with a reason (section 11 C, "the mirror").
+ * Unlocking with a reason ("the mirror").
  * - health / bill / unexpected, up to 300 lei, first time this cycle: released now (emergency release).
  * - Anything else (more than 300 lei, the second time, or "want"): released 24h later.
  * The money is never refused; only the path changes.

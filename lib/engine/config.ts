@@ -1,5 +1,5 @@
 /**
- * Every Ritm threshold, from the "Ritm rules" in CLAUDE.md.
+ * Every Ritm threshold, from the "Ritm rules" in README.md.
  * Change numbers ONLY here; the rules in lib/engine read them.
  */
 export const RULES = {
@@ -40,7 +40,7 @@ export const RULES = {
     /** Early unlock is released this many days after the request (24h). */
     earlyUnlockDelayDays: 1,
     emergencyMaxLei: 300,
-    /** Quick buttons next to the Lock slider (section 11 B). */
+    /** Quick buttons next to the Lock slider. */
     quickAmounts: [300, 500, 800],
     /** Lock preview: under this many lei a day of spending money, show the gentle "that's tight" note. */
     tightPerDayLei: 30,

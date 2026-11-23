@@ -61,7 +61,7 @@ export interface HeadsUpNotification {
   severity: Severity;
   reasons: Reason[];
   actions: AlertAction[];
-  /** "habit": the extra pace is mostly the user's habits and the money lasts: the soft note (section 11 F). */
+  /** "habit": the extra pace is mostly the user's habits and the money lasts: the soft note. */
   variant?: "habit";
   /** The habits behind a soft note, biggest first. */
   habits?: string[];
@@ -70,7 +70,7 @@ export interface HeadsUpNotification {
 /** Month 1 is the scripted first month; month 2 has month 1 as its history (habits, personal pace). */
 export type DemoMonth = 1 | 2;
 
-/** What editing the Lock did: applied now, or a lower Lock that needs a reason first (section 11 A). */
+/** What editing the Lock did: applied now, or a lower Lock that needs a reason first. */
 export type LockEditResult = { kind: "applied" } | { kind: "needsReason"; decrease: number } | { kind: "notLocked" };
 
 /** A purchase the user plans this month (onboarding step 2), e.g. shoes for 280 lei. */
@@ -182,7 +182,7 @@ interface Actions {
   /** Move money to the Lock (creates it if needed). */
   lockMoney: (amount: number, unlockDay?: Day) => void;
   /**
-   * Change the Lock (section 11 A). More money or a later day applies now (never more than the
+   * Change the Lock. More money or a later day applies now (never more than the
    * current account holds). A lower amount returns needsReason: it goes through unlockWithReason.
    */
   editLock: (amount: number, unlockDay: Day) => LockEditResult;
@@ -424,7 +424,7 @@ function evaluateDay(s: PersistedState): PersistedState {
   return next;
 }
 
-/** Month 1 in the demo script ends with one unlock for "Something I want" (section 11 F). */
+/** Month 1 in the demo script ends with one unlock for "Something I want". */
 const SCRIPTED_MONTH1_UNLOCKS: UnlockRecord[] = [{ day: 12, reason: "want", amount: 200, path: "wait" }];
 
 const INITIAL: PersistedState = {

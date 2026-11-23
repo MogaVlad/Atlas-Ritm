@@ -74,7 +74,7 @@ function buildScenario(): Transaction[] {
 export const SCENARIO: readonly Transaction[] = buildScenario();
 
 /**
- * Month 2 (section 11 F): Luca has learned. No big spike. In the first week his habits come a bit
+ * Month 2: Luca has learned. No big spike. In the first week his habits come a bit
  * more often than usual (groceries and coffee every day), so the pace is above his usual day, but
  * the money lasts at his usual day from then on: Ritm sends the soft "your usual rhythm" note on
  * day 6 instead of a Heads-up. Then the month is calm. Same fictional merchants and amounts as

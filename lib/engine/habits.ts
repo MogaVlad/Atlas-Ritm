@@ -72,7 +72,7 @@ export interface HabitNote {
 }
 
 /**
- * Tone, not math (section 11 F). Habit spending still counts toward the spending money. When the
+ * Tone, not math. Habit spending still counts toward the spending money. When the
  * pace is above usual but the extra comes mostly from habits AND the money lasts until payday at the
  * usual day, the user gets the soft note. If the money would run out early, the normal Heads-up.
  */
@@ -105,7 +105,7 @@ export function habitNote(
 }
 
 /**
- * A Lock that fits real spending (section 11 F, the plan suggestion): salary − essentials − what
+ * A Lock that fits real spending (the plan suggestion): salary − essentials − what
  * last month's spending came to, rounded down to 50 lei. 0 when nothing would be left.
  */
 export function lockSuggestion(history: readonly Transaction[], settings: RitmSettings, netSalary: number): number {

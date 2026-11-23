@@ -26,8 +26,8 @@ export function usualDailySpend(history: readonly Transaction[], settings: RitmS
 }
 
 /**
- * The pace of spending since payday, for one day of the cycle (the "Ritm rules" in CLAUDE.md).
- * `history` = last month's transactions (days 1–30). With it (from the 2nd month, section 11 F) the
+ * The pace of spending since payday, for one day of the cycle (the "Ritm rules" in README.md).
+ * `history` = last month's transactions (days 1–30). With it (from the 2nd month) the
  * pace is personal: expected spending is the user's usual day × the days passed, and the run-out
  * forecast asks whether the money lasts at the usual day from now on. Not last month's shape:
  * copying a front-loaded month would teach Ritm that a blown first week is normal.

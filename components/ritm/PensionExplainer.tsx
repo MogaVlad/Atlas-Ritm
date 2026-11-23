@@ -30,7 +30,7 @@ const TITLES: Record<Step, string> = {
 const SUMMARY = ["s1", "s2", "s3", "s4", "s5"] as const;
 
 /**
- * Pillar III, explained before anything moves, in short steps instead of one block (section 11 E):
+ * Pillar III, explained before anything moves, in short steps instead of one block:
  * what it is → what you get (the tax saving in RON) → what to know (payout rules, fees) →
  * join (first time only: prospectus summary + signed adhesion act, Law 204/2006 art. 74) → the payment.
  * The amount, the checkbox and the explicit button come only on the last step. No projected returns.

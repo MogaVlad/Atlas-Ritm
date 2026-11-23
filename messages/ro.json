@@ -424,11 +424,6 @@
         "description": "Pune deoparte o sumă în ziua salariului și o deblochează în ziua aleasă de tine."
       }
     },
-    "playground": {
-      "title": "Ritm · componente",
-      "pickDay": "Alege ziua din lună",
-      "day": "Ziua {day}"
-    },
     "onboarding": {
       "progress": "Pasul {step} din {total}",
       "back": "Înapoi",

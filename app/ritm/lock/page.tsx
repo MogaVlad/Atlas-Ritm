@@ -372,7 +372,7 @@ export default function LockScreen() {
 }
 
 /**
- * Change the Lock (section 11 A, the edit rule). More money or a later day applies now, never more
+ * Change the Lock (the edit rule). More money or a later day applies now, never more
  * than the current account holds. Less money goes through the same reason buttons as taking money
  * out: there is no back door around the Lock.
  */

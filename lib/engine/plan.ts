@@ -104,7 +104,7 @@ export function goalProgress(saved: number, goalAmount: number): number {
 }
 
 /**
- * Goal with an amount and a date (section 11 A): lei a month needed by the date, whether the
+ * Goal with an amount and a date: lei a month needed by the date, whether the
  * chosen monthly Lock covers it, and how many months the chosen Lock takes instead.
  */
 export function goalPlan(goal: GoalPlanInput, monthlyLock: number): GoalPlan {
@@ -119,7 +119,7 @@ export function goalPlan(goal: GoalPlanInput, monthlyLock: number): GoalPlan {
 }
 
 /**
- * Editing the plan (section 11 A, edit rule). Anything safer (a bigger Lock, a later unlock day,
+ * Editing the plan (edit rule). Anything safer (a bigger Lock, a later unlock day,
  * a new goal, other settings) applies now. A smaller Lock or an earlier unlock day goes through
  * the reason screen + 24h (requestUnlockWithReason): there is no back door around the Lock.
  */

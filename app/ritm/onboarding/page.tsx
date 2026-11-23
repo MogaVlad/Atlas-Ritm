@@ -34,7 +34,7 @@ const DETECTED = SCENARIO.filter((t) =>
 );
 /** Lock slider: 0–30% of salary, in steps of 50 lei. */
 const LOCK_MAX = Math.floor((NET_SALARY * 0.3) / 50) * 50;
-/** Quick Lock amounts (section 11 B). */
+/** Quick Lock amounts. */
 const LOCK_QUICK = [300, 500, 800];
 
 // shortcut: the store has no place for future planned purchases yet; they show here but aren't saved. Ask Cosma for addPlannedPurchase.

@@ -9,7 +9,7 @@ import { AtlasPeak, AtlasTile } from "./AtlasMark";
 import { useFocusTrap } from "./useFocusTrap";
 import { isFirstVisit, markWelcomeSeen, startOnPayday, useWelcome } from "./welcomeGuide";
 
-/** The month, as the demo tells it. Days match the demo clock's jumps and the roadmap journey. */
+/** The month, as the demo tells it. Days match the demo clock's jumps. */
 const STOPS = [
   { key: "d1", day: 1 },
   { key: "d6", day: 6 },

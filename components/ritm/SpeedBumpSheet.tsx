@@ -74,7 +74,7 @@ export function SpeedBumpSheet({ purchase, pace, onConfirm, onNotNow, onBackToAt
   // What goes aside a month for the goal: the Lock, or (without one) what the goal needs a month.
   const monthlySaving = lockAmount > 0 ? lockAmount : goal ? goalMonthly(goal) : 0;
   const goalDays = goal ? goalImpactDays(purchase.amount, monthlySaving, pace.cycleLength) : null;
-  // One number per option (section 11 E): what each choice gives, in RON.
+  // One number per option: what each choice gives, in RON.
   const lockDays = Math.max(1, unlockDay - pace.dayOfCycle);
   const lockInterest = interestEstimate(purchase.amount, lockDays, RULES.savings.annualRate);
   const taxBack = pensionTaxBenefit(purchase.amount, pensionSoFar).taxSavedUpTo;

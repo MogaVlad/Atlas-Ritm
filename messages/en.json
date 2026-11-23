@@ -424,11 +424,6 @@
         "description": "Puts an amount aside on payday and unlocks it on the day you choose."
       }
     },
-    "playground": {
-      "title": "Ritm · components",
-      "pickDay": "Pick a day of the month",
-      "day": "Day {day}"
-    },
     "onboarding": {
       "progress": "Step {step} of {total}",
       "back": "Back",

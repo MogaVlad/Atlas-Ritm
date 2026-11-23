@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { DEFAULT_RITM_SETTINGS } from "@/lib/data/persona";
 import { createLock, goalPlan, lockPreview, planEdit, requestUnlockWithReason, resolveLock, unlockMirror } from "@/lib/engine";
 
-describe("lockPreview (section 11 B)", () => {
+describe("lockPreview", () => {
   it("shows per day, what comes back with interest, and goal share", () => {
     const p = lockPreview({
       spendingMoney: 2120,
@@ -39,7 +39,7 @@ describe("lockPreview (section 11 B)", () => {
   });
 });
 
-describe("unlockMirror (section 11 C)", () => {
+describe("unlockMirror", () => {
   const lock = createLock(500, 20);
   const base = { lock, saved: 500, goalAmount: 1000 };
 

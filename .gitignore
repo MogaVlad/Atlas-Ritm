@@ -46,3 +46,10 @@ next-env.d.ts
 # Playwright test output
 /test-results/
 /playwright-report/
+
+# local AI-assistant tooling (Next.js dev also regenerates AGENTS.md)
+/.claude/
+/.mcp.json
+/AGENTS.md
+/CLAUDE.md
+/skills-lock.json

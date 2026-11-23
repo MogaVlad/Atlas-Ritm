@@ -8,7 +8,7 @@ import type { RitmSettings, Transaction } from "./types";
 
 const settings: RitmSettings = { ...DEFAULT_RITM_SETTINGS, enabled: true, lock: { amount: 500, unlockDay: 20 } };
 
-describe("habits (section 11 F)", () => {
+describe("habits", () => {
   it("finds a merchant seen in 3 of the last 4 weeks at a similar amount", () => {
     const habits = detectHabits(SCENARIO_MONTH_2, SCENARIO, settings, 6);
     expect(habits.map((h) => h.merchant).sort()).toEqual(["Cafeneaua Nord", "FoodGo", "Mega Coș"]);
