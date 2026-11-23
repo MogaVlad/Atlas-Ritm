@@ -6,7 +6,7 @@ A hackathon prototype. Ritm is an opt-in feature inside Atlas, a fictional Roman
 
 ## Demo video
 
-<!-- On github.com: edit this file and drag demo-narrated.mp4 onto the line below; GitHub turns it into a video player. -->
+https://github.com/user-attachments/assets/d134387c-5526-47c1-80bd-b7886e4c701b
 
 ## The problem
 
