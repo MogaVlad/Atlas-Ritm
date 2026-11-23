@@ -47,7 +47,7 @@ The month follows one story: payday and turning Ritm on, a spending spike on day
 - simulate any purchase
 - **Reset demo** to start again
 
-You can also open the demo clock directly with [`?demo=1`](https://artificial-inflation-2026.vercel.app/?demo=1).
+You can also open the demo clock directly with [`?demo=1`](https://atlas-ritm.vercel.app/?demo=1).
 
 ## Run it locally
 
