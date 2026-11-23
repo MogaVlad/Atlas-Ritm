@@ -4,7 +4,7 @@
 
 A hackathon prototype. Ritm is an opt-in feature inside Atlas, a fictional Romanian banking app, that protects a first salary from being spent too fast after payday.
 
-!(ritm-features.png)
+<img width="1600" height="1156" alt="ritm-features" src="https://github.com/user-attachments/assets/2845a787-20d0-4b28-93a2-c3950d8b8ca7" />
 
 ## Demo video
 
